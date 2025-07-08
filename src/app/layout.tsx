@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { MadeWithDyad } from "@/components/made-with-dyad";
 import { SessionProvider } from "@/components/SessionProvider"; // Import SessionProvider
+import React from "react"; // Import React for Fragment
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,11 +38,13 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <SessionProvider>
-            {children}
-          </SessionProvider>
-          <Toaster />
-          <MadeWithDyad />
+          <React.Fragment>
+            <SessionProvider>
+              {children}
+            </SessionProvider>
+            <Toaster />
+            <MadeWithDyad />
+          </React.Fragment>
         </ThemeProvider>
       </body>
     </html>
