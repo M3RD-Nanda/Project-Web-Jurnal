@@ -72,27 +72,6 @@ export function SidebarContent({ onLinkClick }: SidebarContentProps) {
 
   return (
     <div className="p-4 space-y-6">
-      <nav className="space-y-2">
-        {sidebarNavItems.map((item) => (
-          <Button
-            key={item.name}
-            variant="ghost"
-            className={`w-full justify-start text-left transition-colors duration-200 ${
-              pathname === item.href
-                ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
-                : "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
-            }`}
-            asChild
-          >
-            <Link href={item.href} className="block w-full py-2 px-4" onClick={onLinkClick}>
-              {item.name}
-            </Link>
-          </Button>
-        ))}
-      </nav>
-
-      <VisitorChart />
-
       {session ? (
         <Card className="bg-sidebar-accent text-sidebar-accent-foreground border-sidebar-border shadow-none">
           <CardHeader className="pb-2">
@@ -124,6 +103,27 @@ export function SidebarContent({ onLinkClick }: SidebarContentProps) {
           </CardContent>
         </Card>
       )}
+
+      <nav className="space-y-2">
+        {sidebarNavItems.map((item) => (
+          <Button
+            key={item.name}
+            variant="ghost"
+            className={`w-full justify-start text-left transition-colors duration-200 ${
+              pathname === item.href
+                ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
+                : "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+            }`}
+            asChild
+          >
+            <Link href={item.href} className="block w-full py-2 px-4" onClick={onLinkClick}>
+              {item.name}
+            </Link>
+          </Button>
+        ))}
+      </nav>
+
+      <VisitorChart />
     </div>
   );
 }
