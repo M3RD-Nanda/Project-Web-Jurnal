@@ -2,6 +2,7 @@ import { MadeWithDyad } from "@/components/made-with-dyad";
 import { Header } from "@/components/layout/Header";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { JournalContent } from "@/components/JournalContent";
+import { Footer } from "@/components/layout/Footer"; // Import the new Footer component
 
 export default function Home() {
   return (
@@ -13,6 +14,7 @@ export default function Home() {
           <JournalContent />
         </main>
       </div>
+      <Footer /> {/* Add the Footer component here */}
       <MadeWithDyad />
     </div>
   );
