@@ -14,6 +14,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { toast } from "sonner";
 import { VisitorChart } from "@/components/VisitorChart";
 import { useSupabase } from "@/components/SessionProvider"; // Import useSupabase hook
+import { RatingDialog } from "@/components/RatingDialog"; // Import RatingDialog
 
 const sidebarLoginFormSchema = z.object({
   username: z.string().min(1, { message: "Nama pengguna tidak boleh kosong." }),
@@ -35,6 +36,7 @@ const sidebarNavItems = [
   { name: "OJS GUIDELENCE", href: "/ojs-guidelines" },
   { name: "STATISTICS", href: "/statistics" },
   { name: "FAQ", href: "/faq" },
+  { name: "RATING WEB", href: "/ratings" }, // New navigation item
 ];
 
 interface SidebarContentProps {
@@ -109,6 +111,21 @@ export function SidebarContent({ onLinkClick }: SidebarContentProps) {
           </CardContent>
         </Card>
       )}
+
+      {/* Rating Button */}
+      <Card className="bg-sidebar-accent text-sidebar-accent-foreground border-sidebar-border shadow-none">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-sm font-semibold text-sidebar-primary">BERI RATING</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <p className="text-sm text-muted-foreground">Bagikan pendapat Anda tentang website kami!</p>
+          <RatingDialog>
+            <Button className="w-full bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90">
+              Beri Rating Bintang 5
+            </Button>
+          </RatingDialog>
+        </CardContent>
+      </Card>
 
       <nav className="space-y-2">
         {sidebarNavItems.map((item) => (
