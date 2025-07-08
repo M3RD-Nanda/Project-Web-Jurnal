@@ -32,7 +32,7 @@ const profileFormSchema = z.object({
   signature: z.string().optional(),
   email: z.string().email("Email tidak valid.").min(1, "Email wajib diisi."),
   orcid_id: z.string().optional(),
-  url: z.string().url("URL tidak valid.").optional(),
+  url: z.string().url("URL tidak valid.").or(z.literal("")).optional(), // Diperbarui di sini
   phone: z.string().optional(),
   fax: z.string().optional(),
   mailing_address: z.string().optional(),
@@ -40,7 +40,7 @@ const profileFormSchema = z.object({
   country: z.string().optional(),
   is_reader: z.boolean(), // Changed from .default(true)
   is_author: z.boolean(), // Changed from .default(false)
-  profile_image_url: z.string().url("URL gambar profil tidak valid.").optional(),
+  profile_image_url: z.string().url("URL gambar profil tidak valid.").or(z.literal("")).optional(), // Diperbarui di sini
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
