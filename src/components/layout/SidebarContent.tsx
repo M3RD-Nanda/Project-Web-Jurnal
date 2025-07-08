@@ -80,6 +80,12 @@ export function SidebarContent({ onLinkClick }: SidebarContentProps) {
           <CardContent className="space-y-3">
             <p className="text-base">Halo, {session.user?.email || "Pengguna"}!</p>
             <Button
+              asChild
+              className="w-full bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
+            >
+              <Link href="/profile" onClick={onLinkClick}>Edit Profil</Link>
+            </Button>
+            <Button
               onClick={handleLogout}
               className="w-full bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
             >

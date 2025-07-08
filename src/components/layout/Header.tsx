@@ -67,13 +67,24 @@ export function Header() {
             </Button>
           ))}
           {session ? (
-            <Button
-              variant="ghost"
-              className="text-primary-foreground hover:bg-primary-foreground/10"
-              onClick={handleLogout}
-            >
-              LOGOUT
-            </Button>
+            <>
+              <Button
+                variant="ghost"
+                asChild
+                className={`text-primary-foreground hover:bg-primary-foreground/10 ${
+                  pathname === "/profile" ? "font-bold underline" : ""
+                }`}
+              >
+                <Link href="/profile">PROFILE</Link>
+              </Button>
+              <Button
+                variant="ghost"
+                className="text-primary-foreground hover:bg-primary-foreground/10"
+                onClick={handleLogout}
+              >
+                LOGOUT
+              </Button>
+            </>
           ) : (
             <>
               <Button
