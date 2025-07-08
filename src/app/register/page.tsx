@@ -41,6 +41,7 @@ export default function RegisterPage() {
               }}
               theme="light" // Sesuaikan dengan tema aplikasi Anda
               redirectTo={`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/`} // Redirect ke root setelah registrasi
+              view="sign_up" // Ini yang akan memastikan tampilan pendaftaran
             />
           </CardContent>
         </Card>
