@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
-import { createClient } from "@/integrations/supabase/client";
+import { supabase } from "@/integrations/supabase/client";
 import { Session, SupabaseClient } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
 import { Toaster, toast } from "sonner";
@@ -14,7 +14,6 @@ interface SupabaseContextType {
 const SupabaseContext = createContext<SupabaseContextType | undefined>(undefined);
 
 export function SessionProvider({ children }: { children: React.ReactNode }) {
-  const [supabase] = useState(() => createClient());
   const [session, setSession] = useState<Session | null>(null);
   const router = useRouter();
 
@@ -34,13 +33,10 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
         setSession(null);
         toast.info("Anda telah keluar.");
         router.push("/login"); // Redirect ke halaman login setelah logout
-      } else if (event === 'INITIAL_SESSION') {
+      } else if (event === 'INITIAL_SESSION' || event === 'TOKEN_REFRESHED') {
         setSession(session);
-      } else if (event === 'TOKEN_REFRESHED') {
-        setSession(session);
-      } else if (event === 'SIGNED_OUT') {
-        setSession(null);
       }
+      // Kondisi SIGNED_OUT yang berlebihan telah dihapus
     });
 
     return () => subscription.unsubscribe();
