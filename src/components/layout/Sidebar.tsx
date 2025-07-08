@@ -7,10 +7,20 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { usePathname } from "next/navigation"; // Import usePathname
+import { usePathname } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { toast } from "sonner";
+
+const sidebarLoginFormSchema = z.object({
+  username: z.string().min(1, { message: "Nama pengguna tidak boleh kosong." }),
+  password: z.string().min(6, { message: "Kata sandi harus minimal 6 karakter." }),
+});
 
 export function Sidebar() {
-  const pathname = usePathname(); // Get current pathname
+  const pathname = usePathname();
 
   const sidebarNavItems = [
     { name: "INCORPORATED WITH", href: "/incorporated" },
@@ -24,10 +34,24 @@ export function Sidebar() {
     { name: "AUTHOR GUIDELINES", href: "/author-guidelines" },
     { name: "PUBLICATION FEE", href: "/publication-fee" },
     { name: "ARTICLE TEMPLATE", href: "/article-template" },
-    { name: "OJS GUIDELINES", href: "/ojs-guidelines" },
+    { name: "OJS GUIDELENCE", href: "/ojs-guidelines" },
     { name: "STATISTICS", href: "/statistics" },
     { name: "FAQ", href: "/faq" },
   ];
+
+  const form = useForm<z.infer<typeof sidebarLoginFormSchema>>({
+    resolver: zodResolver(sidebarLoginFormSchema),
+    defaultValues: {
+      username: "",
+      password: "",
+    },
+  });
+
+  function onSubmit(values: z.infer<typeof sidebarLoginFormSchema>) {
+    console.log(values);
+    toast.success("Login sidebar berhasil! (Simulasi)");
+    // Di sini Anda akan mengintegrasikan logika login sebenarnya untuk sidebar.
+  }
 
   return (
     <aside className="w-full md:w-64 p-4 space-y-6 bg-sidebar text-sidebar-foreground border-r border-sidebar-border">
@@ -71,19 +95,41 @@ export function Sidebar() {
           <CardTitle className="text-sm font-semibold text-sidebar-primary">USER</CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
-          <div className="grid w-full items-center gap-1.5">
-            <Label htmlFor="username">Username</Label>
-            <Input type="text" id="username" placeholder="Username" className="bg-background text-foreground border-input" />
-          </div>
-          <div className="grid w-full items-center gap-1.5">
-            <Label htmlFor="password">Password</Label>
-            <Input type="password" id="password" placeholder="Password" className="bg-background text-foreground border-input" />
-          </div>
-          <div className="flex items-center space-x-2">
-            <Checkbox id="remember-me" className="border-input data-[state=checked]:bg-sidebar-primary data-[state=checked]:text-sidebar-primary-foreground" />
-            <Label htmlFor="remember-me" className="text-sm font-normal">Remember me</Label>
-          </div>
-          <Button className="w-full bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90">Login</Button>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
+              <FormField
+                control={form.control}
+                name="username"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Username</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Username" className="bg-background text-foreground border-input" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                      <Input type="password" placeholder="Password" className="bg-background text-foreground border-input" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="flex items-center space-x-2">
+                <Checkbox id="remember-me" className="border-input data-[state=checked]:bg-sidebar-primary data-[state=checked]:text-sidebar-primary-foreground" />
+                <Label htmlFor="remember-me" className="text-sm font-normal">Remember me</Label>
+              </div>
+              <Button type="submit" className="w-full bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90">Login</Button>
+            </form>
+          </Form>
         </CardContent>
       </Card>
     </aside>
