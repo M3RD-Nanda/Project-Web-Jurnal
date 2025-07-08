@@ -231,9 +231,7 @@ export default function ProfilePage() {
                       <FormItem>
                         <FormLabel>Username</FormLabel>
                         <FormControl>
-                          <React.Fragment>
-                            <Input {...field} />
-                          </React.Fragment>
+                          <Input {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -247,11 +245,9 @@ export default function ProfilePage() {
                         <FormLabel>Salutation</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
-                            <React.Fragment>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Pilih Salutation" />
-                              </SelectTrigger>
-                            </React.Fragment>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Pilih Salutation" />
+                            </SelectTrigger>
                           </FormControl>
                           <SelectContent>
                             <SelectItem value="Mr.">Mr.</SelectItem>
@@ -275,9 +271,7 @@ export default function ProfilePage() {
                       <FormItem>
                         <FormLabel>First Name *</FormLabel>
                         <FormControl>
-                          <React.Fragment>
-                            <Input {...field} />
-                          </React.Fragment>
+                          <Input {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -290,9 +284,7 @@ export default function ProfilePage() {
                       <FormItem>
                         <FormLabel>Middle Name</FormLabel>
                         <FormControl>
-                          <React.Fragment>
-                            <Input {...field} />
-                          </React.Fragment>
+                          <Input {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -305,9 +297,7 @@ export default function ProfilePage() {
                       <FormItem>
                         <FormLabel>Last Name *</FormLabel>
                         <FormControl>
-                          <React.Fragment>
-                            <Input {...field} />
-                          </React.Fragment>
+                          <Input {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -323,9 +313,7 @@ export default function ProfilePage() {
                       <FormItem>
                         <FormLabel>Initials</FormLabel>
                         <FormControl>
-                          <React.Fragment>
-                            <Input {...field} />
-                          </React.Fragment>
+                          <Input {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -339,11 +327,9 @@ export default function ProfilePage() {
                         <FormLabel>Gender</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
                           <FormControl>
-                            <React.Fragment>
-                              <SelectTrigger>
-                                <SelectValue placeholder="Pilih Gender" />
-                              </SelectTrigger>
-                            </React.Fragment>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Pilih Gender" />
+                            </SelectTrigger>
                           </FormControl>
                           <SelectContent>
                             <SelectItem value="Laki-laki">Laki-laki</SelectItem>
@@ -365,9 +351,7 @@ export default function ProfilePage() {
                     <FormItem>
                       <FormLabel>Affiliation</FormLabel>
                       <FormControl>
-                        <React.Fragment>
-                          <Textarea placeholder="Your institution, e.g. 'Simon Fraser University'" {...field} />
-                        </React.Fragment>
+                        <Textarea placeholder="Your institution, e.g. 'Simon Fraser University'" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -381,9 +365,7 @@ export default function ProfilePage() {
                     <FormItem>
                       <FormLabel>Signature</FormLabel>
                       <FormControl>
-                        <React.Fragment>
-                          <Textarea {...field} />
-                        </React.Fragment>
+                        <Textarea {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -397,9 +379,7 @@ export default function ProfilePage() {
                     <FormItem>
                       <FormLabel>Email *</FormLabel>
                       <FormControl>
-                        <React.Fragment>
-                          <Input type="email" disabled {...field} />
-                        </React.Fragment>
+                        <Input type="email" disabled {...field} />
                       </FormControl>
                       <FormDescription>Email tidak dapat diubah dari sini.</FormDescription>
                       <FormMessage />
@@ -414,9 +394,7 @@ export default function ProfilePage() {
                     <FormItem>
                       <FormLabel>ORCID iD</FormLabel>
                       <FormControl>
-                        <React.Fragment>
-                          <Input {...field} />
-                        </React.Fragment>
+                        <Input {...field} />
                       </FormControl>
                       <FormDescription>
                         ORCID iDs can only be assigned by the{" "}
@@ -437,9 +415,7 @@ export default function ProfilePage() {
                     <FormItem>
                       <FormLabel>URL</FormLabel>
                       <FormControl>
-                        <React.Fragment>
-                          <Input type="url" {...field} />
-                        </React.Fragment>
+                        <Input type="url" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -454,9 +430,7 @@ export default function ProfilePage() {
                       <FormItem>
                         <FormLabel>Phone</FormLabel>
                         <FormControl>
-                          <React.Fragment>
-                            <Input type="tel" {...field} />
-                          </React.Fragment>
+                          <Input type="tel" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -469,9 +443,7 @@ export default function ProfilePage() {
                       <FormItem>
                         <FormLabel>Fax</FormLabel>
                         <FormControl>
-                          <React.Fragment>
-                            <Input {...field} />
-                          </React.Fragment>
+                          <Input {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -486,9 +458,7 @@ export default function ProfilePage() {
                     <FormItem>
                       <FormLabel>Mailing Address</FormLabel>
                       <FormControl>
-                        <React.Fragment>
-                          <Textarea {...field} />
-                        </React.Fragment>
+                        <Textarea {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -502,9 +472,7 @@ export default function ProfilePage() {
                     <FormItem>
                       <FormLabel>Country</FormLabel>
                       <FormControl>
-                        <React.Fragment>
-                          <Input {...field} />
-                        </React.Fragment>
+                        <Input {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -520,12 +488,10 @@ export default function ProfilePage() {
                       render={({ field }) => (
                         <FormItem className="flex flex-row items-start space-x-3 space-y-0">
                           <FormControl>
-                            <React.Fragment>
-                              <Checkbox
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                              />
-                            </React.Fragment>
+                            <Checkbox
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
                           </FormControl>
                           <div className="space-y-1 leading-none">
                             <FormLabel>Reader</FormLabel>
@@ -539,12 +505,10 @@ export default function ProfilePage() {
                       render={({ field }) => (
                         <FormItem className="flex flex-row items-start space-x-3 space-y-0">
                           <FormControl>
-                            <React.Fragment>
-                              <Checkbox
-                                checked={field.value}
-                                onCheckedChange={field.onChange}
-                              />
-                            </React.Fragment>
+                            <Checkbox
+                              checked={field.value}
+                              onCheckedChange={field.onChange}
+                            />
                           </FormControl>
                           <div className="space-y-1 leading-none">
                             <FormLabel>Author</FormLabel>
@@ -563,9 +527,7 @@ export default function ProfilePage() {
                     <FormItem>
                       <FormLabel>Bio Statement</FormLabel>
                       <FormControl>
-                        <React.Fragment>
-                          <Textarea {...field} />
-                        </React.Fragment>
+                        <Textarea {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
