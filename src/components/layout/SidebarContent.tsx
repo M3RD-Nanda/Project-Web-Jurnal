@@ -19,29 +19,29 @@ const sidebarLoginFormSchema = z.object({
   password: z.string().min(6, { message: "Kata sandi harus minimal 6 karakter." }),
 });
 
+const sidebarNavItems = [
+  { name: "INCORPORATED WITH", href: "/incorporated" },
+  { name: "EDITORIAL TEAM", href: "/editorial-team" },
+  { name: "FOCUS AND SCOPE", href: "/focus-scope" },
+  { name: "ABSTRACTING AND INDEXING", href: "/abstracting-indexing" },
+  { name: "CITEDNESS IN SCOPUS", href: "/citedness-scopus" },
+  { name: "PUBLICATION ETHICS", href: "/publication-ethics" },
+  { name: "PEER-REVIEWERS", href: "/peer-reviewers" },
+  { name: "SUBMISSION GUIDELINES", href: "/submission-guidelines" },
+  { name: "AUTHOR GUIDELINES", href: "/author-guidelines" },
+  { name: "PUBLICATION FEE", href: "/publication-fee" },
+  { name: "ARTICLE TEMPLATE", href: "/article-template" },
+  { name: "OJS GUIDELENCE", href: "/ojs-guidelines" },
+  { name: "STATISTICS", href: "/statistics" },
+  { name: "FAQ", href: "/faq" },
+];
+
 interface SidebarContentProps {
   onLinkClick?: () => void; // Callback untuk menutup sheet setelah klik link
 }
 
 export function SidebarContent({ onLinkClick }: SidebarContentProps) {
   const pathname = usePathname();
-
-  const sidebarNavItems = [
-    { name: "INCORPORATED WITH", href: "/incorporated" },
-    { name: "EDITORIAL TEAM", href: "/editorial-team" },
-    { name: "FOCUS AND SCOPE", href: "/focus-scope" },
-    { name: "ABSTRACTING AND INDEXING", href: "/abstracting-indexing" },
-    { name: "CITEDNESS IN SCOPUS", href: "/citedness-scopus" },
-    { name: "PUBLICATION ETHICS", href: "/publication-ethics" },
-    { name: "PEER-REVIEWERS", href: "/peer-reviewers" },
-    { name: "SUBMISSION GUIDELINES", href: "/submission-guidelines" },
-    { name: "AUTHOR GUIDELINES", href: "/author-guidelines" },
-    { name: "PUBLICATION FEE", href: "/publication-fee" },
-    { name: "ARTICLE TEMPLATE", href: "/article-template" },
-    { name: "OJS GUIDELENCE", href: "/ojs-guidelines" },
-    { name: "STATISTICS", href: "/statistics" },
-    { name: "FAQ", href: "/faq" },
-  ];
 
   const form = useForm<z.infer<typeof sidebarLoginFormSchema>>({
     resolver: zodResolver(sidebarLoginFormSchema),

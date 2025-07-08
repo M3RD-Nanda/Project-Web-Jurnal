@@ -30,7 +30,7 @@ export function Header() {
           <Link href="/" className="flex items-center gap-2">
             <Image
               src="/jimeka-logo.png" // Placeholder for your logo
-              alt="JIMEKA Logo"
+              alt="Jurnal Ilmiah Mahasiswa Ekonomi Akuntansi (JIMEKA) Logo Universitas Percobaan Nanda" // Updated alt text
               width={40}
               height={40}
               className="rounded-full"
