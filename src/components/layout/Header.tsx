@@ -36,7 +36,10 @@ export function Header() {
               className="rounded-full"
             />
             <div className="flex flex-col">
-              <span className="text-lg font-bold">JIMEKA</span>
+              {/* Teks untuk desktop */}
+              <span className="text-lg font-bold hidden md:block">JIMEKA</span>
+              {/* Teks untuk mobile */}
+              <span className="text-lg font-bold block md:hidden">Jurnal Ilmiah Mahasiswa Ekonomi Akuntansi</span>
               <span className="text-xs hidden sm:block">FAKULTAS EKONOMI DAN BISNIS UNIVERSITAS PERCOBAAN NANDA</span>
             </div>
           </Link>
