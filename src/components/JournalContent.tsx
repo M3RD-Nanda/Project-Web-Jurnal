@@ -1,11 +1,27 @@
+"use client";
+
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { getAllArticles } from "@/lib/articles"; // Import getAllArticles
+import { Article, getAllArticles } from "@/lib/articles"; // Import Article interface
+import React, { useEffect, useState } from "react";
 
-export function JournalContent() {
-  // Mengambil 3 artikel terbaru dari data dummy
-  const latestArticles = getAllArticles().slice(0, 3);
+interface JournalContentProps {
+  initialArticles: Article[];
+}
+
+export function JournalContent({ initialArticles }: JournalContentProps) {
+  const [latestArticles, setLatestArticles] = useState<Article[]>(initialArticles);
+
+  // Jika Anda ingin memuat ulang artikel di sisi klien (misalnya setelah aksi tertentu),
+  // Anda bisa menggunakan useEffect di sini. Namun, untuk SSR, initialArticles sudah cukup.
+  // useEffect(() => {
+  //   const fetchArticles = async () => {
+  //     const articles = await getAllArticles();
+  //     setLatestArticles(articles.slice(0, 3));
+  //   };
+  //   fetchArticles();
+  // }, []);
 
   const announcements = [
     {

@@ -3,20 +3,18 @@ import { getArticleById } from "@/lib/articles";
 import { notFound } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 
-// Menyesuaikan definisi tipe ArticlePageProps agar lebih eksplisit
 type ArticlePageProps = {
   params: {
     id: string;
   };
-  // searchParams adalah opsional dan sering disertakan dalam PageProps
   searchParams?: { [key: string]: string | string[] | undefined };
 };
 
 export default async function ArticlePage({ params }: ArticlePageProps) {
-  const article = getArticleById(params.id);
+  const article = await getArticleById(params.id); // Menggunakan await untuk mengambil data
 
   if (!article) {
-    notFound(); // Tampilkan halaman 404 jika artikel tidak ditemukan
+    notFound();
   }
 
   return (
@@ -32,7 +30,6 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           <h3 className="text-2xl font-semibold mt-8">Abstrak</h3>
           <p>{article.abstract}</p>
           <h3 className="text-2xl font-semibold mt-8">Konten Lengkap</h3>
-          {/* Menambahkan kelas 'prose' untuk styling tipografi */}
           <div dangerouslySetInnerHTML={{ __html: article.fullContent }} className="prose dark:prose-invert max-w-none" />
           <h3 className="text-2xl font-semibold mt-8">Kata Kunci</h3>
           <p className="text-base">

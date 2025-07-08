@@ -4,10 +4,10 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { getAllArticles } from "@/lib/articles";
 
-export default function CurrentPage() {
-  // Mengambil artikel yang relevan untuk edisi saat ini dari data dummy
-  // Untuk simulasi, kita ambil 3 artikel terbaru yang ada di dummy data
-  const currentIssueArticles = getAllArticles().slice(0, 3);
+export default async function CurrentPage() { // Menjadikan komponen async
+  const allArticles = await getAllArticles(); // Mengambil semua artikel dari Supabase
+  // Untuk simulasi, kita ambil 3 artikel terbaru yang ada di data Supabase
+  const currentIssueArticles = allArticles.slice(0, 3);
 
   const currentIssue = {
     volume: 10,
@@ -19,7 +19,7 @@ export default function CurrentPage() {
       id: article.id,
       title: article.title,
       authors: article.authors,
-      link: `/articles/${article.id}`, // Link ke halaman detail artikel
+      link: `/articles/${article.id}`,
     })),
   };
 
