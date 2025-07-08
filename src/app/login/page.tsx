@@ -12,7 +12,6 @@ import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { MadeWithDyad } from "@/components/made-with-dyad";
 
 const formSchema = z.object({
   email: z.string().email({ message: "Masukkan alamat email yang valid." }),
@@ -86,7 +85,6 @@ export default function LoginPage() {
         </Card>
       </main>
       <Footer />
-      <MadeWithDyad />
       <Toaster />
     </div>
   );

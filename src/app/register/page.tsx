@@ -12,7 +12,6 @@ import { Toaster } from "@/components/ui/sonner";
 import { toast } from "sonner";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { MadeWithDyad } from "@/components/made-with-dyad";
 
 const formSchema = z.object({
   fullName: z.string().min(2, { message: "Nama lengkap harus minimal 2 karakter." }),
@@ -119,7 +118,6 @@ export default function RegisterPage() {
         </Card>
       </main>
       <Footer />
-      <MadeWithDyad />
       <Toaster />
     </div>
   );

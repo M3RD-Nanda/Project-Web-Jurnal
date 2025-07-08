@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
+import { MadeWithDyad } from "@/components/made-with-dyad"; // Import MadeWithDyad
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,12 +32,13 @@ export default function RootLayout({
       >
         <ThemeProvider
           attribute="class"
-          defaultTheme="light" // Diubah dari "system" menjadi "light"
+          defaultTheme="light"
           enableSystem
           disableTransitionOnChange
         >
           {children}
           <Toaster />
+          <MadeWithDyad /> {/* Menambahkan MadeWithDyad di sini */}
         </ThemeProvider>
       </body>
     </html>

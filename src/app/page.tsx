@@ -1,4 +1,3 @@
-import { MadeWithDyad } from "@/components/made-with-dyad";
 import { Header } from "@/components/layout/Header";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { JournalContent } from "@/components/JournalContent";
@@ -15,7 +14,6 @@ export default function Home() {
         </main>
       </div>
       <Footer />
-      <MadeWithDyad />
     </div>
   );
 }

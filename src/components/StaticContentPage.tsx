@@ -1,6 +1,5 @@
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { MadeWithDyad } from "@/components/made-with-dyad";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import React from "react";
 
@@ -24,7 +23,6 @@ export function StaticContentPage({ title, children }: StaticContentPageProps) {
         </Card>
       </main>
       <Footer />
-      <MadeWithDyad />
     </div>
   );
 }
