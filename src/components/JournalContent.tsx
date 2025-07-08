@@ -27,7 +27,7 @@ export function JournalContent() {
   return (
     <div className="flex-1 p-4 md:p-8 space-y-8">
       {/* Hero Section */}
-      <section className="relative bg-gradient-to-r from-primary to-primary-foreground/20 text-primary-foreground p-8 rounded-lg shadow-lg animate-in fade-in zoom-in duration-500">
+      <section className="relative bg-gradient-to-r from-primary to-jimeka-blue text-primary-foreground p-8 rounded-lg shadow-lg animate-in fade-in zoom-in duration-500">
         <div className="max-w-3xl mx-auto text-center">
           <h1 className="text-4xl md:text-5xl font-extrabold mb-4 leading-tight">
             Jurnal Ilmiah Mahasiswa Ekonomi Akuntansi
