@@ -37,11 +37,11 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <SessionProvider> {/* Wrap children with SessionProvider */}
+          <SessionProvider>
             {children}
-            <Toaster />
-            <MadeWithDyad />
           </SessionProvider>
+          <Toaster />
+          <MadeWithDyad />
         </ThemeProvider>
       </body>
     </html>
