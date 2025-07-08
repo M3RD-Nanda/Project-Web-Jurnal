@@ -13,6 +13,7 @@ import * as z from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { toast } from "sonner";
 import { VisitorChart } from "@/components/VisitorChart";
+import { useSupabase } from "@/components/SessionProvider"; // Import useSupabase hook
 
 const sidebarLoginFormSchema = z.object({
   username: z.string().min(1, { message: "Nama pengguna tidak boleh kosong." }),
@@ -37,11 +38,12 @@ const sidebarNavItems = [
 ];
 
 interface SidebarContentProps {
-  onLinkClick?: () => void; // Callback untuk menutup sheet setelah klik link
+  onLinkClick?: () => void;
 }
 
 export function SidebarContent({ onLinkClick }: SidebarContentProps) {
   const pathname = usePathname();
+  const { supabase, session } = useSupabase();
 
   const form = useForm<z.infer<typeof sidebarLoginFormSchema>>({
     resolver: zodResolver(sidebarLoginFormSchema),
@@ -51,11 +53,22 @@ export function SidebarContent({ onLinkClick }: SidebarContentProps) {
     },
   });
 
+  // Fungsi onSubmit ini tidak lagi digunakan untuk login sebenarnya,
+  // karena login ditangani oleh Auth UI di halaman /login.
+  // Ini hanya sebagai placeholder jika Anda ingin menambahkan fungsionalitas lain.
   function onSubmit(values: z.infer<typeof sidebarLoginFormSchema>) {
     console.log(values);
-    toast.success("Login sidebar berhasil! (Simulasi)");
-    // Di sini Anda akan mengintegrasikan logika login sebenarnya untuk sidebar.
+    toast.info("Login ditangani di halaman Login utama.");
   }
+
+  const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      toast.error(`Gagal logout: ${error.message}`);
+    } else {
+      // SessionProvider akan menangani redirect dan toast sukses
+    }
+  };
 
   return (
     <div className="p-4 space-y-6">
@@ -80,48 +93,37 @@ export function SidebarContent({ onLinkClick }: SidebarContentProps) {
 
       <VisitorChart />
 
-      <Card className="bg-sidebar-accent text-sidebar-accent-foreground border-sidebar-border shadow-none">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-semibold text-sidebar-primary">USER</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-3">
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
-              <FormField
-                control={form.control}
-                name="username"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Username</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Username" className="bg-background text-foreground border-input" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Password</FormLabel>
-                    <FormControl>
-                      <Input type="password" placeholder="Password" className="bg-background text-foreground border-input" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <div className="flex items-center space-x-2">
-                <Checkbox id="remember-me" className="border-input data-[state=checked]:bg-sidebar-primary data-[state=checked]:text-sidebar-primary-foreground" />
-                <Label htmlFor="remember-me" className="text-sm font-normal">Remember me</Label>
-              </div>
-              <Button type="submit" className="w-full bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90">Login</Button>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
+      {session ? (
+        <Card className="bg-sidebar-accent text-sidebar-accent-foreground border-sidebar-border shadow-none">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-semibold text-sidebar-primary">SELAMAT DATANG</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <p className="text-base">Halo, {session.user?.email || "Pengguna"}!</p>
+            <Button
+              onClick={handleLogout}
+              className="w-full bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
+            >
+              Logout
+            </Button>
+          </CardContent>
+        </Card>
+      ) : (
+        <Card className="bg-sidebar-accent text-sidebar-accent-foreground border-sidebar-border shadow-none">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-semibold text-sidebar-primary">USER</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            <p className="text-sm text-muted-foreground mb-3">Silakan login untuk mengakses fitur lebih lanjut.</p>
+            <Button asChild className="w-full bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90">
+              <Link href="/login" onClick={onLinkClick}>Login</Link>
+            </Button>
+            <Button asChild variant="outline" className="w-full border-sidebar-primary text-sidebar-primary hover:bg-sidebar-primary/10">
+              <Link href="/register" onClick={onLinkClick}>Daftar</Link>
+            </Button>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 }

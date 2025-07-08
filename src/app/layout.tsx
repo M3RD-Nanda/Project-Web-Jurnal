@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { MadeWithDyad } from "@/components/made-with-dyad";
+import { SessionProvider } from "@/components/SessionProvider"; // Import SessionProvider
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -36,9 +37,11 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {children}
-          <Toaster />
-          <MadeWithDyad />
+          <SessionProvider> {/* Wrap children with SessionProvider */}
+            {children}
+            <Toaster />
+            <MadeWithDyad />
+          </SessionProvider>
         </ThemeProvider>
       </body>
     </html>

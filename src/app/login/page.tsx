@@ -1,38 +1,14 @@
 "use client";
 
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import Link from "next/link";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Toaster } from "@/components/ui/sonner";
-import { toast } from "sonner";
+import { Auth } from '@supabase/auth-ui-react';
+import { ThemeSupa } from '@supabase/auth-ui-shared';
+import { useSupabase } from "@/components/SessionProvider"; // Import useSupabase hook
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-
-const formSchema = z.object({
-  email: z.string().email({ message: "Masukkan alamat email yang valid." }),
-  password: z.string().min(6, { message: "Kata sandi harus minimal 6 karakter." }),
-});
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 
 export default function LoginPage() {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
-  });
-
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log(values);
-    toast.success("Login berhasil! (Simulasi)");
-    // Di sini Anda akan mengintegrasikan logika login sebenarnya,
-    // misalnya memanggil API otentikasi.
-  }
+  const { supabase } = useSupabase();
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -44,48 +20,32 @@ export default function LoginPage() {
             <CardDescription>Masuk ke akun Anda untuk mengakses fitur jurnal.</CardDescription>
           </CardHeader>
           <CardContent>
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email</FormLabel>
-                      <FormControl>
-                        <Input placeholder="nama@contoh.com" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Kata Sandi</FormLabel>
-                      <FormControl>
-                        <Input type="password" placeholder="********" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <Button type="submit" className="w-full">Login</Button>
-              </form>
-            </Form>
-            <div className="mt-6 text-center text-sm">
-              Belum punya akun?{" "}
-              <Link href="/register" className="text-primary hover:underline">
-                Daftar Sekarang
-              </Link>
-            </div>
+            <Auth
+              supabaseClient={supabase}
+              providers={[]} // Anda bisa menambahkan 'google', 'github', dll. di sini
+              appearance={{
+                theme: ThemeSupa,
+                variables: {
+                  default: {
+                    colors: {
+                      brand: 'hsl(var(--primary))',
+                      brandAccent: 'hsl(var(--primary-foreground))',
+                      inputBackground: 'hsl(var(--background))',
+                      inputBorder: 'hsl(var(--border))',
+                      inputBorderHover: 'hsl(var(--ring))',
+                      inputBorderFocus: 'hsl(var(--ring))',
+                      inputText: 'hsl(var(--foreground))',
+                    },
+                  },
+                },
+              }}
+              theme="light" // Sesuaikan dengan tema aplikasi Anda
+              redirectTo={`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/`} // Redirect ke root setelah login
+            />
           </CardContent>
         </Card>
       </main>
       <Footer />
-      <Toaster />
     </div>
   );
 }
