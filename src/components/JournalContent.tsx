@@ -1,11 +1,123 @@
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
+
 export function JournalContent() {
+  const latestArticles = [
+    {
+      id: 1,
+      title: "Analisis Dampak Kebijakan Moneter Terhadap Inflasi di Indonesia",
+      authors: "Dr. Budi Santoso, M.E.",
+      abstract: "Penelitian ini mengkaji pengaruh kebijakan moneter Bank Indonesia terhadap tingkat inflasi di Indonesia...",
+      link: "/articles/1",
+    },
+    {
+      id: 2,
+      title: "Peran UMKM dalam Perekonomian Digital: Studi Kasus di Aceh",
+      authors: "Prof. Siti Aminah, Ph.D.",
+      abstract: "Studi ini menganalisis kontribusi Usaha Mikro, Kecil, dan Menengah (UMKM) dalam ekosistem ekonomi digital di Provinsi Aceh...",
+      link: "/articles/2",
+    },
+    {
+      id: 3,
+      title: "Efektivitas Program CSR Perusahaan Terhadap Kesejahteraan Masyarakat Lokal",
+      authors: "Dra. Fitriani, Ak., M.Si.",
+      abstract: "Penelitian ini mengevaluasi efektivitas program Corporate Social Responsibility (CSR) beberapa perusahaan di wilayah tertentu...",
+      link: "/articles/3",
+    },
+  ];
+
+  const announcements = [
+    {
+      id: 1,
+      title: "Panggilan untuk Artikel Volume 10, Nomor 2, Tahun 2024",
+      date: "15 Juli 2024",
+      description: "JIMEKA membuka kesempatan bagi para peneliti dan akademisi untuk mengirimkan artikel terbaiknya...",
+      link: "/announcements/call-for-papers",
+    },
+    {
+      id: 2,
+      title: "Workshop Penulisan Artikel Ilmiah",
+      date: "20 Agustus 2024",
+      description: "Ikuti workshop kami untuk meningkatkan kualitas penulisan artikel ilmiah Anda...",
+      link: "/announcements/workshop",
+    },
+  ];
+
   return (
-    <div className="flex-1 p-4 md:p-8">
-      {/* Konten jurnal akan ditambahkan di sini */}
-      <h2 className="text-2xl font-bold mb-4">Jurnal Ilmiah Mahasiswa Ekonomi Akuntansi</h2>
-      <p className="text-muted-foreground">
-        Ini adalah area konten utama untuk jurnal. Kita akan mengisi ini dengan detail jurnal, daftar artikel, dan lainnya.
-      </p>
+    <div className="flex-1 p-4 md:p-8 space-y-8">
+      {/* Hero Section */}
+      <section className="relative bg-gradient-to-r from-primary to-primary-foreground/20 text-primary-foreground p-8 rounded-lg shadow-lg animate-in fade-in zoom-in duration-500">
+        <div className="max-w-3xl mx-auto text-center">
+          <h1 className="text-4xl md:text-5xl font-extrabold mb-4 leading-tight">
+            Jurnal Ilmiah Mahasiswa Ekonomi Akuntansi
+          </h1>
+          <p className="text-lg md:text-xl mb-6 opacity-90">
+            Platform terkemuka untuk publikasi penelitian inovatif di bidang Ekonomi dan Akuntansi dari Universitas Syiah Kuala.
+          </p>
+          <Button asChild className="bg-primary-foreground text-primary hover:bg-primary-foreground/90 transition-colors duration-300">
+            <Link href="/submission-guidelines">Kirim Artikel Anda Sekarang</Link>
+          </Button>
+        </div>
+      </section>
+
+      {/* Latest Articles Section */}
+      <section className="space-y-6 animate-in slide-in-from-bottom-8 duration-700">
+        <h2 className="text-3xl font-bold text-center">Artikel Terbaru</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {latestArticles.map((article) => (
+            <Card key={article.id} className="hover:shadow-lg transition-shadow duration-300">
+              <CardHeader>
+                <CardTitle className="text-lg font-semibold">{article.title}</CardTitle>
+                <CardDescription className="text-sm text-muted-foreground">Oleh: {article.authors}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm line-clamp-3">{article.abstract}</p>
+              </CardContent>
+              <CardFooter>
+                <Button variant="link" asChild className="p-0 h-auto">
+                  <Link href={article.link}>Baca Selengkapnya &rarr;</Link>
+                </Button>
+              </CardFooter>
+            </Card>
+          ))}
+        </div>
+      </section>
+
+      {/* Announcements Section */}
+      <section className="space-y-6 animate-in slide-in-from-bottom-8 duration-900">
+        <h2 className="text-3xl font-bold text-center">Pengumuman</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {announcements.map((announcement) => (
+            <Card key={announcement.id} className="hover:shadow-lg transition-shadow duration-300">
+              <CardHeader>
+                <CardTitle className="text-lg font-semibold">{announcement.title}</CardTitle>
+                <CardDescription className="text-sm text-muted-foreground">{announcement.date}</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm line-clamp-2">{announcement.description}</p>
+              </CardContent>
+              <CardFooter>
+                <Button variant="link" asChild className="p-0 h-auto">
+                  <Link href={announcement.link}>Lihat Detail &rarr;</Link>
+                </Button>
+              </CardFooter>
+            </Card>
+          ))}
+        </div>
+      </section>
+
+      {/* Call for Papers Section */}
+      <section className="bg-accent text-accent-foreground p-8 rounded-lg shadow-md text-center animate-in fade-in duration-1000">
+        <h2 className="text-3xl font-bold mb-4">Panggilan untuk Artikel</h2>
+        <p className="text-lg mb-6">
+          Kami mengundang para akademisi, peneliti, dan praktisi untuk mengirimkan naskah asli mereka.
+          Jadilah bagian dari kontribusi ilmiah di bidang Ekonomi dan Akuntansi.
+        </p>
+        <Button asChild className="bg-primary text-primary-foreground hover:bg-primary/90 transition-colors duration-300">
+          <Link href="/submission-guidelines">Informasi Pengiriman</Link>
+        </Button>
+      </section>
     </div>
   );
 }
