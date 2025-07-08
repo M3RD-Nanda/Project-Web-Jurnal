@@ -13,6 +13,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { toast } from "sonner";
+import { VisitorChart } from "@/components/VisitorChart"; // Import the new VisitorChart component
 
 const sidebarLoginFormSchema = z.object({
   username: z.string().min(1, { message: "Nama pengguna tidak boleh kosong." }),
@@ -73,22 +74,8 @@ export function Sidebar() {
         ))}
       </nav>
 
-      <Card className="bg-sidebar-accent text-sidebar-accent-foreground border-sidebar-border shadow-none">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-semibold text-sidebar-primary">VISITORS</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex justify-center">
-            <Image
-              src="/stat-counter.png" // Placeholder for stat counter image
-              alt="Stat Counter"
-              width={100}
-              height={50}
-              className="object-contain"
-            />
-          </div>
-        </CardContent>
-      </Card>
+      {/* Replace the static image with the new VisitorChart component */}
+      <VisitorChart />
 
       <Card className="bg-sidebar-accent text-sidebar-accent-foreground border-sidebar-border shadow-none">
         <CardHeader className="pb-2">
