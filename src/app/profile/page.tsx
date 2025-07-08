@@ -37,8 +37,8 @@ const profileFormSchema = z.object({
   mailing_address: z.string().optional(),
   bio_statement: z.string().optional(),
   country: z.string().optional(),
-  is_reader: z.boolean().default(true),
-  is_author: z.boolean().default(false),
+  is_reader: z.boolean(), // Changed from .default(true)
+  is_author: z.boolean(), // Changed from .default(false)
   profile_image_url: z.string().url("URL gambar profil tidak valid.").optional(),
 });
 
@@ -50,7 +50,7 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
 
   const form = useForm<ProfileFormValues>({
-    resolver: zodResolver(profileFormSchema), // Removed explicit type argument here
+    resolver: zodResolver(profileFormSchema),
     defaultValues: {
       username: "",
       salutation: "",
@@ -69,8 +69,8 @@ export default function ProfilePage() {
       mailing_address: "",
       bio_statement: "",
       country: "",
-      is_reader: true,
-      is_author: false,
+      is_reader: true, // Explicit default
+      is_author: false, // Explicit default
       profile_image_url: "",
     },
     mode: "onChange",
@@ -114,8 +114,8 @@ export default function ProfilePage() {
           mailing_address: data.mailing_address ?? "",
           bio_statement: data.bio_statement ?? "",
           country: data.country ?? "",
-          is_reader: data.is_reader ?? true,
-          is_author: data.is_author ?? false,
+          is_reader: data.is_reader, // No ?? true needed if DB is NOT NULL
+          is_author: data.is_author, // No ?? false needed if DB is NOT NULL
           profile_image_url: data.profile_image_url ?? "",
         });
       } else {
@@ -124,8 +124,8 @@ export default function ProfilePage() {
           email: session.user.email ?? "",
           first_name: session.user.user_metadata?.first_name ?? "",
           last_name: session.user.user_metadata?.last_name ?? "",
-          is_reader: true,
-          is_author: false,
+          is_reader: true, // Explicit default
+          is_author: false, // Explicit default
           // Ensure all other optional fields are explicitly set to empty string or default
           username: "",
           salutation: "",
