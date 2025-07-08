@@ -1,31 +1,11 @@
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { getAllArticles } from "@/lib/articles"; // Import getAllArticles
 
 export function JournalContent() {
-  const latestArticles = [
-    {
-      id: 1,
-      title: "Analisis Dampak Kebijakan Moneter Terhadap Inflasi di Indonesia",
-      authors: "Dr. Budi Santoso, M.E.",
-      abstract: "Penelitian ini mengkaji pengaruh kebijakan moneter Bank Indonesia terhadap tingkat inflasi di Indonesia...",
-      link: "/articles/1",
-    },
-    {
-      id: 2,
-      title: "Peran UMKM dalam Perekonomian Digital: Studi Kasus di Aceh",
-      authors: "Prof. Siti Aminah, Ph.D.",
-      abstract: "Studi ini menganalisis kontribusi Usaha Mikro, Kecil, dan Menengah (UMKM) dalam ekosistem ekonomi digital di Provinsi Aceh...",
-      link: "/articles/2",
-    },
-    {
-      id: 3,
-      title: "Efektivitas Program CSR Perusahaan Terhadap Kesejahteraan Masyarakat Lokal",
-      authors: "Dra. Fitriani, Ak., M.Si.",
-      abstract: "Penelitian ini mengevaluasi efektivitas program Corporate Social Responsibility (CSR) beberapa perusahaan di wilayah tertentu...",
-      link: "/articles/3",
-    },
-  ];
+  // Mengambil 3 artikel terbaru dari data dummy
+  const latestArticles = getAllArticles().slice(0, 3);
 
   const announcements = [
     {
@@ -76,7 +56,7 @@ export function JournalContent() {
               </CardContent>
               <CardFooter>
                 <Button variant="link" asChild className="p-0 h-auto">
-                  <Link href={article.link}>Baca Selengkapnya &rarr;</Link>
+                  <Link href={`/articles/${article.id}`}>Baca Selengkapnya &rarr;</Link>
                 </Button>
               </CardFooter>
             </Card>

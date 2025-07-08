@@ -2,19 +2,25 @@ import { StaticContentPage } from "@/components/StaticContentPage";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { getAllArticles } from "@/lib/articles"; // Import getAllArticles
 
 export default function CurrentPage() {
+  // Mengambil artikel yang relevan untuk edisi saat ini dari data dummy
+  // Untuk simulasi, kita ambil 3 artikel terbaru yang ada di dummy data
+  const currentIssueArticles = getAllArticles().slice(0, 3);
+
   const currentIssue = {
     volume: 10,
     number: 1,
     year: 2024,
     publicationDate: "30 Juni 2024",
     description: "Edisi terbaru JIMEKA menampilkan penelitian inovatif tentang dampak ekonomi digital, analisis kebijakan fiskal, dan studi kasus akuntansi forensik.",
-    articles: [
-      { id: 1, title: "Dampak Transformasi Digital pada Sektor UMKM", authors: "A. Rahman, B. Lestari", link: "/articles/current/1" },
-      { id: 2, title: "Analisis Efektivitas Kebijakan Subsidi Energi", authors: "C. Wijaya, D. Putri", link: "/articles/current/2" },
-      { id: 3, title: "Peran Akuntansi Forensik dalam Pencegahan Fraud", authors: "E. Susanto, F. Handayani", link: "/articles/current/3" },
-    ],
+    articles: currentIssueArticles.map(article => ({
+      id: article.id,
+      title: article.title,
+      authors: article.authors,
+      link: `/articles/${article.id}`, // Link ke halaman detail artikel
+    })),
   };
 
   return (

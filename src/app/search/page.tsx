@@ -7,56 +7,11 @@ import { Search } from "lucide-react";
 import React, { useState } from "react";
 import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-
-// Data dummy untuk artikel yang bisa dicari
-const allArticles = [
-  {
-    id: 1,
-    title: "Analisis Dampak Kebijakan Moneter Terhadap Inflasi di Indonesia",
-    authors: "Dr. Budi Santoso, M.E.",
-    abstract: "Penelitian ini mengkaji pengaruh kebijakan moneter Bank Indonesia terhadap tingkat inflasi di Indonesia...",
-    link: "/articles/1",
-  },
-  {
-    id: 2,
-    title: "Peran UMKM dalam Perekonomian Digital: Studi Kasus di Aceh",
-    authors: "Prof. Siti Aminah, Ph.D.",
-    abstract: "Studi ini menganalisis kontribusi Usaha Mikro, Kecil, dan Menengah (UMKM) dalam ekosistem ekonomi digital di Provinsi Aceh...",
-    link: "/articles/2",
-  },
-  {
-    id: 3,
-    title: "Efektivitas Program CSR Perusahaan Terhadap Kesejahteraan Masyarakat Lokal",
-    authors: "Dra. Fitriani, Ak., M.Si.",
-    abstract: "Penelitian ini mengevaluasi efektivitas program Corporate Social Responsibility (CSR) beberapa perusahaan di wilayah tertentu...",
-    link: "/articles/3",
-  },
-  {
-    id: 4,
-    title: "Dampak Transformasi Digital pada Sektor UMKM",
-    authors: "A. Rahman, B. Lestari",
-    abstract: "Artikel ini membahas bagaimana transformasi digital mempengaruhi sektor UMKM di Indonesia, dengan fokus pada adopsi teknologi dan dampaknya terhadap pertumbuhan bisnis.",
-    link: "/articles/current/1",
-  },
-  {
-    id: 5,
-    title: "Analisis Efektivitas Kebijakan Subsidi Energi",
-    authors: "C. Wijaya, D. Putri",
-    abstract: "Studi ini menganalisis efektivitas kebijakan subsidi energi pemerintah dan dampaknya terhadap perekonomian nasional serta kesejahteraan masyarakat.",
-    link: "/articles/current/2",
-  },
-  {
-    id: 6,
-    title: "Peran Akuntansi Forensik dalam Pencegahan Fraud",
-    authors: "E. Susanto, F. Handayani",
-    abstract: "Penelitian ini mengeksplorasi peran akuntansi forensik sebagai alat penting dalam mendeteksi dan mencegah praktik fraud di berbagai organisasi.",
-    link: "/articles/current/3",
-  },
-];
+import { getAllArticles } from "@/lib/articles"; // Import getAllArticles
 
 export default function SearchPage() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<typeof allArticles>([]);
+  const [searchResults, setSearchResults] = useState<ReturnType<typeof getAllArticles>>([]);
   const [hasSearched, setHasSearched] = useState(false);
 
   const handleSearch = (e: React.FormEvent) => {
@@ -67,6 +22,7 @@ export default function SearchPage() {
       return;
     }
 
+    const allArticles = getAllArticles(); // Get all articles from the utility
     const filtered = allArticles.filter(
       (article) =>
         article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -113,7 +69,7 @@ export default function SearchPage() {
                 <CardContent>
                   <p className="text-sm line-clamp-3">{article.abstract}</p>
                   <Button variant="link" asChild className="p-0 h-auto mt-2">
-                    <Link href={article.link}>Baca Selengkapnya &rarr;</Link>
+                    <Link href={`/articles/${article.id}`}>Baca Selengkapnya &rarr;</Link>
                   </Button>
                 </CardContent>
               </Card>
