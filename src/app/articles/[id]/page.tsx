@@ -3,11 +3,14 @@ import { getArticleById } from "@/lib/articles";
 import { notFound } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 
-interface ArticlePageProps {
+// Menyesuaikan definisi tipe ArticlePageProps agar lebih eksplisit
+type ArticlePageProps = {
   params: {
     id: string;
   };
-}
+  // searchParams adalah opsional dan sering disertakan dalam PageProps
+  searchParams?: { [key: string]: string | string[] | undefined };
+};
 
 export default async function ArticlePage({ params }: ArticlePageProps) {
   const article = getArticleById(params.id);
