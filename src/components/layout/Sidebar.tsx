@@ -7,8 +7,11 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { usePathname } from "next/navigation"; // Import usePathname
 
 export function Sidebar() {
+  const pathname = usePathname(); // Get current pathname
+
   const sidebarNavItems = [
     { name: "INCORPORATED WITH", href: "/incorporated" },
     { name: "EDITORIAL TEAM", href: "/editorial-team" },
@@ -21,7 +24,7 @@ export function Sidebar() {
     { name: "AUTHOR GUIDELINES", href: "/author-guidelines" },
     { name: "PUBLICATION FEE", href: "/publication-fee" },
     { name: "ARTICLE TEMPLATE", href: "/article-template" },
-    { name: "OJS GUIDELINGS", href: "/ojs-guidelines" },
+    { name: "OJS GUIDELINES", href: "/ojs-guidelines" },
     { name: "STATISTICS", href: "/statistics" },
     { name: "FAQ", href: "/faq" },
   ];
@@ -30,7 +33,15 @@ export function Sidebar() {
     <aside className="w-full md:w-64 p-4 space-y-6 bg-sidebar text-sidebar-foreground border-r border-sidebar-border">
       <nav className="space-y-2">
         {sidebarNavItems.map((item) => (
-          <Button key={item.name} variant="ghost" className="w-full justify-start text-left bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground transition-colors duration-200">
+          <Button
+            key={item.name}
+            variant="ghost"
+            className={`w-full justify-start text-left transition-colors duration-200 ${
+              pathname === item.href
+                ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
+                : "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+            }`}
+          >
             <Link href={item.href} className="block w-full py-2 px-4">
               {item.name}
             </Link>

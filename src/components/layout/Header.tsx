@@ -5,8 +5,11 @@ import Image from "next/image";
 import { ModeToggle } from "@/components/ui/mode-toggle";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { usePathname } from "next/navigation"; // Import usePathname
 
 export function Header() {
+  const pathname = usePathname(); // Get current pathname
+
   const navItems = [
     { name: "HOME", href: "/" },
     { name: "ABOUT", href: "/about" },
@@ -39,7 +42,14 @@ export function Header() {
         </div>
         <nav className="flex flex-wrap justify-center md:justify-end gap-2">
           {navItems.map((item) => (
-            <Button key={item.name} variant="ghost" asChild className="text-primary-foreground hover:bg-primary-foreground/10">
+            <Button
+              key={item.name}
+              variant="ghost"
+              asChild
+              className={`text-primary-foreground hover:bg-primary-foreground/10 ${
+                pathname === item.href ? "font-bold underline" : ""
+              }`}
+            >
               <Link href={item.href}>{item.name}</Link>
             </Button>
           ))}
