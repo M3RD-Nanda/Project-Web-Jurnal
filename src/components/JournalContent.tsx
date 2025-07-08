@@ -33,7 +33,7 @@ export function JournalContent() {
             Jurnal Ilmiah Mahasiswa Ekonomi Akuntansi
           </h1>
           <p className="text-lg md:text-xl mb-6 opacity-90">
-            Platform terkemuka untuk publikasi penelitian inovatif di bidang Ekonomi dan Akuntansi dari Universitas Syiah Kuala.
+            Platform terkemuka untuk publikasi penelitian inovatif di bidang Ekonomi dan Akuntansi dari Universitas Percobaan Nanda.
           </p>
           <Button asChild className="bg-primary-foreground text-primary hover:bg-primary-foreground/90 transition-colors duration-300">
             <Link href="/submission-guidelines">Kirim Artikel Anda Sekarang</Link>
