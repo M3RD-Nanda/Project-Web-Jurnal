@@ -4,7 +4,8 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Session, SupabaseClient } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
-import { Toaster, toast } from "sonner";
+import { toast } from "sonner";
+import React from "react"; // Import React for Fragment
 
 interface SupabaseContextType {
   supabase: SupabaseClient;
@@ -36,7 +37,6 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
       } else if (event === 'INITIAL_SESSION' || event === 'TOKEN_REFRESHED') {
         setSession(session);
       }
-      // Kondisi SIGNED_OUT yang berlebihan telah dihapus
     });
 
     return () => subscription.unsubscribe();
@@ -44,7 +44,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <SupabaseContext.Provider value={{ supabase, session }}>
-      {children}
+      <React.Fragment>{children}</React.Fragment>
     </SupabaseContext.Provider>
   );
 }
