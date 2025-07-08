@@ -7,7 +7,7 @@ import { Search } from "lucide-react";
 import React, { useState } from "react";
 import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { getAllArticles } from "@/lib/articles"; // Import getAllArticles
+import { getAllArticles } from "@/lib/articles";
 
 export default function SearchPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -22,7 +22,7 @@ export default function SearchPage() {
       return;
     }
 
-    const allArticles = getAllArticles(); // Get all articles from the utility
+    const allArticles = getAllArticles();
     const filtered = allArticles.filter(
       (article) =>
         article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||

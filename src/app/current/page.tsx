@@ -2,7 +2,7 @@ import { StaticContentPage } from "@/components/StaticContentPage";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { getAllArticles } from "@/lib/articles"; // Import getAllArticles
+import { getAllArticles } from "@/lib/articles";
 
 export default function CurrentPage() {
   // Mengambil artikel yang relevan untuk edisi saat ini dari data dummy
