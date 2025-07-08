@@ -1,11 +1,18 @@
 import { MadeWithDyad } from "@/components/made-with-dyad";
+import { Header } from "@/components/layout/Header";
+import { Sidebar } from "@/components/layout/Sidebar";
+import { JournalContent } from "@/components/JournalContent";
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-1 items-center sm:items-start">
-        <h1>Blank page</h1>
-      </main>
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      <div className="flex flex-1 flex-col md:flex-row">
+        <Sidebar />
+        <main className="flex-1">
+          <JournalContent />
+        </main>
+      </div>
       <MadeWithDyad />
     </div>
   );
