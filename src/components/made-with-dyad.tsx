@@ -7,7 +7,7 @@ export const MadeWithDyad = () => {
         rel="noopener noreferrer"
         className="text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
       >
-        Made with Dyad
+        Made by Muhammad Trinanda (Website ini hanya dibuat untuk contoh edukasi bukan asli)
       </a>
     </div>
   );

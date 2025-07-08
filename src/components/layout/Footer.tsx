@@ -17,7 +17,7 @@ export function Footer() {
             &copy; {currentYear} Jurnal Ilmiah Mahasiswa Ekonomi Akuntansi (JIMEKA).
           </p>
           <p className="text-xs opacity-80">
-            Diterbitkan oleh Universitas Syiah Kuala.
+            Diterbitkan oleh Universitas Percobaan Nanda.
           </p>
         </div>
         <nav className="flex flex-wrap justify-center md:justify-end gap-4 mt-4 md:mt-0">

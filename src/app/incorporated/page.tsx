@@ -13,7 +13,7 @@ export default function IncorporatedPage() {
       <ul className="list-disc list-inside space-y-2">
         <li>Asosiasi Dosen Ekonomi Indonesia (ADEI)</li>
         <li>Ikatan Akuntan Indonesia (IAI)</li>
-        <li>Pusat Studi Ekonomi dan Bisnis Universitas Syiah Kuala</li>
+        <li>Pusat Studi Ekonomi dan Bisnis Universitas Percobaan Nanda</li>
         <li>Dan berbagai universitas serta lembaga penelitian lainnya.</li>
       </ul>
       <p>

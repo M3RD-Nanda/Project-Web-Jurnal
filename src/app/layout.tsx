@@ -3,7 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
-import { MadeWithDyad } from "@/components/made-with-dyad"; // Import MadeWithDyad
+import { MadeWithDyad } from "@/components/made-with-dyad";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Jurnal Ilmiah Mahasiswa Ekonomi Akuntansi",
-  description: "Jurnal Ilmiah Mahasiswa Ekonomi Akuntansi (JIMEKA) adalah jurnal peer-review dan open-access yang diterbitkan oleh Universitas Syiah Kuala.",
+  description: "Jurnal Ilmiah Mahasiswa Ekonomi Akuntansi (JIMEKA) adalah jurnal peer-review dan open-access yang diterbitkan oleh Universitas Percobaan Nanda.",
 };
 
 export default function RootLayout({
@@ -38,7 +38,7 @@ export default function RootLayout({
         >
           {children}
           <Toaster />
-          <MadeWithDyad /> {/* Menambahkan MadeWithDyad di sini */}
+          <MadeWithDyad />
         </ThemeProvider>
       </body>
     </html>

@@ -30,21 +30,21 @@ const dummyArticles: Article[] = [
   },
   {
     id: "peran-umkm-ekonomi-digital",
-    title: "Peran UMKM dalam Perekonomian Digital: Studi Kasus di Aceh",
+    title: "Peran UMKM dalam Perekonomian Digital: Studi Kasus di Medan",
     authors: "Prof. Siti Aminah, Ph.D.",
-    abstract: "Studi ini menganalisis kontribusi Usaha Mikro, Kecil, dan Menengah (UMKM) dalam ekosistem ekonomi digital di Provinsi Aceh, serta tantangan dan peluang yang dihadapi.",
+    abstract: "Studi ini menganalisis kontribusi Usaha Mikro, Kecil, dan Menengah (UMKM) dalam ekosistem ekonomi digital di Provinsi Medan, serta tantangan dan peluang yang dihadapi.",
     fullContent: `
       <p><strong>Pendahuluan</strong></p>
-      <p>Transformasi digital telah mengubah lanskap bisnis secara drastis, termasuk bagi UMKM. Di Provinsi Aceh, UMKM memiliki potensi besar untuk berkontribusi pada perekonomian lokal melalui adopsi teknologi digital.</p>
+      <p>Transformasi digital telah mengubah lanskap bisnis secara drastis, termasuk bagi UMKM. Di Provinsi Medan, UMKM memiliki potensi besar untuk berkontribusi pada perekonomian lokal melalui adopsi teknologi digital.</p>
       <p><strong>Metodologi</strong></p>
-      <p>Penelitian ini menggunakan metode kualitatif dengan pendekatan studi kasus, melibatkan wawancara mendalam dengan pemilik UMKM di beberapa kota di Aceh yang telah mengadopsi platform digital.</p>
+      <p>Penelitian ini menggunakan metode kualitatif dengan pendekatan studi kasus, melibatkan wawancara mendalam dengan pemilik UMKM di beberapa kota di Medan yang telah mengadopsi platform digital.</p>
       <p><strong>Hasil dan Pembahasan</strong></p>
       <p>Ditemukan bahwa UMKM yang memanfaatkan platform e-commerce dan media sosial mengalami peningkatan penjualan dan jangkauan pasar. Namun, tantangan seperti literasi digital yang rendah dan akses modal masih menjadi hambatan.</p>
       <p><strong>Kesimpulan</strong></p>
       <p>Pemerintah dan pemangku kepentingan perlu meningkatkan program pelatihan literasi digital dan memfasilitasi akses permodalan bagi UMKM agar dapat bersaing di era ekonomi digital.</p>
     `,
     publicationDate: "20 Mei 2024",
-    keywords: ["UMKM", "Ekonomi Digital", "Aceh", "E-commerce"],
+    keywords: ["UMKM", "Ekonomi Digital", "Medan", "E-commerce"],
   },
   {
     id: "efektivitas-program-csr",

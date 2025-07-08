@@ -8,7 +8,7 @@ export default function EditorialTeamPage() {
       </p>
       <h3 className="text-2xl font-semibold mt-8">Editor-in-Chief:</h3>
       <ul className="list-disc list-inside space-y-2">
-        <li>Prof. Dr. [Nama Editor-in-Chief], Universitas Syiah Kuala</li>
+        <li>Prof. Dr. [Nama Editor-in-Chief], Universitas Percobaan Nanda</li>
       </ul>
       <h3 className="text-2xl font-semibold mt-8">Associate Editors:</h3>
       <ul className="list-disc list-inside space-y-2">

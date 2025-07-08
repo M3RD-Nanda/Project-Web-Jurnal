@@ -1,6 +1,5 @@
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { MadeWithDyad } from "@/components/made-with-dyad";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function AboutPage() {
@@ -14,7 +13,7 @@ export default function AboutPage() {
           </CardHeader>
           <CardContent className="space-y-6 text-lg">
             <p>
-              Jurnal Ilmiah Mahasiswa Ekonomi Akuntansi (JIMEKA) adalah jurnal peer-review dan open-access yang diterbitkan oleh Fakultas Ekonomi dan Bisnis, Universitas Syiah Kuala. JIMEKA didedikasikan untuk mempublikasikan hasil penelitian orisinal dan berkualitas tinggi dari mahasiswa, akademisi, dan peneliti di bidang Ekonomi dan Akuntansi.
+              Jurnal Ilmiah Mahasiswa Ekonomi Akuntansi (JIMEKA) adalah jurnal peer-review dan open-access yang diterbitkan oleh Fakultas Ekonomi dan Bisnis, Universitas Percobaan Nanda. JIMEKA didedikasikan untuk mempublikasikan hasil penelitian orisinal dan berkualitas tinggi dari mahasiswa, akademisi, dan peneliti di bidang Ekonomi dan Akuntansi.
             </p>
             <p>
               Kami berkomitmen untuk menjadi platform terkemuka dalam penyebaran pengetahuan ilmiah, memfasilitasi diskusi, dan mendorong inovasi dalam disiplin ilmu Ekonomi dan Akuntansi. JIMEKA menerima berbagai jenis artikel, termasuk penelitian empiris, studi kasus, tinjauan literatur, dan artikel konseptual yang relevan dengan fokus dan ruang lingkup jurnal.
@@ -37,7 +36,6 @@ export default function AboutPage() {
         </Card>
       </main>
       <Footer />
-      <MadeWithDyad />
     </div>
   );
 }

@@ -8,8 +8,8 @@ export default function PublicationFeePage() {
       </p>
       <h3 className="text-2xl font-semibold mt-8">Rincian Biaya:</h3>
       <ul className="list-disc list-inside space-y-2">
-        <li>**Untuk Penulis dari Universitas Syiah Kuala:** Rp [Jumlah]</li>
-        <li>**Untuk Penulis dari Luar Universitas Syiah Kuala:** Rp [Jumlah]</li>
+        <li>**Untuk Penulis dari Universitas Percobaan Nanda:** Rp [Jumlah]</li>
+        <li>**Untuk Penulis dari Luar Universitas Percobaan Nanda:** Rp [Jumlah]</li>
         <li>**Untuk Penulis Internasional:** USD [Jumlah]</li>
       </ul>
       <p>

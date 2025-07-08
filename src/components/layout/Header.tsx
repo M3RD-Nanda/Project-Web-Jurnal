@@ -37,7 +37,7 @@ export function Header() {
             />
             <div className="flex flex-col">
               <span className="text-lg font-bold">JIMEKA</span>
-              <span className="text-xs hidden sm:block">FAKULTAS EKONOMI DAN BISNIS UNIVERSITAS SYIAH KUALA</span>
+              <span className="text-xs hidden sm:block">FAKULTAS EKONOMI DAN BISNIS UNIVERSITAS PERCOBAAN NANDA</span>
             </div>
           </Link>
           <span className="text-sm ml-4 hidden md:block">E-ISSN: 2581-1002</span>
