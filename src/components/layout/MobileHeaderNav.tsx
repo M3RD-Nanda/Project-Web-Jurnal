@@ -53,6 +53,21 @@ export function MobileHeaderNav({ navItems, session, handleLogout }: MobileHeade
               <Link href={item.href}>{item.name}</Link>
             </Button>
           ))}
+          {/* Add Rating Web link here for mobile header nav */}
+          <Button
+            variant="ghost"
+            asChild
+            className={cn(
+              "w-full justify-start text-left transition-colors duration-200",
+              "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+              pathname === "/ratings"
+                ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
+                : ""
+            )}
+            onClick={() => setIsOpen(false)}
+          >
+            <Link href="/ratings">RATING WEB</Link>
+          </Button>
           {session ? (
             <>
               <Button
