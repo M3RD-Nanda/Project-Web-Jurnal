@@ -64,7 +64,7 @@ export function ArticleForm({ initialData, onSuccess, onCancel }: ArticleFormPro
           fullContent: initialData.fullContent,
           publicationDate: new Date(initialData.publicationDate),
           keywords: initialData.keywords?.join(', ') || undefined,
-          issueId: initialData.issueId || undefined,
+          issueId: initialData.issueId || "null-issue", // Map null to "null-issue" for the select
         }
       : {
           title: "",
@@ -73,7 +73,7 @@ export function ArticleForm({ initialData, onSuccess, onCancel }: ArticleFormPro
           fullContent: "",
           publicationDate: new Date(),
           keywords: undefined,
-          issueId: undefined,
+          issueId: "null-issue", // Default to "Tidak Ada Edisi"
         },
     mode: "onChange",
   });
@@ -103,7 +103,7 @@ export function ArticleForm({ initialData, onSuccess, onCancel }: ArticleFormPro
       fullContent: values.fullContent, // This is now HTML from RichTextEditor
       publicationDate: format(values.publicationDate, 'yyyy-MM-dd'),
       keywords: keywordsArray,
-      issueId: values.issueId || null, // Ensure null if empty string or undefined
+      issueId: (values.issueId === "null-issue" ? null : values.issueId) ?? null, // Convert "null-issue" to null, and any undefined to null
     };
 
     if (initialData) {
@@ -239,14 +239,14 @@ export function ArticleForm({ initialData, onSuccess, onCancel }: ArticleFormPro
           render={({ field }) => (
             <FormItem>
               <FormLabel>Edisi Terkait (Opsional)</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value || ""} disabled={issuesLoading}>
+              <Select onValueChange={field.onChange} value={field.value || "null-issue"} disabled={issuesLoading}>
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder={issuesLoading ? "Memuat edisi..." : "Pilih Edisi"} />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="">Tidak Ada Edisi</SelectItem> {/* Option for null */}
+                  <SelectItem value="null-issue">Tidak Ada Edisi</SelectItem> {/* Changed value from "" to "null-issue" */}
                   {issues.map((issue) => (
                     <SelectItem key={issue.id} value={issue.id}>
                       Vol. {issue.volume}, No. {issue.number} ({issue.year})
