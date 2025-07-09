@@ -5,6 +5,10 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import Image from "next/image";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function FAQPage() {
   const faqs = [
@@ -65,6 +69,35 @@ Dan lain-lain – sebagai wujud eksplorasi keilmuan yang terus berkembang.`,
           </AccordionItem>
         ))}
       </Accordion>
+
+      {/* New section for creator */}
+      <div className="mt-8">
+        <Card className="w-full">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl font-bold">Tentang Pencipta Website</CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col items-center text-center space-y-4">
+            <Image
+              src="/images/muhammad-trinanda.jpg"
+              alt="Foto Muhammad Trinanda"
+              width={150}
+              height={150}
+              className="rounded-full object-cover border-4 border-primary shadow-md"
+            />
+            <h3 className="text-xl font-semibold">Muhammad Trinanda</h3>
+            <p className="text-muted-foreground">
+              Pencipta dan pengembang utama website Jurnal Ilmiah Mahasiswa Ekonomi Akuntansi (JIMEKA).
+              Dengan keahlian di berbagai bidang teknologi, desain, dan ilmu terapan,
+              website ini dibuat sebagai contoh edukasi dan eksplorasi keilmuan.
+            </p>
+            <Button asChild>
+              <Link href="https://www.linkedin.com/in/mtrinanda/" target="_blank" rel="noopener noreferrer">
+                Lihat Profil LinkedIn
+              </Link>
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
     </StaticContentPage>
   );
 }
