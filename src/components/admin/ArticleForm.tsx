@@ -27,13 +27,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 import { Article, insertArticle, updateArticle } from "@/lib/articles";
 import { Issue, getAllIssues } from "@/lib/issues"; // Import Issue and getAllIssues
-import { RichTextEditor } from "@/components/RichTextEditor"; // Import RichTextEditor
 
 const articleFormSchema = z.object({
   title: z.string().min(1, "Judul wajib diisi.").max(500, "Judul terlalu panjang."),
   authors: z.string().min(1, "Penulis wajib diisi."),
   abstract: z.string().min(1, "Abstrak wajib diisi.").max(2000, "Abstrak terlalu panjang."),
-  fullContent: z.string().min(1, "Konten lengkap wajib diisi."), // This will now be HTML string
+  fullContent: z.string().min(1, "Konten lengkap wajib diisi."), // Reverted to string
   publicationDate: z.date({
     required_error: "Tanggal publikasi wajib diisi.",
   }),
@@ -100,7 +99,7 @@ export function ArticleForm({ initialData, onSuccess, onCancel }: ArticleFormPro
       title: values.title,
       authors: values.authors,
       abstract: values.abstract,
-      fullContent: values.fullContent, // This is now HTML from RichTextEditor
+      fullContent: values.fullContent, // This is now a plain string
       publicationDate: format(values.publicationDate, 'yyyy-MM-dd'),
       keywords: keywordsArray,
       issueId: (values.issueId === "null-issue" ? null : values.issueId) ?? null, // Convert "null-issue" to null, and any undefined to null
@@ -172,11 +171,7 @@ export function ArticleForm({ initialData, onSuccess, onCancel }: ArticleFormPro
             <FormItem>
               <FormLabel>Konten Lengkap</FormLabel>
               <FormControl>
-                <RichTextEditor
-                  value={field.value}
-                  onChange={field.onChange}
-                  placeholder="Tulis konten lengkap artikel di sini..."
-                />
+                <Textarea placeholder="Tulis konten lengkap artikel di sini..." className="resize-y min-h-[200px]" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
