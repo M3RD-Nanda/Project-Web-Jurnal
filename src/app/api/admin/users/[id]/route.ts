@@ -4,7 +4,7 @@ import { createSupabaseServerClient } from '@/integrations/supabase/server-actio
 
 export async function PUT(request: Request, { params }: { params: { id: string } }) {
   const { id } = params;
-  const supabase = createSupabaseServerClient(); // Create server-side client
+  const supabase = await createSupabaseServerClient(); // Added await
   const { data: { session } } = await supabase.auth.getSession();
 
   if (!session) {
@@ -33,7 +33,7 @@ export async function PUT(request: Request, { params }: { params: { id: string }
 
 export async function DELETE(request: Request, { params }: { params: { id: string } }) {
   const { id } = params;
-  const supabase = createSupabaseServerClient(); // Create server-side client
+  const supabase = await createSupabaseServerClient(); // Added await
   const { data: { session } } = await supabase.auth.getSession();
 
   if (!session) {

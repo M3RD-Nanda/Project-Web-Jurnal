@@ -3,7 +3,7 @@ import { getAllAnnouncements, insertAnnouncement } from '@/lib/announcements';
 import { createSupabaseServerClient } from '@/integrations/supabase/server-actions';
 
 export async function GET() {
-  const supabase = createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient(); // Added await
   const { data: { session } } = await supabase.auth.getSession();
 
   if (!session) {
@@ -25,7 +25,7 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const supabase = createSupabaseServerClient();
+  const supabase = await createSupabaseServerClient(); // Added await
   const { data: { session } } = await supabase.auth.getSession();
 
   if (!session) {
