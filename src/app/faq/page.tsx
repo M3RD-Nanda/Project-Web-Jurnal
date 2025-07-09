@@ -9,7 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"; // Import Dialog components
+import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"; // Import DialogHeader, DialogTitle, DialogDescription
 
 export default function FAQPage() {
   const faqs = [
@@ -89,6 +89,10 @@ Dan lain-lain – sebagai wujud eksplorasi keilmuan yang terus berkembang.`,
                 />
               </DialogTrigger>
               <DialogContent className="sm:max-w-[600px] p-0 overflow-hidden">
+                <DialogHeader className="p-4"> {/* Added DialogHeader */}
+                  <DialogTitle>Foto Muhammad Trinanda</DialogTitle>
+                  <DialogDescription>Gambar profil pencipta website.</DialogDescription>
+                </DialogHeader>
                 <Image
                   src="/images/muhammad-trinanda.jpg"
                   alt="Foto Muhammad Trinanda (Large)"
