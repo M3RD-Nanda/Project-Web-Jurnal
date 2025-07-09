@@ -23,7 +23,9 @@ export default function AdminArticlesPage() {
 
   const fetchArticles = async () => {
     setLoading(true);
-    const res = await fetch('/api/admin/articles');
+    const res = await fetch('/api/admin/articles', {
+      credentials: 'include', // Tambahkan ini
+    });
     const result = await res.json();
 
     if (res.ok) {
@@ -59,6 +61,7 @@ export default function AdminArticlesPage() {
 
     const res = await fetch(`/api/admin/articles/${id}`, {
       method: 'DELETE',
+      credentials: 'include', // Tambahkan ini
     });
     const { success, error } = await res.json();
 
@@ -100,7 +103,7 @@ export default function AdminArticlesPage() {
                 <PlusCircle className="mr-2 h-4 w-4" /> Tambah Artikel
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[800px]"> {/* Increased max-width for article form */}
+            <DialogContent className="sm:max-w-[800px]">
               <DialogHeader>
                 <DialogTitle>{editingArticle ? "Edit Artikel" : "Tambah Artikel Baru"}</DialogTitle>
                 <CardDescription>

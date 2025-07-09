@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { UserProfile } from "@/lib/users"; // Keep UserProfile type
+import { UserProfile } from "@/lib/users";
 import { UserTable } from "@/components/admin/UserTable";
 import { UserForm } from "@/components/admin/UserForm";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -23,7 +23,9 @@ export default function AdminUsersPage() {
 
   const fetchUsers = async () => {
     setLoading(true);
-    const res = await fetch('/api/admin/users');
+    const res = await fetch('/api/admin/users', {
+      credentials: 'include', // Tambahkan ini
+    });
     const result = await res.json();
 
     if (res.ok) {
@@ -59,6 +61,7 @@ export default function AdminUsersPage() {
 
     const res = await fetch(`/api/admin/users/${id}`, {
       method: 'DELETE',
+      credentials: 'include', // Tambahkan ini
     });
     const { success, error } = await res.json();
 

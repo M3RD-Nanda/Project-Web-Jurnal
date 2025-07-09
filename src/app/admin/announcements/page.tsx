@@ -18,15 +18,17 @@ export default function AdminAnnouncementsPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
-  const [isFormOpen, setIsFormOpen] = useState(false); // Perbaikan di sini
+  const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingAnnouncement, setEditingAnnouncement] = useState<Announcement | null>(null);
 
   const fetchAnnouncements = async () => {
     setLoading(true);
-    const res = await fetch('/api/admin/announcements');
-    const result = await res.json(); // result will be { data: [...] } or { error: { message: '...' } }
+    const res = await fetch('/api/admin/announcements', {
+      credentials: 'include', // Tambahkan ini
+    });
+    const result = await res.json();
 
-    if (res.ok) { // Check if the HTTP status is 2xx
+    if (res.ok) {
       setAnnouncements(result.data);
     } else {
       toast.error(`Gagal memuat pengumuman: ${result.error?.message || 'Terjadi kesalahan.'}`);
@@ -59,6 +61,7 @@ export default function AdminAnnouncementsPage() {
 
     const res = await fetch(`/api/admin/announcements/${id}`, {
       method: 'DELETE',
+      credentials: 'include', // Tambahkan ini
     });
     const { success, error } = await res.json();
 

@@ -9,8 +9,8 @@ import { toast } from "sonner";
 import { Loader2, PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Issue } from "@/lib/issues";
-import { IssueTable } from "@/components/admin/IssueTable"; // Akan dibuat selanjutnya
-import { IssueForm } from "@/components/admin/IssueForm"; // Akan dibuat selanjutnya
+import { IssueTable } from "@/components/admin/IssueTable";
+import { IssueForm } from "@/components/admin/IssueForm";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 export default function AdminIssuesPage() {
@@ -23,7 +23,9 @@ export default function AdminIssuesPage() {
 
   const fetchIssues = async () => {
     setLoading(true);
-    const res = await fetch('/api/admin/issues');
+    const res = await fetch('/api/admin/issues', {
+      credentials: 'include', // Tambahkan ini
+    });
     const result = await res.json();
 
     if (res.ok) {
@@ -59,6 +61,7 @@ export default function AdminIssuesPage() {
 
     const res = await fetch(`/api/admin/issues/${id}`, {
       method: 'DELETE',
+      credentials: 'include', // Tambahkan ini
     });
     const { success, error } = await res.json();
 

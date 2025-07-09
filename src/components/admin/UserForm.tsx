@@ -22,7 +22,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 
-import { UserProfile } from "@/lib/users"; // Keep UserProfile type, remove updateUserProfile
+import { UserProfile } from "@/lib/users";
 
 const userFormSchema = z.object({
   email: z.string().email("Email tidak valid.").min(1, "Email wajib diisi."),
@@ -45,7 +45,7 @@ const userFormSchema = z.object({
   is_reader: z.boolean(),
   is_author: z.boolean(),
   profile_image_url: z.string().url("URL gambar profil tidak valid.").or(z.literal("")).optional(),
-  role: z.enum(["user", "admin", "editor", "reviewer"]), // Define possible roles
+  role: z.enum(["user", "admin", "editor", "reviewer"]),
 });
 
 type UserFormValues = z.infer<typeof userFormSchema>;
@@ -90,7 +90,6 @@ export function UserForm({ initialData, onSuccess, onCancel }: UserFormProps) {
   async function onSubmit(values: UserFormValues) {
     setIsSubmitting(true);
     
-    // Prepare data for the API route
     const payload = {
       profileData: {
         username: values.username || null,
@@ -126,6 +125,7 @@ export function UserForm({ initialData, onSuccess, onCancel }: UserFormProps) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(payload),
+      credentials: 'include', // Tambahkan ini
     });
     const result = await res.json();
 
