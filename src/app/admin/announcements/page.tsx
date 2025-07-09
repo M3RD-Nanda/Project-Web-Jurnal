@@ -18,18 +18,19 @@ export default function AdminAnnouncementsPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
-  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isFormOpen, setIsFormOpen] = useState(false); // Perbaikan di sini
   const [editingAnnouncement, setEditingAnnouncement] = useState<Announcement | null>(null);
 
   const fetchAnnouncements = async () => {
     setLoading(true);
-    // Menggunakan fungsi dari lib/announcements.ts langsung
-    const { data, error } = await fetch('/api/admin/announcements').then(res => res.json());
-    if (data.error) {
-      toast.error(`Gagal memuat pengumuman: ${data.error.message}`);
-      setAnnouncements([]);
+    const res = await fetch('/api/admin/announcements');
+    const result = await res.json(); // result will be { data: [...] } or { error: { message: '...' } }
+
+    if (res.ok) { // Check if the HTTP status is 2xx
+      setAnnouncements(result.data);
     } else {
-      setAnnouncements(data.data);
+      toast.error(`Gagal memuat pengumuman: ${result.error?.message || 'Terjadi kesalahan.'}`);
+      setAnnouncements([]);
     }
     setLoading(false);
   };
