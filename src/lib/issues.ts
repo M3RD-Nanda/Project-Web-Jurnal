@@ -84,3 +84,57 @@ export async function getLatestIssue(): Promise<Issue | undefined> {
   }
   return undefined;
 }
+
+export async function insertIssue(issue: Omit<Issue, 'id'>): Promise<{ data: Issue | null; error: Error | null }> {
+  const { data, error } = await supabase
+    .from('issues')
+    .insert({
+      volume: issue.volume,
+      number: issue.number,
+      year: issue.year,
+      publication_date: issue.publicationDate,
+      description: issue.description,
+    })
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Error inserting issue:", error);
+    return { data: null, error: new Error(error.message) };
+  }
+  return { data: data as Issue, error: null };
+}
+
+export async function updateIssue(id: string, issue: Partial<Omit<Issue, 'id'>>): Promise<{ data: Issue | null; error: Error | null }> {
+  const { data, error } = await supabase
+    .from('issues')
+    .update({
+      volume: issue.volume,
+      number: issue.number,
+      year: issue.year,
+      publication_date: issue.publicationDate,
+      description: issue.description,
+    })
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) {
+    console.error(`Error updating issue with ID ${id}:`, error);
+    return { data: null, error: new Error(error.message) };
+  }
+  return { data: data as Issue, error: null };
+}
+
+export async function deleteIssue(id: string): Promise<{ success: boolean; error: Error | null }> {
+  const { error } = await supabase
+    .from('issues')
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    console.error(`Error deleting issue with ID ${id}:`, error);
+    return { success: false, error: new Error(error.message) };
+  }
+  return { success: true, error: null };
+}
