@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import dynamic from "next/dynamic";
+import { Loader2 } from "lucide-react"; // Import Loader2
 
 // Import interfaces for data
 import { ArticlesPerYearData, AcceptanceRateData, CitationData } from "@/lib/statistics";
@@ -29,6 +30,12 @@ interface StatisticsClientContentProps {
 }
 
 export function StatisticsClientContent({ articlesPerYearData, acceptanceRateData, totalCitationsData }: StatisticsClientContentProps) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const COLORS = ["#0088FE", "#FF8042"]; // Warna untuk Pie Chart
 
   // Calculate percentage for Pie Chart
@@ -38,15 +45,6 @@ export function StatisticsClientContent({ articlesPerYearData, acceptanceRateDat
     value: item.count,
     percent: totalAcceptedRejected > 0 ? item.count / totalAcceptedRejected : 0,
   }));
-
-  // Add console logs here to inspect data
-  useEffect(() => {
-    console.log("Articles Per Year Data (Client):", articlesPerYearData);
-    console.log("Acceptance Rate Data (Client):", acceptanceRateData);
-    console.log("Total Citations Data (Client):", totalCitationsData);
-    console.log("Pie Chart Data (derived, Client):", pieChartData);
-  }, [articlesPerYearData, acceptanceRateData, totalCitationsData, pieChartData]);
-
 
   return (
     <>
@@ -61,7 +59,12 @@ export function StatisticsClientContent({ articlesPerYearData, acceptanceRateDat
             <CardTitle className="text-xl font-semibold">Artikel Diterbitkan per Tahun</CardTitle>
           </CardHeader>
           <CardContent className="h-[300px]">
-            {articlesPerYearData.length > 0 ? (
+            {!mounted ? (
+              <div className="flex items-center justify-center h-full">
+                <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                <p className="ml-2 text-sm text-muted-foreground">Memuat grafik...</p>
+              </div>
+            ) : articlesPerYearData.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={articlesPerYearData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -84,7 +87,12 @@ export function StatisticsClientContent({ articlesPerYearData, acceptanceRateDat
             <CardTitle className="text-xl font-semibold">Tingkat Penerimaan Artikel</CardTitle>
           </CardHeader>
           <CardContent className="h-[300px] flex items-center justify-center">
-            {pieChartData.length > 0 ? (
+            {!mounted ? (
+              <div className="flex items-center justify-center h-full">
+                <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                <p className="ml-2 text-sm text-muted-foreground">Memuat grafik...</p>
+              </div>
+            ) : pieChartData.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Pie
@@ -118,7 +126,12 @@ export function StatisticsClientContent({ articlesPerYearData, acceptanceRateDat
             <CardTitle className="text-xl font-semibold">Total Sitasi (Google Scholar)</CardTitle>
           </CardHeader>
           <CardContent className="h-[300px]">
-            {totalCitationsData.length > 0 ? (
+            {!mounted ? (
+              <div className="flex items-center justify-center h-full">
+                <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                <p className="ml-2 text-sm text-muted-foreground">Memuat grafik...</p>
+              </div>
+            ) : totalCitationsData.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={totalCitationsData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" />

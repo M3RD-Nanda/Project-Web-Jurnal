@@ -9,8 +9,10 @@ import { Loader2 } from "lucide-react";
 export function VisitorChart() {
   const [data, setData] = useState<DailyVisitData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [mounted, setMounted] = useState(false); // Add mounted state
 
   useEffect(() => {
+    setMounted(true); // Set mounted to true after initial render on client
     const fetchVisits = async () => {
       setLoading(true);
       const dailyData = await getDailyVisits(7); // Fetch data for the last 7 days
@@ -26,7 +28,7 @@ export function VisitorChart() {
         <CardTitle className="text-sm font-semibold text-sidebar-primary">VISITORS (Mingguan)</CardTitle>
       </CardHeader>
       <CardContent className="h-[150px] p-2">
-        {loading ? (
+        {!mounted || loading ? ( // Show loader if not mounted or still loading
           <div className="flex items-center justify-center h-full">
             <Loader2 className="h-6 w-6 animate-spin text-sidebar-primary" />
             <p className="ml-2 text-sm text-sidebar-foreground">Memuat data...</p>
