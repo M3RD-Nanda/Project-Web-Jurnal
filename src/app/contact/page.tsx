@@ -1,6 +1,7 @@
 import { StaticContentPage } from "@/components/StaticContentPage";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Mail, Phone, MapPin } from "lucide-react";
+import { ContactForm } from "@/components/ContactForm"; // Import the new ContactForm
 
 export default function ContactPage() {
   return (
@@ -51,10 +52,11 @@ export default function ContactPage() {
         </Card>
       </div>
 
-      <h3 className="text-2xl font-semibold mt-8">Formulir Kontak (Segera Hadir)</h3>
+      <h3 className="text-2xl font-semibold mt-8">Kirim Pesan kepada Kami</h3>
       <p>
-        Kami sedang mengembangkan formulir kontak langsung untuk memudahkan Anda mengirimkan pesan kepada kami. Sementara itu, silakan gunakan alamat email di atas.
+        Gunakan formulir di bawah ini untuk mengirimkan pertanyaan atau masukan Anda secara langsung.
       </p>
+      <ContactForm />
     </StaticContentPage>
   );
 }
