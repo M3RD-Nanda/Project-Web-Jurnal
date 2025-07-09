@@ -8,20 +8,21 @@ import { Loader2 } from "lucide-react";
 // Import interfaces for data
 import { ArticlesPerYearData, AcceptanceRateData, CitationData } from "@/lib/statistics";
 
-// Dynamically import individual Recharts components with 'as any' to resolve type conflicts
-const ResponsiveContainer = dynamic(() => import("recharts").then((mod) => mod.ResponsiveContainer as any), { ssr: false });
-const BarChart = dynamic(() => import("recharts").then((mod) => mod.BarChart as any), { ssr: false });
-const Bar = dynamic(() => import("recharts").then((mod) => mod.Bar as any), { ssr: false });
-const XAxis = dynamic(() => import("recharts").then((mod) => mod.XAxis as any), { ssr: false });
-const YAxis = dynamic(() => import("recharts").then((mod) => mod.YAxis as any), { ssr: false });
-const CartesianGrid = dynamic(() => import("recharts").then((mod) => mod.CartesianGrid as any), { ssr: false });
-const Tooltip = dynamic(() => import("recharts").then((mod) => mod.Tooltip as any), { ssr: false });
-const Legend = dynamic(() => import("recharts").then((mod) => mod.Legend as any), { ssr: false });
-const PieChart = dynamic(() => import("recharts").then((mod) => mod.PieChart as any), { ssr: false });
-const Pie = dynamic(() => import("recharts").then((mod) => mod.Pie as any), { ssr: false });
-const Cell = dynamic(() => import("recharts").then((mod) => mod.Cell as any), { ssr: false });
-const LineChart = dynamic(() => import("recharts").then((mod) => mod.LineChart as any), { ssr: false });
-const Line = dynamic(() => import("recharts").then((mod) => mod.Line as any), { ssr: false });
+// Dynamically import individual Recharts components and cast them to 'any'
+// to bypass strict type checking issues with Recharts' defaultProps.
+const ResponsiveContainer = dynamic(() => import("recharts").then((mod) => mod.ResponsiveContainer as any), { ssr: false }) as any;
+const BarChart = dynamic(() => import("recharts").then((mod) => mod.BarChart as any), { ssr: false }) as any;
+const Bar = dynamic(() => import("recharts").then((mod) => mod.Bar as any), { ssr: false }) as any;
+const XAxis = dynamic(() => import("recharts").then((mod) => mod.XAxis as any), { ssr: false }) as any;
+const YAxis = dynamic(() => import("recharts").then((mod) => mod.YAxis as any), { ssr: false }) as any;
+const CartesianGrid = dynamic(() => import("recharts").then((mod) => mod.CartesianGrid as any), { ssr: false }) as any;
+const Tooltip = dynamic(() => import("recharts").then((mod) => mod.Tooltip as any), { ssr: false }) as any;
+const Legend = dynamic(() => import("recharts").then((mod) => mod.Legend as any), { ssr: false }) as any;
+const PieChart = dynamic(() => import("recharts").then((mod) => mod.PieChart as any), { ssr: false }) as any;
+const Pie = dynamic(() => import("recharts").then((mod) => mod.Pie as any), { ssr: false }) as any;
+const Cell = dynamic(() => import("recharts").then((mod) => mod.Cell as any), { ssr: false }) as any;
+const LineChart = dynamic(() => import("recharts").then((mod) => mod.LineChart as any), { ssr: false }) as any;
+const Line = dynamic(() => import("recharts").then((mod) => mod.Line as any), { ssr: false }) as any;
 
 
 interface StatisticsClientContentProps {
