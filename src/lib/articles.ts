@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { v4 as uuidv4 } from 'uuid'; // Import uuid
 
 export interface Article {
   id: string;
@@ -89,4 +90,64 @@ export async function getArticlesByIssueId(issueId: string): Promise<Article[]> 
     }));
   }
   return [];
+}
+
+export async function insertArticle(article: Omit<Article, 'id'>): Promise<{ data: Article | null; error: Error | null }> {
+  const newId = uuidv4(); // Generate a new UUID for the article ID
+  const { data, error } = await supabase
+    .from('articles')
+    .insert({
+      id: newId, // Use the generated ID
+      title: article.title,
+      authors: article.authors,
+      abstract: article.abstract,
+      full_content: article.fullContent,
+      publication_date: article.publicationDate,
+      keywords: article.keywords,
+      issue_id: article.issueId,
+    })
+    .select()
+    .single();
+
+  if (error) {
+    console.error("Error inserting article:", error);
+    return { data: null, error: new Error(error.message) };
+  }
+  return { data: data as Article, error: null };
+}
+
+export async function updateArticle(id: string, article: Partial<Omit<Article, 'id'>>): Promise<{ data: Article | null; error: Error | null }> {
+  const { data, error } = await supabase
+    .from('articles')
+    .update({
+      title: article.title,
+      authors: article.authors,
+      abstract: article.abstract,
+      full_content: article.fullContent,
+      publication_date: article.publicationDate,
+      keywords: article.keywords,
+      issue_id: article.issueId,
+    })
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) {
+    console.error(`Error updating article with ID ${id}:`, error);
+    return { data: null, error: new Error(error.message) };
+  }
+  return { data: data as Article, error: null };
+}
+
+export async function deleteArticle(id: string): Promise<{ success: boolean; error: Error | null }> {
+  const { error } = await supabase
+    .from('articles')
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    console.error(`Error deleting article with ID ${id}:`, error);
+    return { success: false, error: new Error(error.message) };
+  }
+  return { success: true, error: null };
 }
