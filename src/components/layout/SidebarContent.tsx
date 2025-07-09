@@ -102,7 +102,7 @@ export function SidebarContent({ onLinkClick }: SidebarContentProps) {
                   <Button
                     asChild
                     variant="ghost"
-                    className={`w-full justify-start text-left transition-colors duration-200 text-xs ${ // Changed to text-xs
+                    className={`w-full justify-start text-left transition-colors duration-200 text-[0.75rem] ${ // Adjusted font size
                       pathname === "/admin/announcements"
                         ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
                         : "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
@@ -113,7 +113,7 @@ export function SidebarContent({ onLinkClick }: SidebarContentProps) {
                   <Button
                     asChild
                     variant="ghost"
-                    className={`w-full justify-start text-left transition-colors duration-200 text-xs ${ // Changed to text-xs
+                    className={`w-full justify-start text-left transition-colors duration-200 text-[0.75rem] ${ // Adjusted font size
                       pathname === "/admin/articles"
                         ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
                         : "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
@@ -124,7 +124,7 @@ export function SidebarContent({ onLinkClick }: SidebarContentProps) {
                   <Button
                     asChild
                     variant="ghost"
-                    className={`w-full justify-start text-left transition-colors duration-200 text-xs ${ // Changed to text-xs
+                    className={`w-full justify-start text-left transition-colors duration-200 text-[0.75rem] ${ // Adjusted font size
                       pathname === "/admin/issues"
                         ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
                         : "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
@@ -135,7 +135,7 @@ export function SidebarContent({ onLinkClick }: SidebarContentProps) {
                   <Button
                     asChild
                     variant="ghost"
-                    className={`w-full justify-start text-left transition-colors duration-200 text-xs ${ // Changed to text-xs
+                    className={`w-full justify-start text-left transition-colors duration-200 text-[0.75rem] ${ // Adjusted font size
                       pathname === "/admin/users"
                         ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
                         : "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"

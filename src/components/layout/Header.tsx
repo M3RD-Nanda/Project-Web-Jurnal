@@ -51,6 +51,10 @@ export function Header() {
             />
             <div className="flex flex-col">
               <span className="text-lg font-bold">JIMEKA</span> {/* Always show JIMEKA */}
+              {/* Show on mobile, hide on small screens and up */}
+              <span className="text-[0.6rem] leading-tight block sm:hidden">FAKULTAS EKONOMI DAN BISNIS UNIVERSITAS PERCOBAAN NANDA</span>
+              <span className="text-[0.6rem] leading-tight block sm:hidden">E-ISSN: 2581-1002</span>
+              {/* Show on small screens and up */}
               <span className="text-xs hidden sm:block">FAKULTAS EKONOMI DAN BISNIS UNIVERSITAS PERCOBAAN NANDA</span>
             </div>
           </Link>
