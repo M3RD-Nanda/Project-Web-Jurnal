@@ -16,7 +16,7 @@ export default function ContactPage() {
             <CardTitle className="text-xl">Email</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-lg font-semibold">jimeka@universitaspercobaan.ac.id</p>
+            <p className="text-lg font-semibold">m.3rd.nanda@gmail.com</p>
             <p className="text-sm text-muted-foreground">Untuk pertanyaan umum, pengiriman artikel, atau dukungan teknis.</p>
           </CardContent>
         </Card>
@@ -27,7 +27,7 @@ export default function ContactPage() {
             <CardTitle className="text-xl">Telepon</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-lg font-semibold">+62 812-3456-7890</p>
+            <p className="text-lg font-semibold">+62 000-0000-0000</p>
             <p className="text-sm text-muted-foreground">Jam Kerja: Senin - Jumat, 09:00 - 16:00 WIB</p>
           </CardContent>
         </Card>
@@ -43,7 +43,7 @@ export default function ContactPage() {
               <br />
               Universitas Percobaan Nanda
               <br />
-              Jl. Contoh No. 123, Kota Fiktif
+              Kota Medan
               <br />
               Indonesia
             </p>

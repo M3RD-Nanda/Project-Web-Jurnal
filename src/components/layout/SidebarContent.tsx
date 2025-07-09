@@ -121,7 +121,7 @@ export function SidebarContent({ onLinkClick }: SidebarContentProps) {
           <p className="text-sm text-muted-foreground">Bagikan pendapat Anda tentang website kami!</p>
           <RatingDialog>
             <Button className="w-full bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90">
-              Beri Rating Bintang 5
+              Beri Rating Website
             </Button>
           </RatingDialog>
         </CardContent>

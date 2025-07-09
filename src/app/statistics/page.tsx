@@ -120,14 +120,14 @@ export default function StatisticsPage() {
 
       <h3 className="text-2xl font-semibold mt-8">Statistik Lainnya:</h3>
       <ul className="list-disc list-inside space-y-2">
-        <li>**Jumlah Artikel Diterbitkan (Total):** 150+</li>
-        <li>**Jumlah Artikel Diterbitkan (Tahun Ini):** 12 (hingga Juni 2024)</li>
-        <li>**Waktu Rata-rata dari Pengiriman hingga Publikasi:** 90 hari</li>
-        <li>**Total Pengunjung Situs:** 50.000+</li>
-        <li>**Total Unduhan Artikel:** 120.000+</li>
-        <li>**Negara Pengunjung Teratas:** Indonesia, Malaysia, Singapura, Australia</li>
-        <li>**Indeks H-JIMEKA (Google Scholar):** 10</li>
-        <li>**Artikel Paling Banyak Disitasi:** "Dampak Kebijakan Fiskal Terhadap Pertumbuhan Ekonomi Regional" oleh Dr. A. Rahman</li>
+        <li><strong>Jumlah Artikel Diterbitkan (Total):</strong> 150+</li>
+        <li><strong>Jumlah Artikel Diterbitkan (Tahun Ini):</strong> 12 (hingga Juni 2024)</li>
+        <li><strong>Waktu Rata-rata dari Pengiriman hingga Publikasi:</strong> 90 hari</li>
+        <li><strong>Total Pengunjung Situs:</strong> 50.000+</li>
+        <li><strong>Total Unduhan Artikel:</strong> 120.000+</li>
+        <li><strong>Negara Pengunjung Teratas:</strong> Indonesia, Malaysia, Singapura, Australia</li>
+        <li><strong>Indeks H-JIMEKA (Google Scholar):</strong> 10</li>
+        <li><strong>Artikel Paling Banyak Disitasi:</strong> "Dampak Kebijakan Fiskal Terhadap Pertumbuhan Ekonomi Regional" oleh Dr. A. Rahman</li>
       </ul>
       <p className="mt-4">
         Data ini diperbarui secara berkala untuk memberikan gambaran yang akurat tentang pertumbuhan dan dampak JIMEKA.

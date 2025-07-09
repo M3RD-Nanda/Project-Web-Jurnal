@@ -8,9 +8,9 @@ export default function PublicationFeePage() {
       </p>
       <h3 className="text-2xl font-semibold mt-8">Rincian Biaya:</h3>
       <ul className="list-disc list-inside space-y-2">
-        <li>**Untuk Penulis dari Universitas Percobaan Nanda:** Rp [Jumlah]</li>
-        <li>**Untuk Penulis dari Luar Universitas Percobaan Nanda:** Rp [Jumlah]</li>
-        <li>**Untuk Penulis Internasional:** USD [Jumlah]</li>
+        <li><strong>Untuk Penulis dari Universitas Percobaan Nanda:</strong> Rp. 100.000</li>
+        <li><strong>Untuk Penulis dari Luar Universitas Percobaan Nanda:</strong> Rp. 200.000</li>
+        <li><strong>Untuk Penulis Internasional:</strong> 25 US dollars</li>
       </ul>
       <p>
         Biaya ini akan dikenakan setelah artikel diterima untuk publikasi. Tidak ada biaya pengiriman awal.

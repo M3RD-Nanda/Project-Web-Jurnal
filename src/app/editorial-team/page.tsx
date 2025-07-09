@@ -8,13 +8,13 @@ export default function EditorialTeamPage() {
       </p>
       <h3 className="text-2xl font-semibold mt-8">Editor-in-Chief:</h3>
       <ul className="list-disc list-inside space-y-2">
-        <li>Prof. Dr. [Nama Editor-in-Chief], Universitas Percobaan Nanda</li>
+        <li>Muhammad Trinanda, S.Akun., Universitas Islam Negeri Sumatera Utara</li>
       </ul>
       <h3 className="text-2xl font-semibold mt-8">Associate Editors:</h3>
       <ul className="list-disc list-inside space-y-2">
-        <li>Dr. [Nama Editor 1], [Institusi]</li>
-        <li>Dr. [Nama Editor 2], [Institusi]</li>
-        <li>Dr. [Nama Editor 3], [Institusi]</li>
+        <li>Dr. Muhammad Fikri Aulia, BBA., Universiti Utara Malaysia</li>
+        <li>Dr. Indra Ahmad Maulana, S.M., Universitas Islam Sumatera Utara</li>
+        <li>Dr. Nadya Nayla Putri, S.IKOM., Universitas Siber Asia</li>
       </ul>
       <h3 className="text-2xl font-semibold mt-8">Editorial Board Members:</h3>
       <p>

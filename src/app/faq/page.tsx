@@ -28,6 +28,24 @@ export default function FAQPage() {
       question: "Bagaimana cara menjadi reviewer untuk JIMEKA?",
       answer: "Jika Anda tertarik untuk menjadi reviewer, silakan hubungi tim editorial kami dengan menyertakan CV dan bidang keahlian Anda. Kami selalu mencari reviewer yang berkualitas.",
     },
+    {
+      question: "Siapa pembuat website jurnal ilmiah ini?",
+      answer: `Pembuat website ini adalah seorang pria bernama Muhammad Trinanda. Ia memiliki pengetahuan luas dan keterampilan di segala bidang, antara lain:
+
+Teknologi dan Komputer – kecerdasan buatan (AI), teknik perangkat lunak & perangkat keras, bahasa pemrograman, hacking & cracking, teknologi Web 3.0 (cryptocurrency), pembuatan aplikasi Android (Flutter, Android Studio), pembuatan website (Next.js, React.js, full-stack development – frontend & backend), serta pembuatan database (SQL: PostgreSQL, MySQL; Tableau, Looker Studio).
+
+Multimedia dan Desain – Adobe Photoshop, Premiere Pro, After Effects, pemodelan 3D (Blender), arsitektur (AutoCAD, SketchUp).
+
+Pengembangan Game – Unity, Godot, Unreal Engine 4.
+
+Akuntansi dan Perkantoran – aplikasi Accurate (jurnal akuntansi), Microsoft Office.
+
+Seni dan Kreativitas – seni, musik (Piano, Seruling, Harmonika, Violin), musik digital (FL Studio).
+
+Ilmu Terapan dan Hobi – robotika, olahraga.
+
+Dan lain-lain – sebagai wujud eksplorasi keilmuan yang terus berkembang.`,
+    },
   ];
 
   return (
@@ -41,7 +59,7 @@ export default function FAQPage() {
             <AccordionTrigger className="text-left text-lg font-medium hover:no-underline">
               {faq.question}
             </AccordionTrigger>
-            <AccordionContent className="text-base text-muted-foreground">
+            <AccordionContent className="text-base text-muted-foreground whitespace-pre-line">
               {faq.answer}
             </AccordionContent>
           </AccordionItem>

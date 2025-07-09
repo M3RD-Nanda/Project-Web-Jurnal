@@ -8,9 +8,9 @@ export default function PrivacyPolicyPage() {
       </p>
       <h3 className="text-2xl font-semibold mt-8">Informasi yang Kami Kumpulkan:</h3>
       <ul className="list-disc list-inside space-y-2">
-        <li>**Informasi Pendaftaran:** Saat Anda mendaftar akun, kami mengumpulkan nama, alamat email, afiliasi institusi, dan informasi kontak lainnya.</li>
-        <li>**Informasi Pengiriman Artikel:** Saat Anda mengirimkan artikel, kami mengumpulkan data terkait naskah, nama penulis, dan metadata lainnya.</li>
-        <li>**Data Penggunaan:** Kami mengumpulkan data anonim tentang bagaimana Anda berinteraksi dengan situs web kami, seperti halaman yang dikunjungi, waktu yang dihabiskan, dan unduhan artikel, untuk tujuan analisis dan peningkatan layanan.</li>
+        <li><strong>Informasi Pendaftaran:</strong> Saat Anda mendaftar akun, kami mengumpulkan nama, alamat email, afiliasi institusi, dan informasi kontak lainnya.</li>
+        <li><strong>Informasi Pengiriman Artikel:</strong> Saat Anda mengirimkan artikel, kami mengumpulkan data terkait naskah, nama penulis, dan metadata lainnya.</li>
+        <li><strong>Data Penggunaan:</strong> Kami mengumpulkan data anonim tentang bagaimana Anda berinteraksi dengan situs web kami, seperti halaman yang dikunjungi, waktu yang dihabiskan, dan unduhan artikel, untuk tujuan analisis dan peningkatan layanan.</li>
       </ul>
       <h3 className="text-2xl font-semibold mt-8">Bagaimana Kami Menggunakan Informasi Anda:</h3>
       <ul className="list-disc list-inside space-y-2">
