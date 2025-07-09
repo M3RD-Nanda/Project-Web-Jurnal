@@ -9,6 +9,7 @@ import { usePathname } from "next/navigation";
 import { MobileNav } from "./MobileNav";
 import { useSupabase } from "@/components/SessionProvider"; // Import useSupabase hook
 import { toast } from "sonner";
+import { MobileHeaderNav } from "./MobileHeaderNav"; // Import the new MobileHeaderNav
 
 export function Header() {
   const pathname = usePathname();
@@ -36,7 +37,7 @@ export function Header() {
     <header className="bg-primary text-primary-foreground p-4 shadow-md">
       <div className="container mx-auto flex items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          <MobileNav />
+          <MobileNav /> {/* Left mobile menu */}
           <Link href="/" className="flex items-center gap-2">
             <Image
               src="/jimeka-logo.png"
@@ -53,62 +54,66 @@ export function Header() {
           </Link>
           <span className="text-sm ml-4 hidden md:block">E-ISSN: 2581-1002</span>
         </div>
-        <nav className="hidden md:flex flex-wrap justify-end gap-2">
-          {navItems.map((item) => (
-            <Button
-              key={item.name}
-              variant="ghost"
-              asChild
-              className={`text-primary-foreground hover:bg-primary-foreground/10 ${
-                pathname === item.href ? "font-bold underline" : ""
-              }`}
-            >
-              <Link href={item.href}>{item.name}</Link>
-            </Button>
-          ))}
-          {session ? (
-            <>
+        {/* Right-aligned items for desktop and mobile */}
+        <div className="flex items-center gap-2">
+          <nav className="hidden md:flex flex-wrap justify-end gap-2"> {/* Desktop nav */}
+            {navItems.map((item) => (
               <Button
+                key={item.name}
                 variant="ghost"
                 asChild
                 className={`text-primary-foreground hover:bg-primary-foreground/10 ${
-                  pathname === "/profile" ? "font-bold underline" : ""
+                  pathname === item.href ? "font-bold underline" : ""
                 }`}
               >
-                <Link href="/profile">PROFILE</Link>
+                <Link href={item.href}>{item.name}</Link>
               </Button>
-              <Button
-                variant="ghost"
-                className="text-primary-foreground hover:bg-primary-foreground/10"
-                onClick={handleLogout}
-              >
-                LOGOUT
-              </Button>
-            </>
-          ) : (
-            <>
-              <Button
-                variant="ghost"
-                asChild
-                className={`text-primary-foreground hover:bg-primary-foreground/10 ${
-                  pathname === "/login" ? "font-bold underline" : ""
-                }`}
-              >
-                <Link href="/login">LOGIN</Link>
-              </Button>
-              <Button
-                variant="ghost"
-                asChild
-                className={`text-primary-foreground hover:bg-primary-foreground/10 ${
-                  pathname === "/register" ? "font-bold underline" : ""
-                }`}
-              >
-                <Link href="/register">REGISTER</Link>
-              </Button>
-            </>
-          )}
-          <ModeToggle />
-        </nav>
+            ))}
+            {session ? (
+              <>
+                <Button
+                  variant="ghost"
+                  asChild
+                  className={`text-primary-foreground hover:bg-primary-foreground/10 ${
+                    pathname === "/profile" ? "font-bold underline" : ""
+                  }`}
+                >
+                  <Link href="/profile">PROFILE</Link>
+                </Button>
+                <Button
+                  variant="ghost"
+                  className="text-primary-foreground hover:bg-primary-foreground/10"
+                  onClick={handleLogout}
+                >
+                  LOGOUT
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  variant="ghost"
+                  asChild
+                  className={`text-primary-foreground hover:bg-primary-foreground/10 ${
+                    pathname === "/login" ? "font-bold underline" : ""
+                  }`}
+                >
+                  <Link href="/login">LOGIN</Link>
+                </Button>
+                <Button
+                  variant="ghost"
+                  asChild
+                  className={`text-primary-foreground hover:bg-primary-foreground/10 ${
+                    pathname === "/register" ? "font-bold underline" : ""
+                  }`}
+                >
+                  <Link href="/register">REGISTER</Link>
+                </Button>
+              </>
+            )}
+          </nav>
+          <MobileHeaderNav navItems={navItems} session={session} handleLogout={handleLogout} /> {/* New right mobile menu */}
+          <ModeToggle className="hidden md:block" /> {/* ModeToggle for desktop */}
+        </div>
       </div>
     </header>
   );
