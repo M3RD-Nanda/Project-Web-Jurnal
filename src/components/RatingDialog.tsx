@@ -14,14 +14,14 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Star } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils"; // Perbaikan di sini: Mengubah '=>' menjadi 'from'
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { toast } from "sonner";
 import { useSupabase } from "@/components/SessionProvider";
-import { insertRating } from "@/lib/ratings";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { submitRating } from "@/app/actions/ratings"; // Perbaikan di sini: Mengubah path ke /app/actions
 
 const ratingFormSchema = z.object({
   name: z.string().max(100, "Nama terlalu panjang.").optional(),
@@ -74,16 +74,18 @@ export function RatingDialog({ children }: RatingDialogProps) {
     setIsSubmitting(true);
     try {
       const userId = session.user.id;
-      const { error } = await insertRating(stars, values.name || null, values.comment || null, userId);
+      // Call the server action instead of direct insertRating
+      const { success, error } = await submitRating(stars, values.name || null, values.comment || null, userId);
 
       if (error) {
         console.error("Rating submission failed:", error);
-        toast.error(`Gagal mengirim rating: ${error.message || 'Terjadi kesalahan tidak dikenal.'}`);
-      } else {
+        toast.error(`Gagal mengirim rating: ${error || 'Terjadi kesalahan tidak dikenal.'}`);
+      } else if (success) {
         toast.success("Terima kasih atas rating Anda!");
         setIsOpen(false);
         setStars(0);
         form.reset();
+        // revalidatePath("/ratings") is handled by the server action
       }
     } catch (e: any) {
       console.error("Unexpected error during rating submission:", e);
