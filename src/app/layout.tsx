@@ -10,6 +10,7 @@ import { Header } from "@/components/layout/Header"; // Import Header
 import { Footer } from "@/components/layout/Footer"; // Import Footer
 import { Sidebar } from "@/components/layout/Sidebar"; // Import Sidebar
 import { SpeedInsights } from "@vercel/speed-insights/next"; // Import SpeedInsights
+import { Analytics } from "@vercel/analytics/next"; // Import Analytics
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -57,7 +58,8 @@ export default function RootLayout({
         </ThemeProvider>
         <Toaster />
         <MadeWithDyad />
-        <SpeedInsights /> {/* Moved SpeedInsights here, directly inside body */}
+        <SpeedInsights />
+        <Analytics /> {/* Add Analytics component here */}
       </body>
     </html>
   );
