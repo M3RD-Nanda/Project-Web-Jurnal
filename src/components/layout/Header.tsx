@@ -13,7 +13,7 @@ import { MobileHeaderNav } from "./MobileHeaderNav"; // Import the new MobileHea
 
 export function Header() {
   const pathname = usePathname();
-  const { supabase, session } = useSupabase();
+  const { supabase, session, profile } = useSupabase(); // Get profile from useSupabase
 
   const handleLogout = async () => {
     const { error } = await supabase.auth.signOut();
@@ -80,6 +80,17 @@ export function Header() {
                 >
                   <Link href="/profile">PROFILE</Link>
                 </Button>
+                {profile?.role === 'admin' && (
+                  <Button
+                    variant="ghost"
+                    asChild
+                    className={`text-primary-foreground hover:bg-primary-foreground/10 ${
+                      pathname === "/admin" ? "font-bold underline" : ""
+                    }`}
+                  >
+                    <Link href="/admin">ADMIN</Link>
+                  </Button>
+                )}
                 <Button
                   variant="ghost"
                   className="text-primary-foreground hover:bg-primary-foreground/10"

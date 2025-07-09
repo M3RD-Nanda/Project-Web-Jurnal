@@ -41,12 +41,13 @@ const profileFormSchema = z.object({
   is_reader: z.boolean(), // Changed from .default(true)
   is_author: z.boolean(), // Changed from .default(false)
   profile_image_url: z.string().url("URL gambar profil tidak valid.").or(z.literal("")).optional(), // Diperbarui di sini
+  role: z.string().optional(), // Add role to schema, but it's read-only
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
 export default function ProfilePage() {
-  const { supabase, session } = useSupabase();
+  const { supabase, session, profile } = useSupabase(); // Get profile from useSupabase
   const router = useRouter();
   const [loading, setLoading] = useState(true);
 
@@ -73,6 +74,7 @@ export default function ProfilePage() {
       is_reader: true, // Explicit default
       is_author: false, // Explicit default
       profile_image_url: "",
+      role: "user", // Default role
     },
     mode: "onChange",
   });
@@ -86,38 +88,30 @@ export default function ProfilePage() {
 
     const fetchProfile = async () => {
       setLoading(true);
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("*")
-        .eq("id", session.user.id)
-        .single();
-
-      if (error && error.code !== 'PGRST116') { // PGRST116 means no rows found
-        toast.error(`Gagal memuat profil: ${error.message}`);
-        console.error("Error fetching profile:", error);
-      } else if (data) {
-        // Ensure all fields are explicitly handled, even if null from DB
+      // Profile data is now available from useSupabase context
+      if (profile) {
         form.reset({
-          username: data.username ?? "",
-          salutation: data.salutation ?? "",
-          first_name: data.first_name ?? "",
-          middle_name: data.middle_name ?? "",
-          last_name: data.last_name ?? "",
-          initials: data.initials ?? "",
-          gender: (data.gender as ProfileFormValues['gender']) ?? "Tidak Disebutkan",
-          affiliation: data.affiliation ?? "",
-          signature: data.signature ?? "",
+          username: profile.username ?? "",
+          salutation: profile.salutation ?? "",
+          first_name: profile.first_name ?? "",
+          middle_name: profile.middle_name ?? "",
+          last_name: profile.last_name ?? "",
+          initials: profile.initials ?? "",
+          gender: (profile.gender as ProfileFormValues['gender']) ?? "Tidak Disebutkan",
+          affiliation: profile.affiliation ?? "",
+          signature: profile.signature ?? "",
           email: session.user.email ?? "", // Email from auth.users
-          orcid_id: data.orcid_id ?? "",
-          url: data.url ?? "",
-          phone: data.phone ?? "",
-          fax: data.fax ?? "",
-          mailing_address: data.mailing_address ?? "",
-          bio_statement: data.bio_statement ?? "",
-          country: data.country ?? "",
-          is_reader: data.is_reader, // No ?? true needed if DB is NOT NULL
-          is_author: data.is_author, // No ?? false needed if DB is NOT NULL
-          profile_image_url: data.profile_image_url ?? "",
+          orcid_id: profile.orcid_id ?? "",
+          url: profile.url ?? "",
+          phone: profile.phone ?? "",
+          fax: profile.fax ?? "",
+          mailing_address: profile.mailing_address ?? "",
+          bio_statement: profile.bio_statement ?? "",
+          country: profile.country ?? "",
+          is_reader: profile.is_reader,
+          is_author: profile.is_author,
+          profile_image_url: profile.profile_image_url ?? "",
+          role: profile.role, // Set role from profile
         });
       } else {
         // If no profile exists, initialize with user's email and default names from auth.users
@@ -127,7 +121,6 @@ export default function ProfilePage() {
           last_name: session.user.user_metadata?.last_name ?? "",
           is_reader: true, // Explicit default
           is_author: false, // Explicit default
-          // Ensure all other optional fields are explicitly set to empty string or default
           username: "",
           salutation: "",
           middle_name: "",
@@ -143,13 +136,17 @@ export default function ProfilePage() {
           bio_statement: "",
           country: "",
           profile_image_url: "",
+          role: "user", // Default role for new profiles
         });
       }
       setLoading(false);
     };
 
-    fetchProfile();
-  }, [session, router, supabase, form]);
+    // Only fetch profile if session and profile are available from context
+    if (session) {
+      fetchProfile();
+    }
+  }, [session, router, supabase, form, profile]); // Add profile to dependency array
 
   async function onSubmit(values: ProfileFormValues) {
     if (!session) {
@@ -182,6 +179,7 @@ export default function ProfilePage() {
         is_reader: values.is_reader,
         is_author: values.is_author,
         profile_image_url: values.profile_image_url || null,
+        role: profile?.role || 'user', // Keep existing role, or default to 'user'
       }, { onConflict: 'id' }); // Use onConflict to handle both insert and update
 
     if (error) {
@@ -533,6 +531,15 @@ export default function ProfilePage() {
                     </FormItem>
                   )}
                 />
+
+                {/* Display User Role */}
+                <FormItem>
+                  <FormLabel>User Role</FormLabel>
+                  <FormControl>
+                    <Input value={profile?.role || "Loading..."} disabled />
+                  </FormControl>
+                  <FormDescription>Peran pengguna Anda dalam sistem.</FormDescription>
+                </FormItem>
 
                 {/* Profile Image Section - Placeholder for now */}
                 <FormItem>

@@ -5,13 +5,16 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Article, getAllArticles } from "@/lib/articles"; // Import Article interface
 import React, { useEffect, useState } from "react";
+import { Announcement, getAllAnnouncements } from "@/lib/announcements"; // Import Announcement and getAllAnnouncements
 
 interface JournalContentProps {
   initialArticles: Article[];
+  initialAnnouncements: Announcement[];
 }
 
-export function JournalContent({ initialArticles }: JournalContentProps) {
+export function JournalContent({ initialArticles, initialAnnouncements }: JournalContentProps) {
   const [latestArticles, setLatestArticles] = useState<Article[]>(initialArticles);
+  const [announcements, setAnnouncements] = useState<Announcement[]>(initialAnnouncements);
 
   // Jika Anda ingin memuat ulang artikel di sisi klien (misalnya setelah aksi tertentu),
   // Anda bisa menggunakan useEffect di sini. Namun, untuk SSR, initialArticles sudah cukup.
@@ -22,23 +25,6 @@ export function JournalContent({ initialArticles }: JournalContentProps) {
   //   };
   //   fetchArticles();
   // }, []);
-
-  const announcements = [
-    {
-      id: 1,
-      title: "Panggilan untuk Artikel Volume 10, Nomor 2, Tahun 2024",
-      date: "15 Juli 2024",
-      description: "JIMEKA membuka kesempatan bagi para peneliti dan akademisi untuk mengirimkan artikel terbaiknya...",
-      link: "/announcements/call-for-papers",
-    },
-    {
-      id: 2,
-      title: "Workshop Penulisan Artikel Ilmiah",
-      date: "20 Agustus 2024",
-      description: "Ikuti workshop kami untuk meningkatkan kualitas penulisan artikel ilmiah Anda...",
-      link: "/announcements/workshop",
-    },
-  ];
 
   return (
     <div className="flex-1 p-4 md:p-8 space-y-8">
@@ -84,22 +70,26 @@ export function JournalContent({ initialArticles }: JournalContentProps) {
       <section className="space-y-6 animate-in slide-in-from-bottom-8 duration-900">
         <h2 className="text-3xl font-bold text-center">Pengumuman</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {announcements.map((announcement) => (
-            <Card key={announcement.id} className="hover:shadow-lg transition-shadow duration-300">
-              <CardHeader>
-                <CardTitle className="text-lg font-semibold">{announcement.title}</CardTitle>
-                <CardDescription className="text-sm text-muted-foreground">{announcement.date}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm line-clamp-2">{announcement.description}</p>
-              </CardContent>
-              <CardFooter>
-                <Button variant="link" asChild className="p-0 h-auto">
-                  <Link href={announcement.link}>Lihat Detail &rarr;</Link>
-                </Button>
-              </CardFooter>
-            </Card>
-          ))}
+          {announcements.length > 0 ? (
+            announcements.map((announcement) => (
+              <Card key={announcement.id} className="hover:shadow-lg transition-shadow duration-300">
+                <CardHeader>
+                  <CardTitle className="text-lg font-semibold">{announcement.title}</CardTitle>
+                  <CardDescription className="text-sm text-muted-foreground">{announcement.publicationDate}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm line-clamp-2">{announcement.description}</p>
+                </CardContent>
+                <CardFooter>
+                  <Button variant="link" asChild className="p-0 h-auto">
+                    <Link href={announcement.link || "#"}>Lihat Detail &rarr;</Link>
+                  </Button>
+                </CardFooter>
+              </Card>
+            ))
+          ) : (
+            <p className="text-center text-muted-foreground">Belum ada pengumuman saat ini.</p>
+          )}
         </div>
       </section>
 

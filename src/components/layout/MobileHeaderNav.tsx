@@ -9,6 +9,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import { cn } from "@/lib/utils";
 import { ModeToggle } from "@/components/ui/mode-toggle";
 import { Session } from "@supabase/supabase-js";
+import { useSupabase } from "@/components/SessionProvider"; // Import useSupabase to get profile
 
 interface MobileHeaderNavProps {
   navItems: { name: string; href: string }[];
@@ -19,6 +20,7 @@ interface MobileHeaderNavProps {
 export function MobileHeaderNav({ navItems, session, handleLogout }: MobileHeaderNavProps) {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+  const { profile } = useSupabase(); // Get profile from useSupabase
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -67,6 +69,22 @@ export function MobileHeaderNav({ navItems, session, handleLogout }: MobileHeade
               >
                 <Link href="/profile">PROFILE</Link>
               </Button>
+              {profile?.role === 'admin' && (
+                <Button
+                  variant="ghost"
+                  asChild
+                  className={cn(
+                    "w-full justify-start text-left transition-colors duration-200",
+                    "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+                    pathname === "/admin"
+                      ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
+                      : ""
+                  )}
+                  onClick={() => setIsOpen(false)}
+                >
+                  <Link href="/admin">ADMIN</Link>
+                </Button>
+              )}
               <Button
                 variant="ghost"
                 className="w-full justify-start text-left transition-colors duration-200 text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"

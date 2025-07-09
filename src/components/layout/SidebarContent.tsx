@@ -35,7 +35,6 @@ const sidebarNavItems = [
   { name: "ARTICLE TEMPLATE", href: "/article-template" },
   { name: "OJS GUIDELENCE", href: "/ojs-guidelines" },
   { name: "STATISTICS", href: "/statistics" },
-  { name: "FAQ", href: "/faq" },
   { name: "RATING WEB", href: "/ratings" }, // New navigation item
 ];
 
@@ -45,7 +44,7 @@ interface SidebarContentProps {
 
 export function SidebarContent({ onLinkClick }: SidebarContentProps) {
   const pathname = usePathname();
-  const { supabase, session } = useSupabase();
+  const { supabase, session, profile } = useSupabase(); // Get profile from useSupabase
 
   const form = useForm<z.infer<typeof sidebarLoginFormSchema>>({
     resolver: zodResolver(sidebarLoginFormSchema),
@@ -80,13 +79,21 @@ export function SidebarContent({ onLinkClick }: SidebarContentProps) {
             <CardTitle className="text-sm font-semibold text-sidebar-primary">SELAMAT DATANG</CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            <p className="text-base">Halo, {session.user?.email || "Pengguna"}!</p>
+            <p className="text-base">Halo, {profile?.first_name || session.user?.email?.split('@')[0] || "Pengguna"}!</p>
             <Button
               asChild
               className="w-full bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
             >
               <Link href="/profile" onClick={onLinkClick}>Edit Profil</Link>
             </Button>
+            {profile?.role === 'admin' && (
+              <Button
+                asChild
+                className="w-full bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
+              >
+                <Link href="/admin" onClick={onLinkClick}>Admin Dashboard</Link>
+              </Button>
+            )}
             <Button
               onClick={handleLogout}
               className="w-full bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
