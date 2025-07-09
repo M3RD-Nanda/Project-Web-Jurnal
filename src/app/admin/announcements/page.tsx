@@ -107,11 +107,11 @@ export default function AdminAnnouncementsPage() {
   return (
     <StaticContentPage title="Kelola Pengumuman">
       <Card className="w-full">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-2 sm:space-y-0 pb-2"> {/* Adjusted for responsiveness */}
           <CardTitle className="text-2xl font-bold">Daftar Pengumuman</CardTitle>
           <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
             <DialogTrigger asChild>
-              <Button onClick={() => { setEditingAnnouncement(null); setIsFormOpen(true); }}>
+              <Button onClick={() => { setEditingAnnouncement(null); setIsFormOpen(true); }} className="w-full sm:w-auto"> {/* Added w-full sm:w-auto */}
                 <PlusCircle className="mr-2 h-4 w-4" /> Tambah Pengumuman
               </Button>
             </DialogTrigger>

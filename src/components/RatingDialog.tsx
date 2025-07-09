@@ -24,7 +24,7 @@ import { insertRating } from "@/lib/ratings";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 
 const ratingFormSchema = z.object({
-  name: z.string().min(1, "Nama wajib diisi.").max(100, "Nama terlalu panjang.").optional(),
+  name: z.string().max(100, "Nama terlalu panjang.").optional(), // Removed min(1) to allow empty string for optional name
   comment: z.string().max(500, "Komentar terlalu panjang.").optional(),
 });
 

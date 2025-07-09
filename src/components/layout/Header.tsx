@@ -51,15 +51,16 @@ export function Header() {
             />
             <div className="flex flex-col">
               <span className="text-lg font-bold hidden md:block">JIMEKA</span>
-              <span className="text-lg font-bold block md:hidden">Jurnal Ilmiah Mahasiswa Ekonomi Akuntansi</span>
+              {/* Shorter title for small screens, full title for larger screens */}
+              <span className="text-lg font-bold block md:hidden">Jurnal Ilmiah</span>
               <span className="text-xs hidden sm:block">FAKULTAS EKONOMI DAN BISNIS UNIVERSITAS PERCOBAAN NANDA</span>
             </div>
           </Link>
-          <span className="text-sm ml-4 hidden md:block">E-ISSN: 2581-1002</span>
+          <span className="text-sm ml-2 hidden md:block">E-ISSN: 2581-1002</span> {/* Adjusted ml */}
         </div>
         {/* Right-aligned items for desktop and mobile */}
         <div className="flex items-center gap-2">
-          <nav className="hidden md:flex flex-wrap justify-end gap-2"> {/* Desktop nav */}
+          <nav className="hidden md:flex flex-wrap justify-end gap-1"> {/* Desktop nav, reduced gap */}
             {navItems.map((item) => (
               <Button
                 key={item.name}
