@@ -37,7 +37,7 @@ export function Header() {
   ];
 
   return (
-    <header className="bg-primary text-primary-foreground p-4 shadow-md">
+    <header className="bg-primary text-primary-foreground p-4 shadow-md sticky top-0 z-50 w-full">
       <div className="container mx-auto flex items-center justify-between gap-4">
         <div className="flex items-center gap-4">
           <MobileNav /> {/* Left mobile menu */}
