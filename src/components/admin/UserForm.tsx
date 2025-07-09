@@ -22,7 +22,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 
-import { UserProfile, updateUserProfile } from "@/lib/users";
+import { UserProfile } from "@/lib/users"; // Keep UserProfile type, remove updateUserProfile
 
 const userFormSchema = z.object({
   email: z.string().email("Email tidak valid.").min(1, "Email wajib diisi."),
@@ -89,38 +89,48 @@ export function UserForm({ initialData, onSuccess, onCancel }: UserFormProps) {
 
   async function onSubmit(values: UserFormValues) {
     setIsSubmitting(true);
-    const { error } = await updateUserProfile(
-      initialData.id,
-      {
-        username: values.username,
-        salutation: values.salutation,
+    
+    // Prepare data for the API route
+    const payload = {
+      profileData: {
+        username: values.username || null,
+        salutation: values.salutation || null,
         first_name: values.first_name,
-        middle_name: values.middle_name,
+        middle_name: values.middle_name || null,
         last_name: values.last_name,
-        initials: values.initials,
-        gender: values.gender,
-        affiliation: values.affiliation,
-        signature: values.signature,
-        orcid_id: values.orcid_id,
-        url: values.url,
-        phone: values.phone,
-        fax: values.fax,
-        mailing_address: values.mailing_address,
-        bio_statement: values.bio_statement,
-        country: values.country,
+        initials: values.initials || null,
+        gender: values.gender || null,
+        affiliation: values.affiliation || null,
+        signature: values.signature || null,
+        orcid_id: values.orcid_id || null,
+        url: values.url || null,
+        phone: values.phone || null,
+        fax: values.fax || null,
+        mailing_address: values.mailing_address || null,
+        bio_statement: values.bio_statement || null,
+        country: values.country || null,
         is_reader: values.is_reader,
         is_author: values.is_author,
-        profile_image_url: values.profile_image_url,
+        profile_image_url: values.profile_image_url || null,
         role: values.role,
       },
-      {
+      authMetadata: {
         first_name: values.first_name,
         last_name: values.last_name,
       }
-    );
+    };
 
-    if (error) {
-      toast.error(`Gagal memperbarui pengguna: ${error.message}`);
+    const res = await fetch(`/api/admin/users/${initialData.id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+    const result = await res.json();
+
+    if (!res.ok) {
+      toast.error(`Gagal memperbarui pengguna: ${result.error?.message || 'Terjadi kesalahan.'}`);
     } else {
       toast.success("Profil pengguna berhasil diperbarui!");
       onSuccess();

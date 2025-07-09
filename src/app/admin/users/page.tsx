@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { UserProfile } from "@/lib/users";
+import { UserProfile } from "@/lib/users"; // Keep UserProfile type
 import { UserTable } from "@/components/admin/UserTable";
 import { UserForm } from "@/components/admin/UserForm";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
