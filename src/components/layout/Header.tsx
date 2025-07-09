@@ -27,15 +27,20 @@ export function Header() {
     }
   };
 
-  const navItems = [
+  const baseNavItems = [
     { name: "HOME", href: "/" },
     { name: "ABOUT", href: "/about" },
     { name: "SEARCH", href: "/search" },
     { name: "CURRENT", href: "/current" },
     { name: "ARCHIVES", href: "/archives" },
     { name: "ANNOUNCEMENTS", href: "/announcements" },
-    { name: "FAQ", href: "/faq" }, // Menambahkan kembali item FAQ
+    { name: "FAQ", href: "/faq" },
   ];
+
+  // Filter navItems based on user role for desktop header
+  const desktopNavItems = profile?.role === 'admin'
+    ? baseNavItems.filter(item => item.name !== "FAQ")
+    : baseNavItems;
 
   return (
     <header className="bg-primary text-primary-foreground p-4 shadow-md sticky top-0 z-50 w-full">
@@ -64,7 +69,7 @@ export function Header() {
         {/* Right-aligned items for desktop and mobile */}
         <div className="flex items-center gap-2">
           <nav className="hidden md:flex flex-wrap justify-end gap-1"> {/* Desktop nav, reduced gap */}
-            {navItems.map((item) => (
+            {desktopNavItems.map((item) => (
               <Button
                 key={item.name}
                 variant="ghost"
@@ -129,7 +134,8 @@ export function Header() {
               </>
             )}
           </nav>
-          <MobileHeaderNav navItems={navItems} session={session} handleLogout={handleLogout} /> {/* New right mobile menu */}
+          {/* MobileHeaderNav will still show FAQ as per its own logic, if needed */}
+          <MobileHeaderNav navItems={baseNavItems} session={session} handleLogout={handleLogout} />
           <ModeToggle className="hidden md:block" /> {/* ModeToggle for desktop */}
         </div>
       </div>
