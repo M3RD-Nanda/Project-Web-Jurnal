@@ -70,20 +70,40 @@ export function MobileHeaderNav({ navItems, session, handleLogout }: MobileHeade
                 <Link href="/profile">PROFILE</Link>
               </Button>
               {profile?.role === 'admin' && (
-                <Button
-                  variant="ghost"
-                  asChild
-                  className={cn(
-                    "w-full justify-start text-left transition-colors duration-200",
-                    "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
-                    pathname === "/admin"
-                      ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
-                      : ""
-                  )}
-                  onClick={() => setIsOpen(false)}
-                >
-                  <Link href="/admin">ADMIN</Link>
-                </Button>
+                <>
+                  <Button
+                    variant="ghost"
+                    asChild
+                    className={cn(
+                      "w-full justify-start text-left transition-colors duration-200",
+                      "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+                      pathname === "/admin"
+                        ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
+                        : ""
+                    )}
+                    onClick={() => setIsOpen(false)}
+                  >
+                    <Link href="/admin">ADMIN</Link>
+                  </Button>
+                  <div className="border-t border-sidebar-border pt-3 mt-3 space-y-1">
+                    <p className="text-xs font-semibold text-muted-foreground px-3">ADMIN MENU</p>
+                    <Button
+                      variant="ghost"
+                      asChild
+                      className={cn(
+                        "w-full justify-start text-left transition-colors duration-200",
+                        "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+                        pathname === "/admin/announcements"
+                          ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
+                          : ""
+                      )}
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <Link href="/admin/announcements">Kelola Pengumuman</Link>
+                    </Button>
+                    {/* Tambahkan tautan admin lainnya di sini nanti */}
+                  </div>
+                </>
               )}
               <Button
                 variant="ghost"

@@ -7,6 +7,8 @@ import { StaticContentPage } from "@/components/StaticContentPage";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export default function AdminDashboardPage() {
   const { session, profile } = useSupabase();
@@ -43,21 +45,27 @@ export default function AdminDashboardPage() {
         <CardHeader>
           <CardTitle className="text-3xl font-bold text-center">Selamat Datang, Admin!</CardTitle>
           <CardDescription className="text-center text-muted-foreground mt-2">
-            Ini adalah halaman dashboard admin. Anda dapat mengelola konten di sini.
+            Pilih bagian yang ingin Anda kelola.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4 text-lg">
-          <p>Sebagai admin, Anda memiliki akses untuk:</p>
-          <ul className="list-disc list-inside space-y-2">
-            <li>Mengelola Artikel (tambah, edit, hapus)</li>
-            <li>Mengelola Edisi Jurnal (tambah, edit, hapus)</li>
-            <li>Mengelola Pengumuman (tambah, edit, hapus)</li>
-            <li>Melihat dan mengelola Rating</li>
-            <li>Mengelola Pengguna (opsional, jika diperlukan)</li>
-          </ul>
-          <p className="text-sm text-muted-foreground">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <Button asChild className="h-24 text-xl">
+              <Link href="/admin/announcements">Kelola Pengumuman</Link>
+            </Button>
+            <Button asChild className="h-24 text-xl" variant="outline" disabled>
+              <Link href="#">Kelola Artikel (Segera Hadir)</Link>
+            </Button>
+            <Button asChild className="h-24 text-xl" variant="outline" disabled>
+              <Link href="#">Kelola Edisi (Segera Hadir)</Link>
+            </Button>
+            <Button asChild className="h-24 text-xl" variant="outline" disabled>
+              <Link href="#">Kelola Pengguna (Segera Hadir)</Link>
+            </Button>
+          </div>
+          <p className="text-sm text-muted-foreground mt-8">
             Untuk saat ini, pengelolaan data secara visual dapat dilakukan melalui <a href="https://supabase.com/dashboard/project/xlvnaempudqlrdonfzun/editor" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Supabase Studio</a>.
-            Di masa mendatang, fitur pengelolaan langsung di website ini dapat dikembangkan.
+            Fitur pengelolaan langsung di website ini akan dikembangkan secara bertahap.
           </p>
         </CardContent>
       </Card>

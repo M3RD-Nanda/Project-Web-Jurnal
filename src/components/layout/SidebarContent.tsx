@@ -87,12 +87,29 @@ export function SidebarContent({ onLinkClick }: SidebarContentProps) {
               <Link href="/profile" onClick={onLinkClick}>Edit Profil</Link>
             </Button>
             {profile?.role === 'admin' && (
-              <Button
-                asChild
-                className="w-full bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
-              >
-                <Link href="/admin" onClick={onLinkClick}>Admin Dashboard</Link>
-              </Button>
+              <>
+                <Button
+                  asChild
+                  className="w-full bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
+                >
+                  <Link href="/admin" onClick={onLinkClick}>Admin Dashboard</Link>
+                </Button>
+                <div className="border-t border-sidebar-border pt-3 mt-3 space-y-2">
+                  <p className="text-xs font-semibold text-muted-foreground">ADMIN MENU</p>
+                  <Button
+                    asChild
+                    variant="ghost"
+                    className={`w-full justify-start text-left transition-colors duration-200 ${
+                      pathname === "/admin/announcements"
+                        ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
+                        : "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                    }`}
+                  >
+                    <Link href="/admin/announcements" onClick={onLinkClick}>Kelola Pengumuman</Link>
+                  </Button>
+                  {/* Tambahkan tautan admin lainnya di sini nanti */}
+                </div>
+              </>
             )}
             <Button
               onClick={handleLogout}
