@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog"; // Import Dialog components
 
 export default function FAQPage() {
   const faqs = [
@@ -77,13 +78,26 @@ Dan lain-lain – sebagai wujud eksplorasi keilmuan yang terus berkembang.`,
             <CardTitle className="text-2xl font-bold">Tentang Pencipta Website</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col items-center text-center space-y-4">
-            <Image
-              src="/images/muhammad-trinanda.jpg"
-              alt="Foto Muhammad Trinanda"
-              width={150}
-              height={150}
-              className="rounded-full object-cover border-4 border-primary shadow-md"
-            />
+            <Dialog>
+              <DialogTrigger asChild>
+                <Image
+                  src="/images/muhammad-trinanda.jpg"
+                  alt="Foto Muhammad Trinanda"
+                  width={150}
+                  height={150}
+                  className="rounded-full object-cover border-4 border-primary shadow-md cursor-pointer transition-transform hover:scale-105"
+                />
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[600px] p-0 overflow-hidden">
+                <Image
+                  src="/images/muhammad-trinanda.jpg"
+                  alt="Foto Muhammad Trinanda (Large)"
+                  width={600} // Set a larger width for the dialog image
+                  height={600} // Set a larger height for the dialog image
+                  className="w-full h-auto object-contain" // Ensure it fits and is responsive
+                />
+              </DialogContent>
+            </Dialog>
             <h3 className="text-xl font-semibold">Muhammad Trinanda</h3>
             <p className="text-muted-foreground">
               Pencipta dan pengembang utama website Jurnal Ilmiah Mahasiswa Ekonomi Akuntansi (JIMEKA).
