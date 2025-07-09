@@ -1,12 +1,16 @@
 import { NextResponse } from 'next/server';
 import { getAllUsersWithProfiles } from '@/lib/users';
-import { createSupabaseServerClient } from '@/integrations/supabase/server-actions'; // Use new server client
+import { createSupabaseServerClient } from '@/integrations/supabase/server-actions';
 
 export async function GET() {
-  const supabase = createSupabaseServerClient(); // Create server-side client
-  const { data: { session } } = await supabase.auth.getSession();
+  const supabase = createSupabaseServerClient();
+  const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+
+  console.log('API Admin Users GET: Session ->', session);
+  console.log('API Admin Users GET: Session Error ->', sessionError);
 
   if (!session) {
+    console.log('API Admin Users GET: Unauthorized - No session');
     return NextResponse.json({ error: { message: 'Unauthorized' } }, { status: 401 });
   }
 
@@ -16,11 +20,16 @@ export async function GET() {
     .eq('id', session.user.id)
     .single();
 
+  console.log('API Admin Users GET: Profile ->', profile);
+  console.log('API Admin Users GET: Profile Error ->', profileError);
+
   if (profileError || profile?.role !== 'admin') {
+    console.log('API Admin Users GET: Forbidden - Not an admin or profile error');
     return NextResponse.json({ error: { message: 'Forbidden: Not an admin' } }, { status: 403 });
   }
 
   const users = await getAllUsersWithProfiles();
+  console.log('API Admin Users GET: Successfully fetched users');
   return NextResponse.json({ data: users });
 }
 
