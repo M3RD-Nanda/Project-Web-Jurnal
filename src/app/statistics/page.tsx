@@ -2,21 +2,7 @@
 
 import { StaticContentPage } from "@/components/StaticContentPage";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-  Legend,
-  LineChart,
-  Line,
-} from "recharts";
+import dynamic from "next/dynamic"; // Import dynamic
 
 // Data dummy untuk grafik
 const articlesPerYearData = [
@@ -40,6 +26,22 @@ const totalCitationsData = [
   { month: "Mei", citations: 60 },
   { month: "Jun", citations: 85 },
 ];
+
+// Dynamically import Recharts components and cast them as any to resolve type issues
+const ResponsiveContainer = dynamic(() => import("recharts").then((mod) => mod.ResponsiveContainer), { ssr: false });
+const BarChart = dynamic(() => import("recharts").then((mod) => mod.BarChart), { ssr: false });
+const Bar = dynamic(() => import("recharts").then((mod) => mod.Bar), { ssr: false }) as any;
+const XAxis = dynamic(() => import("recharts").then((mod) => mod.XAxis), { ssr: false }) as any;
+const YAxis = dynamic(() => import("recharts").then((mod) => mod.YAxis), { ssr: false }) as any;
+const CartesianGrid = dynamic(() => import("recharts").then((mod) => mod.CartesianGrid), { ssr: false });
+const Tooltip = dynamic(() => import("recharts").then((mod) => mod.Tooltip), { ssr: false }) as any;
+const PieChart = dynamic(() => import("recharts").then((mod) => mod.PieChart), { ssr: false });
+const Pie = dynamic(() => import("recharts").then((mod) => mod.Pie), { ssr: false }) as any;
+const Cell = dynamic(() => import("recharts").then((mod) => mod.Cell), { ssr: false });
+const Legend = dynamic(() => import("recharts").then((mod) => mod.Legend), { ssr: false }) as any;
+const LineChart = dynamic(() => import("recharts").then((mod) => mod.LineChart), { ssr: false });
+const Line = dynamic(() => import("recharts").then((mod) => mod.Line), { ssr: false }) as any;
+
 
 export default function StatisticsPage() {
   return (
@@ -85,7 +87,7 @@ export default function StatisticsPage() {
                   fill="#8884d8"
                   dataKey="value"
                   nameKey="name"
-                  label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                  label={({ name, percent }: { name: string; percent: number }) => `${name}: ${(percent * 100).toFixed(0)}%`}
                 >
                   {acceptanceRateData.map((entry, index) => (
                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
