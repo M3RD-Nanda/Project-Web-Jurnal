@@ -2,26 +2,25 @@ import { StaticContentPage } from "@/components/StaticContentPage";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { getAllArticles } from "@/lib/articles";
+import { getLatestIssue } from "@/lib/issues"; // Import getLatestIssue
+import { getArticlesByIssueId } from "@/lib/articles"; // Import getArticlesByIssueId
+import { notFound } from "next/navigation";
+import { format } from "date-fns";
+import { id } from "date-fns/locale";
 
-export default async function CurrentPage() { // Menjadikan komponen async
-  const allArticles = await getAllArticles(); // Mengambil semua artikel dari Supabase
-  // Untuk simulasi, kita ambil 3 artikel terbaru yang ada di data Supabase
-  const currentIssueArticles = allArticles.slice(0, 3);
+export default async function CurrentPage() {
+  const currentIssue = await getLatestIssue();
 
-  const currentIssue = {
-    volume: 10,
-    number: 1,
-    year: 2024,
-    publicationDate: "30 Juni 2024",
-    description: "Edisi terbaru JIMEKA menampilkan penelitian inovatif tentang dampak ekonomi digital, analisis kebijakan fiskal, dan studi kasus akuntansi forensik.",
-    articles: currentIssueArticles.map(article => ({
-      id: article.id,
-      title: article.title,
-      authors: article.authors,
-      link: `/articles/${article.id}`,
-    })),
-  };
+  if (!currentIssue) {
+    // Handle case where no issues are found
+    return (
+      <StaticContentPage title="EDISI SAAT INI">
+        <p className="text-center text-muted-foreground">Belum ada edisi jurnal yang diterbitkan saat ini.</p>
+      </StaticContentPage>
+    );
+  }
+
+  const articlesInCurrentIssue = await getArticlesByIssueId(currentIssue.id);
 
   return (
     <StaticContentPage title="EDISI SAAT INI">
@@ -31,24 +30,28 @@ export default async function CurrentPage() { // Menjadikan komponen async
       <Card className="mt-6">
         <CardHeader>
           <CardTitle className="text-2xl">Volume {currentIssue.volume}, Nomor {currentIssue.number} ({currentIssue.year})</CardTitle>
-          <CardDescription>Tanggal Publikasi: {currentIssue.publicationDate}</CardDescription>
+          <CardDescription>Tanggal Publikasi: {format(new Date(currentIssue.publicationDate), "dd MMMM yyyy", { locale: id })}</CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-base mb-4">{currentIssue.description}</p>
+          {currentIssue.description && <p className="text-base mb-4">{currentIssue.description}</p>}
           <h3 className="text-xl font-semibold mb-3">Daftar Artikel:</h3>
-          <ul className="space-y-2">
-            {currentIssue.articles.map((article) => (
-              <li key={article.id}>
-                <Link href={article.link} className="text-primary hover:underline">
-                  {article.title} <span className="text-muted-foreground text-sm">({article.authors})</span>
-                </Link>
-              </li>
-            ))}
-          </ul>
+          {articlesInCurrentIssue.length > 0 ? (
+            <ul className="space-y-2">
+              {articlesInCurrentIssue.map((article) => (
+                <li key={article.id}>
+                  <Link href={`/articles/${article.id}`} className="text-primary hover:underline">
+                    {article.title} <span className="text-muted-foreground text-sm">({article.authors})</span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-muted-foreground">Belum ada artikel yang diterbitkan untuk edisi ini.</p>
+          )}
         </CardContent>
         <CardFooter>
           <Button asChild>
-            <Link href={`/archives/volume-${currentIssue.volume}-number-${currentIssue.number}`}>Lihat Semua Artikel Edisi Ini</Link>
+            <Link href={`/archives/${currentIssue.id}`}>Lihat Semua Edisi &rarr;</Link>
           </Button>
         </CardFooter>
       </Card>
