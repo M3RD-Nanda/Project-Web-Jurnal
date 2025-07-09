@@ -16,10 +16,13 @@ export function Header() {
   const { supabase, session, profile } = useSupabase(); // Get profile from useSupabase
 
   const handleLogout = async () => {
+    console.log("Attempting to log out from Header...");
     const { error } = await supabase.auth.signOut();
     if (error) {
+      console.error("Logout error (Header):", error);
       toast.error(`Gagal logout: ${error.message}`);
     } else {
+      console.log("Logout successful (Header), SessionProvider should handle redirect.");
       // SessionProvider akan menangani redirect dan toast sukses
     }
   };

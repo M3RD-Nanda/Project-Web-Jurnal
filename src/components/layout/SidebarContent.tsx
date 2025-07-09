@@ -63,10 +63,13 @@ export function SidebarContent({ onLinkClick }: SidebarContentProps) {
   }
 
   const handleLogout = async () => {
+    console.log("Attempting to log out from Sidebar...");
     const { error } = await supabase.auth.signOut();
     if (error) {
+      console.error("Logout error (Sidebar):", error);
       toast.error(`Gagal logout: ${error.message}`);
     } else {
+      console.log("Logout successful (Sidebar), SessionProvider should handle redirect.");
       // SessionProvider akan menangani redirect dan toast sukses
     }
   };
