@@ -473,7 +473,7 @@ export default function ProfilePage() {
                       <FormLabel>Country</FormLabel>
                       <FormControl>
                         <Input {...field} />
-                      </FormControl>
+                        </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}

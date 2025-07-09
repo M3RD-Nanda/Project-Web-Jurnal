@@ -4,8 +4,11 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { MadeWithDyad } from "@/components/made-with-dyad";
-import { SessionProvider } from "@/components/SessionProvider"; // Import SessionProvider
-import React from "react"; // Import React for Fragment
+import { SessionProvider } from "@/components/SessionProvider";
+import React from "react";
+import { Header } from "@/components/layout/Header"; // Import Header
+import { Footer } from "@/components/layout/Footer"; // Import Footer
+import { Sidebar } from "@/components/layout/Sidebar"; // Import Sidebar
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -40,7 +43,16 @@ export default function RootLayout({
         >
           <React.Fragment>
             <SessionProvider>
-              {children}
+              <div className="min-h-screen flex flex-col">
+                <Header />
+                <div className="flex flex-1 flex-col md:flex-row">
+                  <Sidebar />
+                  <main className="flex-1">
+                    {children}
+                  </main>
+                </div>
+                <Footer />
+              </div>
             </SessionProvider>
             <Toaster />
             <MadeWithDyad />
