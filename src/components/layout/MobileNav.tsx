@@ -14,7 +14,7 @@ export function MobileNav() {
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
         <Button variant="ghost" size="icon" className="md:hidden">
-          <Menu className="h-6 w-6 text-primary-foreground" />
+          <Menu className="h-6 w-6" /> {/* Removed text-primary-foreground here */}
           <span className="sr-only">Toggle navigation menu</span>
         </Button>
       </SheetTrigger>
