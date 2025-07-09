@@ -107,7 +107,39 @@ export function SidebarContent({ onLinkClick }: SidebarContentProps) {
                   >
                     <Link href="/admin/announcements" onClick={onLinkClick}>Kelola Pengumuman</Link>
                   </Button>
-                  {/* Tambahkan tautan admin lainnya di sini nanti */}
+                  <Button
+                    asChild
+                    variant="ghost"
+                    className={`w-full justify-start text-left transition-colors duration-200 ${
+                      pathname === "/admin/articles"
+                        ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
+                        : "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                    }`}
+                  >
+                    <Link href="/admin/articles" onClick={onLinkClick}>Kelola Artikel</Link>
+                  </Button>
+                  <Button
+                    asChild
+                    variant="ghost"
+                    className={`w-full justify-start text-left transition-colors duration-200 ${
+                      pathname === "/admin/issues"
+                        ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
+                        : "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                    }`}
+                  >
+                    <Link href="/admin/issues" onClick={onLinkClick}>Kelola Edisi</Link>
+                  </Button>
+                  <Button
+                    asChild
+                    variant="ghost"
+                    className={`w-full justify-start text-left transition-colors duration-200 ${
+                      pathname === "/admin/users"
+                        ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
+                        : "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                    }`}
+                  >
+                    <Link href="/admin/users" onClick={onLinkClick}>Kelola Pengguna</Link>
+                  </Button>
                 </div>
               </>
             )}

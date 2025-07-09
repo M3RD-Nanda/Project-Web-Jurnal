@@ -101,7 +101,48 @@ export function MobileHeaderNav({ navItems, session, handleLogout }: MobileHeade
                     >
                       <Link href="/admin/announcements">Kelola Pengumuman</Link>
                     </Button>
-                    {/* Tambahkan tautan admin lainnya di sini nanti */}
+                    <Button
+                      variant="ghost"
+                      asChild
+                      className={cn(
+                        "w-full justify-start text-left transition-colors duration-200",
+                        "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+                        pathname === "/admin/articles"
+                          ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
+                          : ""
+                      )}
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <Link href="/admin/articles">Kelola Artikel</Link>
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      asChild
+                      className={cn(
+                        "w-full justify-start text-left transition-colors duration-200",
+                        "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+                        pathname === "/admin/issues"
+                          ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
+                          : ""
+                      )}
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <Link href="/admin/issues">Kelola Edisi</Link>
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      asChild
+                      className={cn(
+                        "w-full justify-start text-left transition-colors duration-200",
+                        "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+                        pathname === "/admin/users"
+                          ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
+                          : ""
+                      )}
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <Link href="/admin/users">Kelola Pengguna</Link>
+                    </Button>
                   </div>
                 </>
               )}
