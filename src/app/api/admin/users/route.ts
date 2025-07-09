@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
 import { getAllUsersWithProfiles } from '@/lib/users';
-import { supabase } from '@/integrations/supabase/client'; // Use client for session check
+import { createSupabaseServerClient } from '@/integrations/supabase/server-actions'; // Use new server client
 
 export async function GET() {
+  const supabase = createSupabaseServerClient(); // Create server-side client
   const { data: { session } } = await supabase.auth.getSession();
 
   if (!session) {
