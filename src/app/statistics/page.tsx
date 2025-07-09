@@ -27,20 +27,20 @@ const totalCitationsData = [
   { month: "Jun", citations: 85 },
 ];
 
-// Dynamically import Recharts components and cast them as any to resolve type issues
+// Dynamically import Recharts components and wrap them to resolve type issues
 const ResponsiveContainer = dynamic(() => import("recharts").then((mod) => mod.ResponsiveContainer), { ssr: false });
 const BarChart = dynamic(() => import("recharts").then((mod) => mod.BarChart), { ssr: false });
-const Bar = dynamic(() => import("recharts").then((mod) => mod.Bar), { ssr: false }) as any;
-const XAxis = dynamic(() => import("recharts").then((mod) => mod.XAxis), { ssr: false }) as any;
-const YAxis = dynamic(() => import("recharts").then((mod) => mod.YAxis), { ssr: false }) as any;
+const Bar = dynamic(() => import("recharts").then((mod) => { const Comp = mod.Bar; return (props: any) => <Comp {...props} />; }), { ssr: false });
+const XAxis = dynamic(() => import("recharts").then((mod) => { const Comp = mod.XAxis; return (props: any) => <Comp {...props} />; }), { ssr: false });
+const YAxis = dynamic(() => import("recharts").then((mod) => { const Comp = mod.YAxis; return (props: any) => <Comp {...props} />; }), { ssr: false });
 const CartesianGrid = dynamic(() => import("recharts").then((mod) => mod.CartesianGrid), { ssr: false });
-const Tooltip = dynamic(() => import("recharts").then((mod) => mod.Tooltip), { ssr: false }) as any;
+const Tooltip = dynamic(() => import("recharts").then((mod) => { const Comp = mod.Tooltip; return (props: any) => <Comp {...props} />; }), { ssr: false });
 const PieChart = dynamic(() => import("recharts").then((mod) => mod.PieChart), { ssr: false });
-const Pie = dynamic(() => import("recharts").then((mod) => mod.Pie), { ssr: false }) as any;
+const Pie = dynamic(() => import("recharts").then((mod) => { const Comp = mod.Pie; return (props: any) => <Comp {...props} />; }), { ssr: false });
 const Cell = dynamic(() => import("recharts").then((mod) => mod.Cell), { ssr: false });
-const Legend = dynamic(() => import("recharts").then((mod) => mod.Legend), { ssr: false }) as any;
+const Legend = dynamic(() => import("recharts").then((mod) => { const Comp = mod.Legend; return (props: any) => <Comp {...props} />; }), { ssr: false });
 const LineChart = dynamic(() => import("recharts").then((mod) => mod.LineChart), { ssr: false });
-const Line = dynamic(() => import("recharts").then((mod) => mod.Line), { ssr: false }) as any;
+const Line = dynamic(() => import("recharts").then((mod) => { const Comp = mod.Line; return (props: any) => <Comp {...props} />; }), { ssr: false });
 
 
 export default function StatisticsPage() {
