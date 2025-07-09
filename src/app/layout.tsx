@@ -42,24 +42,22 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <React.Fragment>
-            <SessionProvider>
-              <div className="min-h-screen flex flex-col">
-                <Header />
-                <div className="flex flex-1 flex-col md:flex-row">
-                  <Sidebar />
-                  <main className="flex-1">
-                    {children}
-                  </main>
-                </div>
-                <Footer />
+          <SessionProvider>
+            <div className="min-h-screen flex flex-col">
+              <Header />
+              <div className="flex flex-1 flex-col md:flex-row">
+                <Sidebar />
+                <main className="flex-1">
+                  {children}
+                </main>
               </div>
-            </SessionProvider>
-            <Toaster />
-            <MadeWithDyad />
-            <SpeedInsights /> {/* Add SpeedInsights component here */}
-          </React.Fragment>
+              <Footer />
+            </div>
+          </SessionProvider>
         </ThemeProvider>
+        <Toaster />
+        <MadeWithDyad />
+        <SpeedInsights /> {/* Moved SpeedInsights here, directly inside body */}
       </body>
     </html>
   );
