@@ -23,8 +23,14 @@ export default function AdminUsersPage() {
 
   const fetchUsers = async () => {
     setLoading(true);
+    if (!session) {
+      setLoading(false);
+      return;
+    }
     const res = await fetch('/api/admin/users', {
-      credentials: 'include', // Tambahkan ini
+      headers: {
+        'Authorization': `Bearer ${session.access_token}`,
+      },
     });
     const result = await res.json();
 
@@ -58,10 +64,16 @@ export default function AdminUsersPage() {
 
   const handleDelete = async (id: string) => {
     if (!confirm("Apakah Anda yakin ingin menghapus pengguna ini? Tindakan ini tidak dapat dibatalkan.")) return;
+    if (!session) {
+      toast.error("Anda tidak terautentikasi.");
+      return;
+    }
 
     const res = await fetch(`/api/admin/users/${id}`, {
       method: 'DELETE',
-      credentials: 'include', // Tambahkan ini
+      headers: {
+        'Authorization': `Bearer ${session.access_token}`,
+      },
     });
     const { success, error } = await res.json();
 

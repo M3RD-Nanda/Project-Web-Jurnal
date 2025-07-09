@@ -23,8 +23,14 @@ export default function AdminAnnouncementsPage() {
 
   const fetchAnnouncements = async () => {
     setLoading(true);
+    if (!session) {
+      setLoading(false);
+      return;
+    }
     const res = await fetch('/api/admin/announcements', {
-      credentials: 'include', // Tambahkan ini
+      headers: {
+        'Authorization': `Bearer ${session.access_token}`,
+      },
     });
     const result = await res.json();
 
@@ -58,10 +64,16 @@ export default function AdminAnnouncementsPage() {
 
   const handleDelete = async (id: string) => {
     if (!confirm("Apakah Anda yakin ingin menghapus pengumuman ini?")) return;
+    if (!session) {
+      toast.error("Anda tidak terautentikasi.");
+      return;
+    }
 
     const res = await fetch(`/api/admin/announcements/${id}`, {
       method: 'DELETE',
-      credentials: 'include', // Tambahkan ini
+      headers: {
+        'Authorization': `Bearer ${session.access_token}`,
+      },
     });
     const { success, error } = await res.json();
 

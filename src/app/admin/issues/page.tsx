@@ -23,8 +23,14 @@ export default function AdminIssuesPage() {
 
   const fetchIssues = async () => {
     setLoading(true);
+    if (!session) {
+      setLoading(false);
+      return;
+    }
     const res = await fetch('/api/admin/issues', {
-      credentials: 'include', // Tambahkan ini
+      headers: {
+        'Authorization': `Bearer ${session.access_token}`,
+      },
     });
     const result = await res.json();
 
@@ -58,10 +64,16 @@ export default function AdminIssuesPage() {
 
   const handleDelete = async (id: string) => {
     if (!confirm("Apakah Anda yakin ingin menghapus edisi ini?")) return;
+    if (!session) {
+      toast.error("Anda tidak terautentikasi.");
+      return;
+    }
 
     const res = await fetch(`/api/admin/issues/${id}`, {
       method: 'DELETE',
-      credentials: 'include', // Tambahkan ini
+      headers: {
+        'Authorization': `Bearer ${session.access_token}`,
+      },
     });
     const { success, error } = await res.json();
 

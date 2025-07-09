@@ -1,22 +1,31 @@
 import { NextResponse } from 'next/server';
 import { getAllAnnouncements, insertAnnouncement } from '@/lib/announcements';
-import { createSupabaseServerClient } from '@/integrations/supabase/server-actions';
+import { supabaseAdmin } from '@/integrations/supabase/server';
 
-export async function GET() {
-  const supabase = await createSupabaseServerClient(); // Added await
-  const { data: { session } } = await supabase.auth.getSession();
+export async function GET(request: Request) {
+  const authHeader = request.headers.get('Authorization');
 
-  if (!session) {
-    return NextResponse.json({ error: { message: 'Unauthorized' } }, { status: 401 });
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return NextResponse.json({ error: { message: 'Unauthorized: No valid Authorization header' } }, { status: 401 });
   }
 
-  const { data: profile, error: profileError } = await supabase
+  const accessToken = authHeader.replace('Bearer ', '');
+
+  const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(accessToken);
+
+  if (authError || !user) {
+    console.error("API Admin Announcements GET: Auth error or no user:", authError);
+    return NextResponse.json({ error: { message: 'Unauthorized: Invalid token' } }, { status: 401 });
+  }
+
+  const { data: profile, error: profileError } = await supabaseAdmin
     .from('profiles')
     .select('role')
-    .eq('id', session.user.id)
+    .eq('id', user.id)
     .single();
 
   if (profileError || profile?.role !== 'admin') {
+    console.error("API Admin Announcements GET: Profile error or not admin:", profileError);
     return NextResponse.json({ error: { message: 'Forbidden: Not an admin' } }, { status: 403 });
   }
 
@@ -25,17 +34,23 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
-  const supabase = await createSupabaseServerClient(); // Added await
-  const { data: { session } } = await supabase.auth.getSession();
+  const authHeader = request.headers.get('Authorization');
 
-  if (!session) {
-    return NextResponse.json({ error: { message: 'Unauthorized' } }, { status: 401 });
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return NextResponse.json({ error: { message: 'Unauthorized: No valid Authorization header' } }, { status: 401 });
   }
 
-  const { data: profile, error: profileError } = await supabase
+  const accessToken = authHeader.replace('Bearer ', '');
+  const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(accessToken);
+
+  if (authError || !user) {
+    return NextResponse.json({ error: { message: 'Unauthorized: Invalid token' } }, { status: 401 });
+  }
+
+  const { data: profile, error: profileError } = await supabaseAdmin
     .from('profiles')
     .select('role')
-    .eq('id', session.user.id)
+    .eq('id', user.id)
     .single();
 
   if (profileError || profile?.role !== 'admin') {
