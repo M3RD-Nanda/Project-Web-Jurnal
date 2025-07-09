@@ -31,7 +31,7 @@ export function MobileHeaderNav({ navItems, session, handleLogout }: MobileHeade
         </Button>
       </SheetTrigger>
       <SheetContent side="right" className="w-64 p-0 bg-sidebar text-sidebar-foreground border-l border-sidebar-border flex flex-col">
-        <SheetHeader className="p-4 border-b border-sidebar-border flex flex-row items-center justify-between">
+        <SheetHeader className="p-4 border-b border-sidebar-border flex flex-row items-center gap-x-2"> {/* Adjusted: removed justify-between, added gap-x-2 */}
           <SheetTitle className="text-lg font-semibold text-sidebar-primary">Navigasi</SheetTitle>
           <ModeToggle />
         </SheetHeader>

@@ -19,7 +19,7 @@ export function MobileNav() {
         </Button>
       </SheetTrigger>
       <SheetContent side="left" className="w-64 p-0 bg-sidebar text-sidebar-foreground border-r border-sidebar-border flex flex-col">
-        <div className="flex items-center justify-between p-4 border-b border-sidebar-border">
+        <div className="flex items-center gap-x-2 p-4 border-b border-sidebar-border"> {/* Adjusted: removed justify-between, added gap-x-2 */}
           <SheetTitle className="text-lg font-semibold text-sidebar-primary">Menu JIMEKA</SheetTitle> {/* Wrap h2 with SheetTitle */}
           <ModeToggle />
         </div>
