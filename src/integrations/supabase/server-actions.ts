@@ -1,4 +1,4 @@
-import { createServerClient } from '@supabase/ssr';
+import { createServerClient, CookieOptions } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://xlvnaempudqlrdonfzun.supabase.co";
@@ -12,21 +12,21 @@ export function createSupabaseServerClient() {
     SUPABASE_ANON_KEY,
     {
       cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value;
+        async get(name: string) {
+          return (await cookieStore).get(name)?.value;
         },
-        set(name: string, value: string, options: any) {
+        async set(name: string, value: string, options: CookieOptions) {
           try {
-            cookieStore.set({ name, value, ...options });
+            (await cookieStore).set({ name, value, ...options });
           } catch (error) {
             // The `cookies().set()` method can only be called from a Server Action or Route Handler.
             // This error is safe to ignore if you're only reading cookies.
             console.warn('Could not set cookie from server client:', error);
           }
         },
-        remove(name: string, options: any) {
+        async remove(name: string, options: CookieOptions) {
           try {
-            cookieStore.set({ name, value: '', ...options });
+            (await cookieStore).set({ name, value: '', ...options });
           } catch (error) {
             console.warn('Could not remove cookie from server client:', error);
           }
