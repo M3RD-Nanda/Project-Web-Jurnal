@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { MadeWithDyad } from "@/components/made-with-dyad";
 import { SessionProvider } from "@/components/SessionProvider";
@@ -13,6 +12,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
 import { recordPageVisit } from "@/actions/analytics";
 import { headers } from "next/headers";
+import { ClientThemeProviderWrapper } from "@/components/ClientThemeProviderWrapper"; // Import the new client wrapper
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -44,8 +44,12 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        {/* Delay ThemeProvider rendering to client-side to avoid hydration issues with system theme */}
-        <ClientThemeProviderWrapper>
+        <ClientThemeProviderWrapper
+          attribute="class"
+          defaultTheme="light"
+          enableSystem
+          disableTransitionOnChange
+        >
           <SessionProvider>
             <div className="min-h-screen flex flex-col">
               <Header />
@@ -65,31 +69,5 @@ export default async function RootLayout({
         <Analytics />
       </body>
     </html>
-  );
-}
-
-// New Client Component to wrap ThemeProvider
-// This ensures ThemeProvider only runs on the client after hydration
-function ClientThemeProviderWrapper({ children }: { children: React.ReactNode }) {
-  const [mounted, setMounted] = React.useState(false);
-
-  React.useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
-    // Render children directly without theme for server to avoid hydration mismatch
-    return <>{children}</>;
-  }
-
-  return (
-    <ThemeProvider
-      attribute="class"
-      defaultTheme="light"
-      enableSystem
-      disableTransitionOnChange
-    >
-      {children}
-    </ThemeProvider>
   );
 }
