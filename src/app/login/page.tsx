@@ -25,7 +25,7 @@ export default function LoginPage() {
                 default: {
                   colors: {
                     brand: 'hsl(var(--primary))',
-                    brandAccent: 'hsl(var(--primary-foreground))',
+                    brandAccent: 'hsl(var(--primary-hover))', // Menggunakan variabel baru untuk warna hover
                     inputBackground: 'hsl(var(--background))',
                     inputBorder: 'hsl(var(--border))',
                     inputBorderHover: 'hsl(var(--ring))',
@@ -33,7 +33,7 @@ export default function LoginPage() {
                     inputText: 'hsl(var(--foreground))',
                   },
                 },
-              }, // Perbaikan di sini: Menambahkan kurung kurawal penutup dan koma yang hilang
+              },
             }}
             theme="light" // Sesuaikan dengan tema aplikasi Anda
             redirectTo={`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/`} // Redirect ke root setelah login

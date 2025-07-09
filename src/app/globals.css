@@ -15,6 +15,7 @@
 
     --primary: 220.9 39.3% 39.3%; /* A professional, muted blue */
     --primary-foreground: 210 40% 98%; /* Light background for text on primary */
+    --primary-hover: 220.9 39.3% 30%; /* Darker shade of primary for hover */
 
     --secondary: 210 40% 96.1%; /* Light grey */
     --secondary-foreground: 222.2 47.4% 11.2%;
@@ -64,6 +65,7 @@
 
     --primary: 217.2 91.2% 59.8%; /* A vibrant blue for contrast */
     --primary-foreground: 0 0% 98%; /* Corrected: Light foreground for text on primary in dark mode */
+    --primary-hover: 217.2 91.2% 45%; /* Darker shade of primary for hover in dark mode */
 
     --secondary: 217.2 32.6% 17.5%; /* Darker grey-blue */
     --secondary-foreground: 210 40% 98%;
