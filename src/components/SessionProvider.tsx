@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Session, SupabaseClient } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import React from "react"; // Import React for Fragment
+import React from "react";
 
 interface UserProfile {
   id: string;
@@ -34,74 +34,66 @@ interface UserProfile {
 interface SupabaseContextType {
   supabase: SupabaseClient;
   session: Session | null;
-  profile: UserProfile | null; // Add profile to context
+  profile: UserProfile | null;
 }
 
 const SupabaseContext = createContext<SupabaseContextType | undefined>(undefined);
 
-export function SessionProvider({ children }: { children: React.ReactNode }) {
-  const [session, setSession] = useState<Session | null>(null);
+interface SessionProviderProps {
+  children: React.ReactNode;
+  initialSession: Session | null; // Add initialSession prop
+}
+
+export function SessionProvider({ children, initialSession }: SessionProviderProps) {
+  const [session, setSession] = useState<Session | null>(initialSession);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const router = useRouter();
 
-  useEffect(() => {
-    const getSessionAndProfile = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      setSession(session);
+  // Function to fetch profile based on session
+  const fetchProfile = async (currentSession: Session | null) => {
+    if (currentSession) {
+      const { data: profileData, error } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', currentSession.user.id)
+        .single();
 
-      if (session) {
-        const { data: profileData, error } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', session.user.id)
-          .single();
-
-        if (error && error.code !== 'PGRST116') { // PGRST116 means no rows found
-          console.error("Error fetching profile:", error);
-          setProfile(null);
-        } else if (profileData) {
-          setProfile(profileData as UserProfile);
-        } else {
-          setProfile(null); // No profile found
-        }
-      } else {
+      if (error && error.code !== 'PGRST116') { // PGRST116 means no rows found
+        console.error("Error fetching profile:", error);
         setProfile(null);
+      } else if (profileData) {
+        setProfile(profileData as UserProfile);
+      } else {
+        setProfile(null); // No profile found
       }
-    };
+    } else {
+      setProfile(null);
+    }
+  };
 
-    getSessionAndProfile();
+  // Fetch profile initially based on initialSession
+  useEffect(() => {
+    fetchProfile(initialSession);
+  }, [initialSession]);
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      setSession(session);
-      if (session) {
-        const { data: profileData, error } = await supabase
-          .from('profiles')
-          .select('*')
-          .eq('id', session.user.id)
-          .single();
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, currentSession) => {
+      setSession(currentSession);
+      await fetchProfile(currentSession); // Fetch profile on auth state change
 
-        if (error && error.code !== 'PGRST116') {
-          console.error("Error fetching profile on auth state change:", error);
-          setProfile(null);
-        } else if (profileData) {
-          setProfile(profileData as UserProfile);
-        } else {
-          setProfile(null);
-        }
-
+      if (currentSession) {
         if (event === 'SIGNED_IN' || event === 'USER_UPDATED') {
           toast.success("Anda berhasil masuk!");
           router.push("/"); // Redirect ke halaman utama setelah login
         }
       } else if (event === 'SIGNED_OUT') {
-        setProfile(null);
         toast.info("Anda telah keluar.");
         router.push("/login"); // Redirect ke halaman login setelah logout
       }
     });
 
     return () => subscription.unsubscribe();
-  }, [router, supabase.auth]);
+  }, [router]); // Removed supabase.auth from dependency array as it's stable
 
   return (
     <SupabaseContext.Provider value={{ supabase, session, profile }}>
