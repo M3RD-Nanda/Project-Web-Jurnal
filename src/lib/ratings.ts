@@ -13,14 +13,21 @@ export async function insertRating(stars: number, name: string | null, comment: 
   const { data, error } = await supabase
     .from('ratings')
     .insert({ stars, name, comment, user_id: userId })
-    .select(); // Removed .single() to handle potential array return
+    .select(); // This should return the inserted row(s)
 
   if (error) {
     console.error("Error inserting rating:", error);
     return { data: null, error: new Error(error.message) };
   }
-  // If data is an array, return the first element, otherwise null
-  return { data: data ? (data[0] as Rating) : null, error: null };
+
+  // If data is null or an empty array, it means the insert didn't return the expected row.
+  // This could happen if RLS silently prevents the select part, or other issues.
+  if (!data || data.length === 0) {
+    console.error("Insert rating operation completed without error, but no data was returned. This might indicate an RLS issue or a problem with the insert statement.");
+    return { data: null, error: new Error("Rating could not be saved. Please try again.") };
+  }
+
+  return { data: data[0] as Rating, error: null };
 }
 
 export async function getAllRatings(): Promise<Rating[]> {

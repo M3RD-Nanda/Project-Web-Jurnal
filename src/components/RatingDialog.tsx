@@ -24,7 +24,7 @@ import { insertRating } from "@/lib/ratings";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 
 const ratingFormSchema = z.object({
-  name: z.string().max(100, "Nama terlalu panjang.").optional(), // Removed min(1) to allow empty string for optional name
+  name: z.string().max(100, "Nama terlalu panjang.").optional(),
   comment: z.string().max(500, "Komentar terlalu panjang.").optional(),
 });
 
@@ -72,18 +72,25 @@ export function RatingDialog({ children }: RatingDialogProps) {
     }
 
     setIsSubmitting(true);
-    const userId = session.user.id; // userId is guaranteed to be present if session exists
-    const { error } = await insertRating(stars, values.name || null, values.comment || null, userId);
+    try {
+      const userId = session.user.id;
+      const { error } = await insertRating(stars, values.name || null, values.comment || null, userId);
 
-    if (error) {
-      toast.error(`Gagal mengirim rating: ${error.message}`);
-    } else {
-      toast.success("Terima kasih atas rating Anda!");
-      setIsOpen(false);
-      setStars(0);
-      form.reset(); // Reset form after successful submission
+      if (error) {
+        console.error("Rating submission failed:", error);
+        toast.error(`Gagal mengirim rating: ${error.message || 'Terjadi kesalahan tidak dikenal.'}`);
+      } else {
+        toast.success("Terima kasih atas rating Anda!");
+        setIsOpen(false);
+        setStars(0);
+        form.reset();
+      }
+    } catch (e: any) {
+      console.error("Unexpected error during rating submission:", e);
+      toast.error(`Terjadi kesalahan tak terduga: ${e.message || 'Silakan coba lagi.'}`);
+    } finally {
+      setIsSubmitting(false);
     }
-    setIsSubmitting(false);
   };
 
   return (
