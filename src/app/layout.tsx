@@ -12,7 +12,7 @@ import { Sidebar } from "@/components/layout/Sidebar";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
 import { recordPageVisit } from "@/actions/analytics";
-import { headers } from "next/headers"; // Import headers for path
+import { headers } from "next/headers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,8 +35,8 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   // Record page visit on every page load
-  const headersList = await headers(); // Added await here
-  const path = headersList.get('x-pathname') || '/'; // Get the current path
+  const headersList = await headers();
+  const path = headersList.get('x-pathname') || '/';
   await recordPageVisit(path);
 
   return (
@@ -44,12 +44,8 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="light"
-          enableSystem
-          disableTransitionOnChange
-        >
+        {/* Delay ThemeProvider rendering to client-side to avoid hydration issues with system theme */}
+        <ClientThemeProviderWrapper>
           <SessionProvider>
             <div className="min-h-screen flex flex-col">
               <Header />
@@ -62,12 +58,38 @@ export default async function RootLayout({
               <Footer />
             </div>
           </SessionProvider>
-        </ThemeProvider>
+        </ClientThemeProviderWrapper>
         <Toaster />
         <MadeWithDyad />
         <SpeedInsights />
         <Analytics />
       </body>
     </html>
+  );
+}
+
+// New Client Component to wrap ThemeProvider
+// This ensures ThemeProvider only runs on the client after hydration
+function ClientThemeProviderWrapper({ children }: { children: React.ReactNode }) {
+  const [mounted, setMounted] = React.useState(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    // Render children directly without theme for server to avoid hydration mismatch
+    return <>{children}</>;
+  }
+
+  return (
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="light"
+      enableSystem
+      disableTransitionOnChange
+    >
+      {children}
+    </ThemeProvider>
   );
 }
