@@ -59,8 +59,8 @@ export default function AdminDashboardPage() {
             <Button asChild className="h-24 text-xl">
               <Link href="/admin/issues">Kelola Edisi</Link>
             </Button>
-            <Button asChild className="h-24 text-xl" variant="outline" disabled>
-              <Link href="#">Kelola Pengguna (Segera Hadir)</Link>
+            <Button asChild className="h-24 text-xl">
+              <Link href="/admin/users">Kelola Pengguna</Link>
             </Button>
           </div>
           <p className="text-sm text-muted-foreground mt-8">
