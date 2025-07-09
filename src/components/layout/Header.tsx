@@ -34,6 +34,7 @@ export function Header() {
     { name: "CURRENT", href: "/current" },
     { name: "ARCHIVES", href: "/archives" },
     { name: "ANNOUNCEMENTS", href: "/announcements" },
+    { name: "FAQ", href: "/faq" }, // Menambahkan kembali item FAQ
   ];
 
   return (

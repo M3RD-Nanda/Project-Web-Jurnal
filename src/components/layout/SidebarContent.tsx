@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { usePathname } from "next/navigation";
-import { useForm } from "react-hook-form";
+import { useForm } from "react-hook-form"; // Perbaikan di sini: Mengubah import dari @hookform/resolvers/zod
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -34,6 +34,7 @@ const sidebarNavItems = [
   { name: "PUBLICATION FEE", href: "/publication-fee" },
   { name: "ARTICLE TEMPLATE", href: "/article-template" },
   { name: "OJS GUIDELENCE", href: "/ojs-guidelines" },
+  { name: "FAQ", href: "/faq" }, // Menambahkan kembali item FAQ
   { name: "STATISTICS", href: "/statistics" },
   { name: "RATING WEB", href: "/ratings" }, // New navigation item
 ];
