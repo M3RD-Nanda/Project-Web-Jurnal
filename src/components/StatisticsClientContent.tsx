@@ -3,25 +3,26 @@
 import React, { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import dynamic from "next/dynamic";
-import { Loader2 } from "lucide-react"; // Import Loader2
+import { Loader2 } from "lucide-react";
 
 // Import interfaces for data
 import { ArticlesPerYearData, AcceptanceRateData, CitationData } from "@/lib/statistics";
 
-// Dynamically import Recharts components and cast them as React.ComponentType<any> to resolve type issues
-const ResponsiveContainer = dynamic(() => import("recharts").then((mod) => mod.ResponsiveContainer), { ssr: false });
-const BarChart = dynamic(() => import("recharts").then((mod) => mod.BarChart), { ssr: false });
-const Bar = dynamic(() => import("recharts").then((mod) => mod.Bar as unknown as React.ComponentType<any>), { ssr: false });
-const XAxis = dynamic(() => import("recharts").then((mod) => mod.XAxis as React.ComponentType<any>), { ssr: false });
-const YAxis = dynamic(() => import("recharts").then((mod) => mod.YAxis as React.ComponentType<any>), { ssr: false });
-const CartesianGrid = dynamic(() => import("recharts").then((mod) => mod.CartesianGrid), { ssr: false });
-const Tooltip = dynamic(() => import("recharts").then((mod) => mod.Tooltip as unknown as React.ComponentType<any>), { ssr: false });
-const PieChart = dynamic(() => import("recharts").then((mod) => mod.PieChart), { ssr: false });
-const Pie = dynamic(() => import("recharts").then((mod) => mod.Pie as unknown as React.ComponentType<any>), { ssr: false });
-const Cell = dynamic(() => import("recharts").then((mod) => mod.Cell), { ssr: false });
-const Legend = dynamic(() => import("recharts").then((mod) => mod.Legend as React.ComponentType<any>), { ssr: false });
-const LineChart = dynamic(() => import("recharts").then((mod) => mod.LineChart), { ssr: false });
-const Line = dynamic(() => import("recharts").then((mod) => mod.Line as unknown as React.ComponentType<any>), { ssr: false });
+// Dynamically import individual Recharts components with 'as any' to resolve type conflicts
+const ResponsiveContainer = dynamic(() => import("recharts").then((mod) => mod.ResponsiveContainer as any), { ssr: false });
+const BarChart = dynamic(() => import("recharts").then((mod) => mod.BarChart as any), { ssr: false });
+const Bar = dynamic(() => import("recharts").then((mod) => mod.Bar as any), { ssr: false });
+const XAxis = dynamic(() => import("recharts").then((mod) => mod.XAxis as any), { ssr: false });
+const YAxis = dynamic(() => import("recharts").then((mod) => mod.YAxis as any), { ssr: false });
+const CartesianGrid = dynamic(() => import("recharts").then((mod) => mod.CartesianGrid as any), { ssr: false });
+const Tooltip = dynamic(() => import("recharts").then((mod) => mod.Tooltip as any), { ssr: false });
+const Legend = dynamic(() => import("recharts").then((mod) => mod.Legend as any), { ssr: false });
+const PieChart = dynamic(() => import("recharts").then((mod) => mod.PieChart as any), { ssr: false });
+const Pie = dynamic(() => import("recharts").then((mod) => mod.Pie as any), { ssr: false });
+const Cell = dynamic(() => import("recharts").then((mod) => mod.Cell as any), { ssr: false });
+const LineChart = dynamic(() => import("recharts").then((mod) => mod.LineChart as any), { ssr: false });
+const Line = dynamic(() => import("recharts").then((mod) => mod.Line as any), { ssr: false });
+
 
 interface StatisticsClientContentProps {
   articlesPerYearData: ArticlesPerYearData[];
@@ -46,6 +47,29 @@ export function StatisticsClientContent({ articlesPerYearData, acceptanceRateDat
     percent: totalAcceptedRejected > 0 ? item.count / totalAcceptedRejected : 0,
   }));
 
+  // Helper function to render chart content
+  const renderChart = (data: any[], ChartComponent: React.ComponentType<any>, chartProps: any, children: React.ReactNode, noDataMessage: string) => {
+    if (!mounted) {
+      return (
+        <div className="flex items-center justify-center h-full">
+          <Loader2 className="h-6 w-6 animate-spin text-primary" />
+          <p className="ml-2 text-sm text-muted-foreground">Memuat grafik...</p>
+        </div>
+      );
+    }
+    if (data.length === 0) {
+      return <p className="text-center text-muted-foreground p-4">{noDataMessage}</p>;
+    }
+    return (
+      <ResponsiveContainer width="100%" height="100%">
+        <ChartComponent data={data} {...chartProps}>
+          <CartesianGrid strokeDasharray="3 3" />
+          {children}
+        </ChartComponent>
+      </ResponsiveContainer>
+    );
+  };
+
   return (
     <>
       <p>
@@ -59,24 +83,18 @@ export function StatisticsClientContent({ articlesPerYearData, acceptanceRateDat
             <CardTitle className="text-xl font-semibold">Artikel Diterbitkan per Tahun</CardTitle>
           </CardHeader>
           <CardContent className="h-[300px]">
-            {!mounted ? (
-              <div className="flex items-center justify-center h-full">
-                <Loader2 className="h-6 w-6 animate-spin text-primary" />
-                <p className="ml-2 text-sm text-muted-foreground">Memuat grafik...</p>
-              </div>
-            ) : articlesPerYearData.length > 0 ? (
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={articlesPerYearData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="year" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="articles" fill="hsl(var(--primary))" name="Jumlah Artikel" />
-                </BarChart>
-              </ResponsiveContainer>
-            ) : (
-              <p className="text-center text-muted-foreground p-4">Data artikel per tahun tidak tersedia.</p>
+            {renderChart(
+              articlesPerYearData,
+              BarChart,
+              { margin: { top: 20, right: 30, left: 20, bottom: 5 } },
+              <>
+                <XAxis dataKey="year" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="articles" fill="hsl(var(--primary))" name="Jumlah Artikel" />
+              </>,
+              "Data artikel per tahun tidak tersedia."
             )}
           </CardContent>
         </Card>
@@ -87,35 +105,30 @@ export function StatisticsClientContent({ articlesPerYearData, acceptanceRateDat
             <CardTitle className="text-xl font-semibold">Tingkat Penerimaan Artikel</CardTitle>
           </CardHeader>
           <CardContent className="h-[300px] flex items-center justify-center">
-            {!mounted ? (
-              <div className="flex items-center justify-center h-full">
-                <Loader2 className="h-6 w-6 animate-spin text-primary" />
-                <p className="ml-2 text-sm text-muted-foreground">Memuat grafik...</p>
-              </div>
-            ) : pieChartData.length > 0 ? (
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={pieChartData}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={true}
-                    outerRadius={100}
-                    fill="#8884d8"
-                    dataKey="value"
-                    nameKey="name"
-                    label={({ name, percent }: { name: string; percent: number }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                  >
-                    {pieChartData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                  <Legend />
-                </PieChart>
-              </ResponsiveContainer>
-            ) : (
-              <p className="text-center text-muted-foreground p-4">Data tingkat penerimaan tidak tersedia.</p>
+            {renderChart(
+              pieChartData,
+              PieChart,
+              {},
+              <>
+                <Pie
+                  data={pieChartData}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={true}
+                  outerRadius={100}
+                  fill="#8884d8"
+                  dataKey="value"
+                  nameKey="name"
+                  label={({ name, percent }: { name: string; percent: number }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                >
+                  {pieChartData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+                <Tooltip />
+                <Legend />
+              </>,
+              "Data tingkat penerimaan tidak tersedia."
             )}
           </CardContent>
         </Card>
@@ -126,24 +139,18 @@ export function StatisticsClientContent({ articlesPerYearData, acceptanceRateDat
             <CardTitle className="text-xl font-semibold">Total Sitasi (Google Scholar)</CardTitle>
           </CardHeader>
           <CardContent className="h-[300px]">
-            {!mounted ? (
-              <div className="flex items-center justify-center h-full">
-                <Loader2 className="h-6 w-6 animate-spin text-primary" />
-                <p className="ml-2 text-sm text-muted-foreground">Memuat grafik...</p>
-              </div>
-            ) : totalCitationsData.length > 0 ? (
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={totalCitationsData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Line type="monotone" dataKey="citations" stroke="hsl(var(--chart-1))" activeDot={{ r: 8 }} name="Jumlah Sitasi" />
-                </LineChart>
-              </ResponsiveContainer>
-            ) : (
-              <p className="text-center text-muted-foreground p-4">Data sitasi tidak tersedia.</p>
+            {renderChart(
+              totalCitationsData,
+              LineChart,
+              { margin: { top: 5, right: 30, left: 20, bottom: 5 } },
+              <>
+                <XAxis dataKey="month" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Line type="monotone" dataKey="citations" stroke="hsl(var(--chart-1))" activeDot={{ r: 8 }} name="Jumlah Sitasi" />
+              </>,
+              "Data sitasi tidak tersedia."
             )}
           </CardContent>
         </Card>
