@@ -63,7 +63,7 @@
     --popover-foreground: 210 40% 98%;
 
     --primary: 217.2 91.2% 59.8%; /* A vibrant blue for contrast */
-    --primary-foreground: 222.2 47.4% 11.2%; /* Dark foreground for text on primary */
+    --primary-foreground: 0 0% 98%; /* Corrected: Light foreground for text on primary in dark mode */
 
     --secondary: 217.2 32.6% 17.5%; /* Darker grey-blue */
     --secondary-foreground: 210 40% 98%;
