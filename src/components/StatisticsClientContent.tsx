@@ -8,21 +8,21 @@ import { Loader2 } from "lucide-react";
 // Import interfaces for data
 import { ArticlesPerYearData, AcceptanceRateData, CitationData } from "@/lib/statistics";
 
-// Dynamically import individual Recharts components and cast them to 'any'
-// to bypass strict type checking issues with Recharts' defaultProps.
-const ResponsiveContainer = dynamic(() => import("recharts").then((mod) => mod.ResponsiveContainer as any), { ssr: false }) as any;
-const BarChart = dynamic(() => import("recharts").then((mod) => mod.BarChart as any), { ssr: false }) as any;
-const Bar = dynamic(() => import("recharts").then((mod) => mod.Bar as any), { ssr: false }) as any;
-const XAxis = dynamic(() => import("recharts").then((mod) => mod.XAxis as any), { ssr: false }) as any;
-const YAxis = dynamic(() => import("recharts").then((mod) => mod.YAxis as any), { ssr: false }) as any;
-const CartesianGrid = dynamic(() => import("recharts").then((mod) => mod.CartesianGrid as any), { ssr: false }) as any;
-const Tooltip = dynamic(() => import("recharts").then((mod) => mod.Tooltip as any), { ssr: false }) as any;
-const Legend = dynamic(() => import("recharts").then((mod) => mod.Legend as any), { ssr: false }) as any;
-const PieChart = dynamic(() => import("recharts").then((mod) => mod.PieChart as any), { ssr: false }) as any;
-const Pie = dynamic(() => import("recharts").then((mod) => mod.Pie as any), { ssr: false }) as any;
-const Cell = dynamic(() => import("recharts").then((mod) => mod.Cell as any), { ssr: false }) as any;
-const LineChart = dynamic(() => import("recharts").then((mod) => mod.LineChart as any), { ssr: false }) as any;
-const Line = dynamic(() => import("recharts").then((mod) => mod.Line as any), { ssr: false }) as any;
+// Dynamically import individual Recharts components and explicitly type them as React.ComponentType<any>
+// This helps bypass strict type checking issues with Recharts' defaultProps when used with next/dynamic.
+const ResponsiveContainer: React.ComponentType<any> = dynamic(() => import("recharts").then((mod) => mod.ResponsiveContainer), { ssr: false });
+const BarChart: React.ComponentType<any> = dynamic(() => import("recharts").then((mod) => mod.BarChart), { ssr: false });
+const Bar: React.ComponentType<any> = dynamic(() => import("recharts").then((mod) => mod.Bar), { ssr: false });
+const XAxis: React.ComponentType<any> = dynamic(() => import("recharts").then((mod) => mod.XAxis), { ssr: false });
+const YAxis: React.ComponentType<any> = dynamic(() => import("recharts").then((mod) => mod.YAxis), { ssr: false });
+const CartesianGrid: React.ComponentType<any> = dynamic(() => import("recharts").then((mod) => mod.CartesianGrid), { ssr: false });
+const Tooltip: React.ComponentType<any> = dynamic(() => import("recharts").then((mod) => mod.Tooltip), { ssr: false });
+const Legend: React.ComponentType<any> = dynamic(() => import("recharts").then((mod) => mod.Legend), { ssr: false });
+const PieChart: React.ComponentType<any> = dynamic(() => import("recharts").then((mod) => mod.PieChart), { ssr: false });
+const Pie: React.ComponentType<any> = dynamic(() => import("recharts").then((mod) => mod.Pie), { ssr: false });
+const Cell: React.ComponentType<any> = dynamic(() => import("recharts").then((mod) => mod.Cell), { ssr: false });
+const LineChart: React.ComponentType<any> = dynamic(() => import("recharts").then((mod) => mod.LineChart), { ssr: false });
+const Line: React.ComponentType<any> = dynamic(() => import("recharts").then((mod) => mod.Line), { ssr: false });
 
 
 interface StatisticsClientContentProps {
@@ -35,8 +35,18 @@ export function StatisticsClientContent({ articlesPerYearData, acceptanceRateDat
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    // Set mounted to true after the component has mounted on the client side.
+    // This ensures that Recharts components, which rely on DOM, only render client-side.
     setMounted(true);
-  }, []);
+
+    // --- Logging untuk debugging ---
+    console.log("StatisticsClientContent: Component mounted.");
+    console.log("StatisticsClientContent: articlesPerYearData received:", articlesPerYearData);
+    console.log("StatisticsClientContent: acceptanceRateData received:", acceptanceRateData);
+    console.log("StatisticsClientContent: totalCitationsData received:", totalCitationsData);
+    // --- Akhir logging ---
+
+  }, [articlesPerYearData, acceptanceRateData, totalCitationsData]); // Depend on data to re-log if it changes
 
   const COLORS = ["#0088FE", "#FF8042"]; // Warna untuk Pie Chart
 
@@ -47,10 +57,13 @@ export function StatisticsClientContent({ articlesPerYearData, acceptanceRateDat
     value: item.count,
     percent: totalAcceptedRejected > 0 ? item.count / totalAcceptedRejected : 0,
   }));
+  console.log("StatisticsClientContent: pieChartData calculated:", pieChartData);
+
 
   // Helper function to render chart content
   const renderChart = (data: any[], ChartComponent: React.ComponentType<any>, chartProps: any, children: React.ReactNode, noDataMessage: string) => {
     if (!mounted) {
+      // If not mounted yet (during initial server render or client hydration), show a loading indicator.
       return (
         <div className="flex items-center justify-center h-full">
           <Loader2 className="h-6 w-6 animate-spin text-primary" />
@@ -59,8 +72,12 @@ export function StatisticsClientContent({ articlesPerYearData, acceptanceRateDat
       );
     }
     if (data.length === 0) {
+      // If mounted but data is empty, show the no data message.
+      console.log(`StatisticsClientContent: No data for chart. Message: "${noDataMessage}"`);
       return <p className="text-center text-muted-foreground p-4">{noDataMessage}</p>;
     }
+    // If mounted and data exists, render the chart.
+    console.log(`StatisticsClientContent: Rendering chart with data:`, data);
     return (
       <ResponsiveContainer width="100%" height="100%">
         <ChartComponent data={data} {...chartProps}>
