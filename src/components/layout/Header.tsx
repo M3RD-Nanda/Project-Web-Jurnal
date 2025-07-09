@@ -50,13 +50,11 @@ export function Header() {
               className="rounded-full"
             />
             <div className="flex flex-col">
-              <span className="text-lg font-bold hidden md:block">JIMEKA</span>
-              {/* Shorter title for small screens, full title for larger screens */}
-              <span className="text-lg font-bold block md:hidden">Jurnal Ilmiah</span>
+              <span className="text-lg font-bold">JIMEKA</span> {/* Always show JIMEKA */}
               <span className="text-xs hidden sm:block">FAKULTAS EKONOMI DAN BISNIS UNIVERSITAS PERCOBAAN NANDA</span>
             </div>
           </Link>
-          <span className="text-sm ml-2 hidden md:block">E-ISSN: 2581-1002</span> {/* Adjusted ml */}
+          <span className="text-sm ml-2 hidden md:block">E-ISSN: 2581-1002</span>
         </div>
         {/* Right-aligned items for desktop and mobile */}
         <div className="flex items-center gap-2">

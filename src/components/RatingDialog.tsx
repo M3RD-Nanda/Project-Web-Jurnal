@@ -61,13 +61,18 @@ export function RatingDialog({ children }: RatingDialogProps) {
   };
 
   const onSubmit = async (values: RatingFormValues) => {
+    if (!session) {
+      toast.error("Anda harus login untuk memberi rating.");
+      return;
+    }
+
     if (stars === 0) {
       toast.error("Harap berikan rating bintang.");
       return;
     }
 
     setIsSubmitting(true);
-    const userId = session?.user?.id || null;
+    const userId = session.user.id; // userId is guaranteed to be present if session exists
     const { error } = await insertRating(stars, values.name || null, values.comment || null, userId);
 
     if (error) {
@@ -93,6 +98,11 @@ export function RatingDialog({ children }: RatingDialogProps) {
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4 py-4">
+            {!session && (
+              <p className="text-center text-sm text-muted-foreground bg-yellow-100 dark:bg-yellow-900/20 p-2 rounded-md">
+                Anda harus login untuk memberi rating.
+              </p>
+            )}
             <div className="flex items-center justify-center gap-1">
               {[1, 2, 3, 4, 5].map((starCount) => (
                 <Star
@@ -114,7 +124,7 @@ export function RatingDialog({ children }: RatingDialogProps) {
                 <FormItem>
                   <FormLabel>Nama Anda (Opsional)</FormLabel>
                   <FormControl>
-                    <Input placeholder="Anonim" {...field} />
+                    <Input placeholder="Anonim" {...field} disabled={!session} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -128,14 +138,14 @@ export function RatingDialog({ children }: RatingDialogProps) {
                 <FormItem>
                   <FormLabel>Komentar (Opsional)</FormLabel>
                   <FormControl>
-                    <Textarea placeholder="Tulis komentar Anda di sini..." className="resize-none" {...field} />
+                    <Textarea placeholder="Tulis komentar Anda di sini..." className="resize-none" {...field} disabled={!session} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            <Button type="submit" disabled={isSubmitting} className="w-full">
+            <Button type="submit" disabled={isSubmitting || !session} className="w-full">
               {isSubmitting ? "Mengirim..." : "Kirim Rating"}
             </Button>
           </form>

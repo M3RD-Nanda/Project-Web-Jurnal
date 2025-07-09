@@ -13,14 +13,14 @@ export async function insertRating(stars: number, name: string | null, comment: 
   const { data, error } = await supabase
     .from('ratings')
     .insert({ stars, name, comment, user_id: userId })
-    .select()
-    .single();
+    .select(); // Removed .single() to handle potential array return
 
   if (error) {
     console.error("Error inserting rating:", error);
     return { data: null, error: new Error(error.message) };
   }
-  return { data, error: null };
+  // If data is an array, return the first element, otherwise null
+  return { data: data ? (data[0] as Rating) : null, error: null };
 }
 
 export async function getAllRatings(): Promise<Rating[]> {
