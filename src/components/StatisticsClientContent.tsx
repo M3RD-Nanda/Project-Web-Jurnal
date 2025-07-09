@@ -7,20 +7,20 @@ import dynamic from "next/dynamic";
 // Import interfaces for data
 import { ArticlesPerYearData, AcceptanceRateData, CitationData } from "@/lib/statistics";
 
-// Dynamically import Recharts components and wrap them to resolve type issues
+// Dynamically import Recharts components and cast them as React.ComponentType<any> to resolve type issues
 const ResponsiveContainer = dynamic(() => import("recharts").then((mod) => mod.ResponsiveContainer), { ssr: false });
 const BarChart = dynamic(() => import("recharts").then((mod) => mod.BarChart), { ssr: false });
-const Bar = dynamic(() => import("recharts").then((mod) => { const Comp = mod.Bar; return (props: any) => <Comp {...props} />; }), { ssr: false });
-const XAxis = dynamic(() => import("recharts").then((mod) => { const Comp = mod.XAxis; return (props: any) => <Comp {...props} />; }), { ssr: false });
-const YAxis = dynamic(() => import("recharts").then((mod) => { const Comp = mod.YAxis; return (props: any) => <Comp {...props} />; }), { ssr: false });
+const Bar = dynamic(() => import("recharts").then((mod) => mod.Bar as unknown as React.ComponentType<any>), { ssr: false });
+const XAxis = dynamic(() => import("recharts").then((mod) => mod.XAxis as React.ComponentType<any>), { ssr: false });
+const YAxis = dynamic(() => import("recharts").then((mod) => mod.YAxis as React.ComponentType<any>), { ssr: false });
 const CartesianGrid = dynamic(() => import("recharts").then((mod) => mod.CartesianGrid), { ssr: false });
-const Tooltip = dynamic(() => import("recharts").then((mod) => { const Comp = mod.Tooltip; return (props: any) => <Comp {...props} />; }), { ssr: false });
+const Tooltip = dynamic(() => import("recharts").then((mod) => mod.Tooltip as unknown as React.ComponentType<any>), { ssr: false });
 const PieChart = dynamic(() => import("recharts").then((mod) => mod.PieChart), { ssr: false });
-const Pie = dynamic(() => import("recharts").then((mod) => { const Comp = mod.Pie; return (props: any) => <Comp {...props} />; }), { ssr: false });
+const Pie = dynamic(() => import("recharts").then((mod) => mod.Pie as unknown as React.ComponentType<any>), { ssr: false });
 const Cell = dynamic(() => import("recharts").then((mod) => mod.Cell), { ssr: false });
-const Legend = dynamic(() => import("recharts").then((mod) => { const Comp = mod.Legend; return (props: any) => <Comp {...props} />; }), { ssr: false });
+const Legend = dynamic(() => import("recharts").then((mod) => mod.Legend as React.ComponentType<any>), { ssr: false });
 const LineChart = dynamic(() => import("recharts").then((mod) => mod.LineChart), { ssr: false });
-const Line = dynamic(() => import("recharts").then((mod) => { const Comp = mod.Line; return (props: any) => <Comp {...props} />; }), { ssr: false });
+const Line = dynamic(() => import("recharts").then((mod) => mod.Line as unknown as React.ComponentType<any>), { ssr: false });
 
 interface StatisticsClientContentProps {
   articlesPerYearData: ArticlesPerYearData[];
