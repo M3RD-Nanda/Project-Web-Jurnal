@@ -1,4 +1,4 @@
-import { supabase } from "@/integrations/supabase/client";
+import { supabaseAdmin } from "@/integrations/supabase/server"; // Menggunakan supabaseAdmin
 
 export interface ArticlesPerYearData {
   year: number;
@@ -17,7 +17,7 @@ export interface CitationData {
 }
 
 export async function getArticlesPerYear(): Promise<ArticlesPerYearData[]> {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin // Menggunakan supabaseAdmin
     .from('articles_per_year')
     .select('*')
     .order('year', { ascending: true });
@@ -30,7 +30,7 @@ export async function getArticlesPerYear(): Promise<ArticlesPerYearData[]> {
 }
 
 export async function getAcceptanceRates(): Promise<AcceptanceRateData[]> {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin // Menggunakan supabaseAdmin
     .from('acceptance_rates')
     .select('*');
 
@@ -42,7 +42,7 @@ export async function getAcceptanceRates(): Promise<AcceptanceRateData[]> {
 }
 
 export async function getCitations(): Promise<CitationData[]> {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin // Menggunakan supabaseAdmin
     .from('citations')
     .select('*')
     .order('id', { ascending: true }); // Assuming 'id' or a specific order column for months
