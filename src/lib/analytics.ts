@@ -22,8 +22,11 @@ export async function getDailyVisits(days: number = 7): Promise<DailyVisitData[]
     return [];
   }
 
+  // Memastikan 'data' adalah array sebelum menggunakan forEach
+  const visits = data || []; 
+
   const dailyCounts: { [key: string]: number } = {};
-  data.forEach(visit => {
+  visits.forEach(visit => {
     const dateKey = format(new Date(visit.visited_at), 'yyyy-MM-dd');
     dailyCounts[dateKey] = (dailyCounts[dateKey] || 0) + 1;
   });
