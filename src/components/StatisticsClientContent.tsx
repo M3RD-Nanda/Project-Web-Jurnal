@@ -77,7 +77,7 @@ export function StatisticsClientContent({ articlesPerYearData, acceptanceRateDat
                   data={pieChartData}
                   cx="50%"
                   cy="50%"
-                  labelLine={false}
+                  labelLine={true} // Mengubah ini menjadi true
                   outerRadius={100}
                   fill="#8884d8"
                   dataKey="value"
