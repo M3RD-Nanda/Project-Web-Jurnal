@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { ThemeProvider } from "next-themes"; // Import ThemeProvider directly from next-themes
 import { Toaster } from "@/components/ui/sonner";
 import { MadeWithDyad } from "@/components/made-with-dyad";
 import { SessionProvider } from "@/components/SessionProvider";
@@ -12,7 +13,6 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
 import { recordPageVisit } from "@/actions/analytics";
 import { headers } from "next/headers";
-import { ClientThemeProviderWrapper } from "@/components/ClientThemeProviderWrapper"; // Import the new client wrapper
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -44,7 +44,7 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ClientThemeProviderWrapper
+        <ThemeProvider
           attribute="class"
           defaultTheme="light"
           enableSystem
@@ -62,7 +62,7 @@ export default async function RootLayout({
               <Footer />
             </div>
           </SessionProvider>
-        </ClientThemeProviderWrapper>
+        </ThemeProvider>
         <Toaster />
         <MadeWithDyad />
         <SpeedInsights />
