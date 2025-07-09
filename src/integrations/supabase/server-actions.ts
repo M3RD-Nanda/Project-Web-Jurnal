@@ -26,7 +26,7 @@ export function createSupabaseServerClient() {
         },
         async remove(name: string, options: CookieOptions) {
           try {
-            (await cookieStore).set({ name, value: '', ...options });
+            (await cookieStore).delete({ name, ...options }); // Memperbaiki pemanggilan delete
           } catch (error) {
             console.warn('Could not remove cookie from server client:', error);
           }
