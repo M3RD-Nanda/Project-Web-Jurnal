@@ -9,6 +9,7 @@ import React from "react";
 import { Header } from "@/components/layout/Header"; // Import Header
 import { Footer } from "@/components/layout/Footer"; // Import Footer
 import { Sidebar } from "@/components/layout/Sidebar"; // Import Sidebar
+import { SpeedInsights } from "@vercel/speed-insights/next"; // Import SpeedInsights
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -56,6 +57,7 @@ export default function RootLayout({
             </SessionProvider>
             <Toaster />
             <MadeWithDyad />
+            <SpeedInsights /> {/* Add SpeedInsights component here */}
           </React.Fragment>
         </ThemeProvider>
       </body>
