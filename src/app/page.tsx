@@ -5,6 +5,6 @@ export default async function Home() {
   const latestArticles: Article[] = await getAllArticles(); // Mengambil artikel dari Supabase
 
   return (
-    <JournalContent initialArticles={latestArticles.slice(0, 3)} /> {/* Meneruskan artikel ke JournalContent */}
+    <JournalContent initialArticles={latestArticles.slice(0, 3)} />
   );
 }
