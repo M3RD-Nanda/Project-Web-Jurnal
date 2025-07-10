@@ -44,8 +44,8 @@ export function Header() {
   return (
     <header className="bg-primary text-primary-foreground p-4 shadow-md sticky top-0 z-50 w-full">
       <div className="container mx-auto flex items-center justify-between">
-        {/* Left side: MobileNav and Logo/Journal Info + E-ISSN */}
-        <div className="flex items-center gap-4"> {/* This div contains MobileNav, Logo, and E-ISSN */}
+        {/* Left side: MobileNav, Logo, Journal Info */}
+        <div className="flex items-center gap-4">
           <MobileNav />
           <Link href="/" className="flex items-center gap-2">
             <Image
@@ -57,17 +57,19 @@ export function Header() {
             />
             <div className="flex flex-col">
               <span className="text-lg font-bold">JIMEKA</span>
-              <span className="text-[0.6rem] leading-tight sm:text-xs">FAKULTAS EKONOMI DAN BISNIS UNIVERSITAS PERCOBAAN NANDA</span>
+              {/* Added whitespace-nowrap to prevent text from wrapping */}
+              <span className="text-[0.6rem] leading-tight sm:text-xs whitespace-nowrap">FAKULTAS EKONOMI DAN BISNIS UNIVERSITAS PERCOBAAN NANDA</span>
             </div>
           </Link>
-          {/* E-ISSN (Desktop only, close to logo) */}
-          <span className="hidden md:block text-[0.6rem] sm:text-xs text-primary-foreground/80 ml-4">E-ISSN: 2581-1002</span> {/* Added ml-4 for separation from logo text */}
         </div>
 
-        {/* Right side: Desktop Nav, User Actions, Mode Toggle */}
-        <div className="hidden md:flex items-center gap-x-6 ml-auto"> {/* ml-auto pushes this group to the far right */}
+        {/* Right side: E-ISSN, Desktop Nav, User Actions, Mode Toggle */}
+        <div className="hidden md:flex items-center gap-x-4"> {/* Main right container with spacing */}
+          {/* E-ISSN */}
+          <span className="text-[0.6rem] sm:text-xs text-primary-foreground/80">E-ISSN: 2581-1002</span>
+
           {/* Desktop Main Navigation */}
-          <nav className="flex items-center gap-x-4">
+          <nav className="flex items-center gap-x-2"> {/* Tighter spacing for nav items */}
             {desktopNavItems.map((item) => (
               <Button
                 key={item.name}
@@ -83,7 +85,7 @@ export function Header() {
           </nav>
 
           {/* Desktop User/Auth Actions */}
-          <div className="flex items-center gap-x-4">
+          <div className="flex items-center gap-x-2"> {/* Tighter spacing for auth buttons */}
             {session ? (
               <>
                 <Button
