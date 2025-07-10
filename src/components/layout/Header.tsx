@@ -60,7 +60,7 @@ export function Header() {
                 <span className="text-base font-bold">JIMEKA</span>
                 <span className="text-[7px] leading-tight text-primary-foreground/80 whitespace-nowrap">E-ISSN: 2581-1002</span> {/* Removed mt-1 */}
               </div>
-              <span className="text-[8px] md:text-[10px] leading-tight whitespace-nowrap">FAKULTAS EKONOMI DAN BISNIS UNIVERSITAS PERCOBAAN NANDA</span> {/* Adjusted font size for mobile */}
+              <span className="text-[7px] md:text-[10px] leading-tight whitespace-nowrap">FAKULTAS EKONOMI DAN BISNIS UNIVERSITAS PERCOBAAN NANDA</span> {/* Adjusted font size for mobile */}
             </div>
           </Link>
         </div>
