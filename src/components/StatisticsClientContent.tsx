@@ -35,17 +35,24 @@ export function StatisticsClientContent({ articlesPerYearData, acceptanceRateDat
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    // Add a small delay to ensure the DOM is fully hydrated and dimensions are calculated
     const timer = setTimeout(() => {
       setMounted(true);
-    }, 100); // 100ms delay
+    }, 100);
 
-    return () => clearTimeout(timer); // Cleanup the timer
+    return () => clearTimeout(timer);
   }, []);
 
-  const COLORS = ["#0088FE", "#FF8042"]; // Warna untuk Pie Chart
+  // Use theme-aware colors for consistency
+  // These colors are defined in globals.css and should adapt to light/dark mode
+  const BAR_FILL_COLOR = "hsl(var(--primary))";
+  const LINE_STROKE_COLOR = "hsl(var(--chart-1))";
+  const PIE_COLOR_1 = "hsl(var(--chart-2))"; // Using chart-2 for first pie slice
+  const PIE_COLOR_2 = "hsl(var(--chart-3))"; // Using chart-3 for second pie slice
+  const GRID_STROKE_COLOR = "hsl(var(--border))"; // Use border color for grid
+  const AXIS_STROKE_COLOR = "hsl(var(--foreground))"; // Use foreground color for axis text/lines
 
-  // Calculate percentage for Pie Chart
+  const PIE_COLORS = [PIE_COLOR_1, PIE_COLOR_2]; // Use HSL variables for Pie Chart
+
   const totalAcceptedRejected = acceptanceRateData.reduce((sum, item) => sum + item.count, 0);
   const pieChartData = acceptanceRateData.map(item => ({
     name: item.status,
@@ -69,12 +76,12 @@ export function StatisticsClientContent({ articlesPerYearData, acceptanceRateDat
             <ResponsiveContainer width="100%" height="100%">
               {mounted && articlesPerYearData.length > 0 ? (
                 <BarChart data={articlesPerYearData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="year" />
-                  <YAxis />
+                  <CartesianGrid strokeDasharray="3 3" stroke={GRID_STROKE_COLOR} />
+                  <XAxis dataKey="year" stroke={AXIS_STROKE_COLOR} tick={{ fill: AXIS_STROKE_COLOR }} />
+                  <YAxis stroke={AXIS_STROKE_COLOR} tick={{ fill: AXIS_STROKE_COLOR }} />
                   <Tooltip />
                   <Legend />
-                  <Bar dataKey="articles" fill="hsl(var(--primary))" name="Jumlah Artikel" />
+                  <Bar dataKey="articles" fill={BAR_FILL_COLOR} name="Jumlah Artikel" />
                 </BarChart>
               ) : mounted ? (
                 <p className="text-center text-muted-foreground p-4 h-full flex items-center justify-center">Data artikel per tahun tidak tersedia.</p>
@@ -103,13 +110,13 @@ export function StatisticsClientContent({ articlesPerYearData, acceptanceRateDat
                     cy="50%"
                     labelLine={true}
                     outerRadius={100}
-                    fill="#8884d8"
+                    // fill="#8884d8" // This fill is for the whole pie, but cells override it
                     dataKey="value"
                     nameKey="name"
                     label={({ name, percent }: { name: string; percent: number }) => `${name}: ${(percent * 100).toFixed(0)}%`}
                   >
                     {pieChartData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                      <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
                     ))}
                   </Pie>
                   <Tooltip />
@@ -136,12 +143,12 @@ export function StatisticsClientContent({ articlesPerYearData, acceptanceRateDat
             <ResponsiveContainer width="100%" height="100%">
               {mounted && totalCitationsData.length > 0 ? (
                 <LineChart data={totalCitationsData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="month" />
-                  <YAxis />
+                  <CartesianGrid strokeDasharray="3 3" stroke={GRID_STROKE_COLOR} />
+                  <XAxis dataKey="month" stroke={AXIS_STROKE_COLOR} tick={{ fill: AXIS_STROKE_COLOR }} />
+                  <YAxis stroke={AXIS_STROKE_COLOR} tick={{ fill: AXIS_STROKE_COLOR }} />
                   <Tooltip />
                   <Legend />
-                  <Line type="monotone" dataKey="citations" stroke="hsl(var(--chart-1))" activeDot={{ r: 8 }} name="Jumlah Sitasi" />
+                  <Line type="monotone" dataKey="citations" stroke={LINE_STROKE_COLOR} activeDot={{ r: 8 }} name="Jumlah Sitasi" />
                 </LineChart>
               ) : mounted ? (
                 <p className="text-center text-muted-foreground p-4 h-full flex items-center justify-center">Data sitasi tidak tersedia.</p>
