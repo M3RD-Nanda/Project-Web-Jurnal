@@ -29,6 +29,7 @@ interface UserProfile {
   is_reader: boolean;
   is_author: boolean;
   profile_image_url: string | null;
+  wallet_address: string | null;
 }
 
 interface SupabaseContextType {
@@ -37,14 +38,19 @@ interface SupabaseContextType {
   profile: UserProfile | null;
 }
 
-const SupabaseContext = createContext<SupabaseContextType | undefined>(undefined);
+const SupabaseContext = createContext<SupabaseContextType | undefined>(
+  undefined
+);
 
 interface SessionProviderProps {
   children: React.ReactNode;
   initialSession: Session | null; // Add initialSession prop
 }
 
-export function SessionProvider({ children, initialSession }: SessionProviderProps) {
+export function SessionProvider({
+  children,
+  initialSession,
+}: SessionProviderProps) {
   const [session, setSession] = useState<Session | null>(initialSession);
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const router = useRouter();
@@ -53,12 +59,13 @@ export function SessionProvider({ children, initialSession }: SessionProviderPro
   const fetchProfile = async (currentSession: Session | null) => {
     if (currentSession) {
       const { data: profileData, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', currentSession.user.id)
+        .from("profiles")
+        .select("*")
+        .eq("id", currentSession.user.id)
         .single();
 
-      if (error && error.code !== 'PGRST116') { // PGRST116 means no rows found
+      if (error && error.code !== "PGRST116") {
+        // PGRST116 means no rows found
         console.error("Error fetching profile:", error);
         setProfile(null);
       } else if (profileData) {
@@ -77,16 +84,18 @@ export function SessionProvider({ children, initialSession }: SessionProviderPro
   }, [initialSession]);
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, currentSession) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, currentSession) => {
       setSession(currentSession);
       await fetchProfile(currentSession); // Fetch profile on auth state change
 
       if (currentSession) {
-        if (event === 'SIGNED_IN' || event === 'USER_UPDATED') {
+        if (event === "SIGNED_IN" || event === "USER_UPDATED") {
           toast.success("Anda berhasil masuk!");
           router.push("/"); // Redirect ke halaman utama setelah login
         }
-      } else if (event === 'SIGNED_OUT') {
+      } else if (event === "SIGNED_OUT") {
         toast.info("Anda telah keluar.");
         router.push("/login"); // Redirect ke halaman login setelah logout
       }

@@ -5,6 +5,7 @@ import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/sonner";
 import { MadeWithDyad } from "@/components/made-with-dyad";
 import { SessionProvider } from "@/components/SessionProvider";
+import { Web3Provider } from "@/components/Web3Provider";
 import React from "react";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -55,6 +56,18 @@ export default async function RootLayout({
     data: { session: initialSession },
   } = await supabase.auth.getSession();
 
+  // Add polyfill for indexedDB on server-side
+  if (typeof globalThis.indexedDB === "undefined") {
+    globalThis.indexedDB = {
+      open: () =>
+        Promise.reject(new Error("IndexedDB not available on server")),
+      deleteDatabase: () =>
+        Promise.reject(new Error("IndexedDB not available on server")),
+      databases: () =>
+        Promise.reject(new Error("IndexedDB not available on server")),
+    } as any;
+  }
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body
@@ -67,17 +80,19 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          {/* Pass initialSession to SessionProvider */}
-          <SessionProvider initialSession={initialSession}>
-            <div className="min-h-screen flex flex-col">
-              <Header />
-              <div className="flex flex-1 flex-col md:flex-row">
-                <Sidebar />
-                <main className="flex-1">{children}</main>
+          <Web3Provider>
+            {/* Pass initialSession to SessionProvider */}
+            <SessionProvider initialSession={initialSession}>
+              <div className="min-h-screen flex flex-col">
+                <Header />
+                <div className="flex flex-1 flex-col md:flex-row">
+                  <Sidebar />
+                  <main className="flex-1">{children}</main>
+                </div>
+                <Footer />
               </div>
-              <Footer />
-            </div>
-          </SessionProvider>
+            </SessionProvider>
+          </Web3Provider>
         </ThemeProvider>
         <Toaster />
         <MadeWithDyad />
