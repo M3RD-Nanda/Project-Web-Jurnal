@@ -17,7 +17,7 @@ export function Footer() {
   ];
 
   return (
-    <footer className="bg-primary text-primary-foreground p-6 shadow-inner mt-8">
+    <footer className="bg-primary text-primary-foreground p-4 shadow-inner mt-8">
       <div className="container mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
         <div className="flex flex-col">
           <p className="text-sm">
@@ -28,12 +28,12 @@ export function Footer() {
             Diterbitkan oleh Universitas Percobaan Nanda.
           </p>
         </div>
-        <nav className="flex flex-wrap justify-center md:justify-end gap-4 mt-4 md:mt-0">
+        <nav className="flex flex-wrap justify-center md:justify-end gap-2 md:gap-4 mt-4 md:mt-0">
           {footerNavItems.map((item) => (
             <Link
               key={item.name}
               href={item.href}
-              className="text-sm hover:underline opacity-90"
+              className="text-xs md:text-sm hover:underline opacity-90"
             >
               {item.name}
             </Link>

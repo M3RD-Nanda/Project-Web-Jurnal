@@ -54,7 +54,7 @@ function RainbowKitThemeProvider({ children }: { children: React.ReactNode }) {
   });
 
   const customDarkTheme = darkTheme({
-    accentColor: "hsl(217.2, 91.2%, 59.8%)", // Primary color for dark mode
+    accentColor: "hsl(217.2, 65%, 45%)", // Updated to match new softer primary color for dark mode
     accentColorForeground: "hsl(0, 0%, 98%)",
     borderRadius: "medium",
     fontStack: "system",

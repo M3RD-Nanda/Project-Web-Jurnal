@@ -51,12 +51,19 @@ export function Header() {
             <div className="flex flex-col min-w-0">
               <div className="flex justify-between items-baseline gap-2">
                 <span className="text-sm font-bold text-white">JIMEKA</span>
-                <span className="text-[8px] leading-tight text-primary-foreground/80 whitespace-nowrap">
+                <span className="text-[10px] md:text-[11px] leading-tight text-primary-foreground/80 whitespace-nowrap">
                   E-ISSN: 2581-1002
                 </span>
               </div>
-              <span className="text-[8px] md:text-[9px] leading-tight text-primary-foreground/90 truncate">
-                FAKULTAS EKONOMI DAN BISNIS UNIVERSITAS PERCOBAAN NANDA
+              <span className="text-[10px] md:text-[11px] leading-tight text-primary-foreground/90">
+                <span className="block md:hidden">
+                  FAKULTAS EKONOMI DAN BISNIS
+                  <br />
+                  UNIVERSITAS PERCOBAAN NANDA
+                </span>
+                <span className="hidden md:block truncate">
+                  FAKULTAS EKONOMI DAN BISNIS UNIVERSITAS PERCOBAAN NANDA
+                </span>
               </span>
             </div>
           </Link>
