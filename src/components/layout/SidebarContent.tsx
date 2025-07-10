@@ -10,15 +10,59 @@ import { usePathname } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { toast } from "sonner";
-import { VisitorChart } from "@/components/VisitorChart";
+import dynamic from "next/dynamic";
+
+// Dynamically import VisitorChart with SSR disabled and fallback
+const VisitorChart = dynamic(
+  () =>
+    import("@/components/VisitorChart")
+      .then((mod) => ({
+        default: mod.VisitorChart,
+      }))
+      .catch(() =>
+        // Fallback to simple chart if main chart fails to load
+        import("@/components/VisitorChartSimple").then((mod) => ({
+          default: mod.VisitorChartSimple,
+        }))
+      ),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="bg-sidebar-accent text-sidebar-accent-foreground border-sidebar-border shadow-none rounded-lg border p-4">
+        <div className="pb-2">
+          <h3 className="text-sm font-semibold text-sidebar-primary">
+            VISITORS (Mingguan)
+          </h3>
+        </div>
+        <div className="h-[150px] p-2 flex items-center justify-center">
+          <div className="flex items-center">
+            <div className="h-4 w-4 animate-spin rounded-full border-2 border-sidebar-primary border-t-transparent"></div>
+            <p className="ml-2 text-sm text-sidebar-foreground">
+              Memuat grafik...
+            </p>
+          </div>
+        </div>
+      </div>
+    ),
+  }
+);
 import { useSupabase } from "@/components/SessionProvider";
 import { RatingDialog } from "@/components/RatingDialog";
 
 const sidebarLoginFormSchema = z.object({
   username: z.string().min(1, { message: "Nama pengguna tidak boleh kosong." }),
-  password: z.string().min(6, { message: "Kata sandi harus minimal 6 karakter." }),
+  password: z
+    .string()
+    .min(6, { message: "Kata sandi harus minimal 6 karakter." }),
 });
 
 const sidebarNavItems = [
@@ -67,7 +111,9 @@ export function SidebarContent({ onLinkClick }: SidebarContentProps) {
       console.error("Logout error (Sidebar):", error);
       toast.error(`Gagal logout: ${error.message}`);
     } else {
-      console.log("Logout successful (Sidebar), SessionProvider should handle redirect.");
+      console.log(
+        "Logout successful (Sidebar), SessionProvider should handle redirect."
+      );
     }
   };
 
@@ -76,69 +122,95 @@ export function SidebarContent({ onLinkClick }: SidebarContentProps) {
       {session ? (
         <Card className="bg-sidebar-accent text-sidebar-accent-foreground border-sidebar-border shadow-none">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-semibold text-sidebar-primary">SELAMAT DATANG</CardTitle>
+            <CardTitle className="text-sm font-semibold text-sidebar-primary">
+              SELAMAT DATANG
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            <p className="text-base">Halo, {profile?.first_name || session.user?.email?.split('@')[0] || "Pengguna"}!</p>
+            <p className="text-base">
+              Halo,{" "}
+              {profile?.first_name ||
+                session.user?.email?.split("@")[0] ||
+                "Pengguna"}
+              !
+            </p>
             <Button
               asChild
               className="w-full bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
             >
-              <Link href="/profile" onClick={onLinkClick}>Edit Profil</Link>
+              <Link href="/profile" onClick={onLinkClick}>
+                Edit Profil
+              </Link>
             </Button>
-            {profile?.role === 'admin' && (
+            {profile?.role === "admin" && (
               <>
                 <Button
                   asChild
                   className="w-full bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
                 >
-                  <Link href="/admin" onClick={onLinkClick}>Admin Dashboard</Link>
+                  <Link href="/admin" onClick={onLinkClick}>
+                    Admin Dashboard
+                  </Link>
                 </Button>
                 <div className="border-t border-sidebar-border pt-3 mt-3 space-y-2">
-                  <p className="text-xs font-semibold text-muted-foreground">ADMIN MENU</p>
+                  <p className="text-xs font-semibold text-muted-foreground">
+                    ADMIN MENU
+                  </p>
                   <Button
                     asChild
                     variant="ghost"
-                    className={`w-full justify-start text-left transition-colors duration-200 text-xs ${ // Changed text-sm to text-xs
+                    className={`w-full justify-start text-left transition-colors duration-200 text-xs ${
+                      // Changed text-sm to text-xs
                       pathname === "/admin/announcements"
                         ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
                         : "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                     }`}
                   >
-                    <Link href="/admin/announcements" onClick={onLinkClick}>Kelola Pengumuman</Link>
+                    <Link href="/admin/announcements" onClick={onLinkClick}>
+                      Kelola Pengumuman
+                    </Link>
                   </Button>
                   <Button
                     asChild
                     variant="ghost"
-                    className={`w-full justify-start text-left transition-colors duration-200 text-xs ${ // Changed text-sm to text-xs
+                    className={`w-full justify-start text-left transition-colors duration-200 text-xs ${
+                      // Changed text-sm to text-xs
                       pathname === "/admin/articles"
                         ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
                         : "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                     }`}
                   >
-                    <Link href="/admin/articles" onClick={onLinkClick}>Kelola Artikel</Link>
+                    <Link href="/admin/articles" onClick={onLinkClick}>
+                      Kelola Artikel
+                    </Link>
                   </Button>
                   <Button
                     asChild
                     variant="ghost"
-                    className={`w-full justify-start text-left transition-colors duration-200 text-xs ${ // Changed text-sm to text-xs
+                    className={`w-full justify-start text-left transition-colors duration-200 text-xs ${
+                      // Changed text-sm to text-xs
                       pathname === "/admin/issues"
                         ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
                         : "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                     }`}
                   >
-                    <Link href="/admin/issues" onClick={onLinkClick}>Kelola Edisi</Link>
+                    <Link href="/admin/issues" onClick={onLinkClick}>
+                      Kelola Edisi
+                    </Link>
                   </Button>
                   <Button
                     asChild
                     variant="ghost"
-                    className={`w-full justify-start text-left transition-colors duration-200 text-xs ${ // Changed text-sm to text-xs
+                    className={`w-full justify-start text-left transition-colors duration-200 text-xs ${
+                      // Changed text-sm to text-xs
                       pathname === "/admin/users"
                         ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
                         : "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                     }`}
                   >
-                    <Link href="/admin/users" onClick={onLinkClick}>Kelola Pengguna</Link>
+                    <Link href="/admin/users" onClick={onLinkClick}>
+                      Kelola Pengguna
+                    </Link>
                   </Button>
                 </div>
               </>
@@ -154,15 +226,30 @@ export function SidebarContent({ onLinkClick }: SidebarContentProps) {
       ) : (
         <Card className="bg-sidebar-accent text-sidebar-accent-foreground border-sidebar-border shadow-none">
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-semibold text-sidebar-primary">USER</CardTitle>
+            <CardTitle className="text-sm font-semibold text-sidebar-primary">
+              USER
+            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-3">
-            <p className="text-sm text-muted-foreground mb-3">Silakan login untuk mengakses fitur lebih lanjut.</p>
-            <Button asChild className="w-full bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90">
-              <Link href="/login" onClick={onLinkClick}>Login</Link>
+            <p className="text-sm text-muted-foreground mb-3">
+              Silakan login untuk mengakses fitur lebih lanjut.
+            </p>
+            <Button
+              asChild
+              className="w-full bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
+            >
+              <Link href="/login" onClick={onLinkClick}>
+                Login
+              </Link>
             </Button>
-            <Button asChild variant="outline" className="w-full border-sidebar-primary text-sidebar-primary hover:bg-sidebar-primary/10">
-              <Link href="/register" onClick={onLinkClick}>Daftar</Link>
+            <Button
+              asChild
+              variant="outline"
+              className="w-full border-sidebar-primary text-sidebar-primary hover:bg-sidebar-primary/10"
+            >
+              <Link href="/register" onClick={onLinkClick}>
+                Daftar
+              </Link>
             </Button>
           </CardContent>
         </Card>
@@ -171,10 +258,14 @@ export function SidebarContent({ onLinkClick }: SidebarContentProps) {
       {/* Rating Button */}
       <Card className="bg-sidebar-accent text-sidebar-accent-foreground border-sidebar-border shadow-none">
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-semibold text-sidebar-primary">BERI RATING</CardTitle>
+          <CardTitle className="text-sm font-semibold text-sidebar-primary">
+            BERI RATING
+          </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
-          <p className="text-sm text-muted-foreground">Bagikan pendapat Anda tentang website kami!</p>
+          <p className="text-sm text-muted-foreground">
+            Bagikan pendapat Anda tentang website kami!
+          </p>
           <RatingDialog>
             <Button className="w-full bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90">
               Beri Rating Website
@@ -188,14 +279,19 @@ export function SidebarContent({ onLinkClick }: SidebarContentProps) {
           <Button
             key={item.name}
             variant="ghost"
-            className={`w-full justify-start text-left transition-colors duration-200 text-xs ${ // Changed text-sm to text-xs
+            className={`w-full justify-start text-left transition-colors duration-200 text-xs ${
+              // Changed text-sm to text-xs
               pathname === item.href
                 ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
                 : "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
             }`}
             asChild
           >
-            <Link href={item.href} className="block w-full py-2 px-4" onClick={onLinkClick}>
+            <Link
+              href={item.href}
+              className="block w-full py-2 px-4"
+              onClick={onLinkClick}
+            >
               {item.name}
             </Link>
           </Button>
