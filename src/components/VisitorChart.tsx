@@ -33,6 +33,8 @@ export function VisitorChart() {
             <Loader2 className="h-6 w-6 animate-spin text-sidebar-primary" />
             <p className="ml-2 text-sm text-sidebar-foreground">Memuat data...</p>
           </div>
+        ) : data.length === 0 ? (
+          <p className="text-center text-sm text-muted-foreground">Tidak ada data kunjungan.</p>
         ) : (
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={data} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>

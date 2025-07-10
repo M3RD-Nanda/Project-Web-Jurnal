@@ -61,15 +61,12 @@ export function StatisticsClientContent({ articlesPerYearData, acceptanceRateDat
 
   // Helper function to render loading or no data message
   const renderFallback = (message: string) => {
-    if (!mounted) {
-      return (
-        <div className="flex items-center justify-center h-full">
-          <Loader2 className="h-6 w-6 animate-spin text-primary" />
-          <p className="ml-2 text-sm text-muted-foreground">Memuat grafik...</p>
-        </div>
-      );
-    }
-    return <p className="text-center text-muted-foreground p-4">{message}</p>;
+    return (
+      <div className="flex items-center justify-center h-full">
+        <Loader2 className="h-6 w-6 animate-spin text-primary" />
+        <p className="ml-2 text-sm text-muted-foreground">Memuat grafik...</p>
+      </div>
+    );
   };
 
   return (
@@ -85,8 +82,8 @@ export function StatisticsClientContent({ articlesPerYearData, acceptanceRateDat
             <CardTitle className="text-xl font-semibold">Artikel Diterbitkan per Tahun</CardTitle>
           </CardHeader>
           <CardContent className="h-[300px]">
-            {articlesPerYearData.length === 0 ? (
-              renderFallback("Data artikel per tahun tidak tersedia.")
+            {!mounted ? renderFallback("Memuat grafik...") : articlesPerYearData.length === 0 ? (
+              <p className="text-center text-muted-foreground p-4">Data artikel per tahun tidak tersedia.</p>
             ) : (
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={articlesPerYearData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
@@ -108,8 +105,8 @@ export function StatisticsClientContent({ articlesPerYearData, acceptanceRateDat
             <CardTitle className="text-xl font-semibold">Tingkat Penerimaan Artikel</CardTitle>
           </CardHeader>
           <CardContent className="h-[300px] flex items-center justify-center">
-            {pieChartData.length === 0 || totalAcceptedRejected === 0 ? (
-              renderFallback("Data tingkat penerimaan tidak tersedia.")
+            {!mounted ? renderFallback("Memuat grafik...") : (pieChartData.length === 0 || totalAcceptedRejected === 0) ? (
+              <p className="text-center text-muted-foreground p-4">Data tingkat penerimaan tidak tersedia.</p>
             ) : (
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -142,8 +139,8 @@ export function StatisticsClientContent({ articlesPerYearData, acceptanceRateDat
             <CardTitle className="text-xl font-semibold">Total Sitasi (Google Scholar)</CardTitle>
           </CardHeader>
           <CardContent className="h-[300px]">
-            {totalCitationsData.length === 0 ? (
-              renderFallback("Data sitasi tidak tersedia.")
+            {!mounted ? renderFallback("Memuat grafik...") : totalCitationsData.length === 0 ? (
+              <p className="text-center text-muted-foreground p-4">Data sitasi tidak tersedia.</p>
             ) : (
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={totalCitationsData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
