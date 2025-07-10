@@ -22,21 +22,32 @@ export function VisitorChart() {
     fetchVisits();
   }, []);
 
+  // Helper component to render chart content or fallback
+  const ChartContent = ({ mounted, data, message, children }: { mounted: boolean; data: any[]; message: string; children: React.ReactNode }) => {
+    if (!mounted) {
+      return (
+        <div className="flex items-center justify-center h-full">
+          <Loader2 className="h-6 w-6 animate-spin text-sidebar-primary" />
+          <p className="ml-2 text-sm text-sidebar-foreground">Memuat data...</p>
+        </div>
+      );
+    }
+    if (data.length === 0) {
+      return (
+        <p className="text-center text-sm text-muted-foreground h-full flex items-center justify-center">{message}</p>
+      );
+    }
+    return children;
+  };
+
   return (
     <Card className="bg-sidebar-accent text-sidebar-accent-foreground border-sidebar-border shadow-none">
       <CardHeader className="pb-2">
         <CardTitle className="text-sm font-semibold text-sidebar-primary">VISITORS (Mingguan)</CardTitle>
       </CardHeader>
       <CardContent className="h-[150px] p-2">
-        {!mounted || loading ? ( // Show loader if not mounted or still loading
-          <div className="flex items-center justify-center h-full">
-            <Loader2 className="h-6 w-6 animate-spin text-sidebar-primary" />
-            <p className="ml-2 text-sm text-sidebar-foreground">Memuat data...</p>
-          </div>
-        ) : data.length === 0 ? (
-          <p className="text-center text-sm text-muted-foreground">Tidak ada data kunjungan.</p>
-        ) : (
-          <ResponsiveContainer width="100%" height="100%">
+        <ResponsiveContainer width="100%" height="100%">
+          <ChartContent mounted={mounted} data={data} message="Tidak ada data kunjungan.">
             <BarChart data={data} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--sidebar-border))" />
               <XAxis dataKey="date" stroke="hsl(var(--sidebar-foreground))" tickLine={false} axisLine={false} />
@@ -53,8 +64,8 @@ export function VisitorChart() {
               />
               <Bar dataKey="visitors" fill="hsl(var(--sidebar-primary))" radius={[4, 4, 0, 0]} />
             </BarChart>
-          </ResponsiveContainer>
-        )}
+          </ChartContent>
+        </ResponsiveContainer>
       </CardContent>
     </Card>
   );

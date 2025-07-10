@@ -59,14 +59,22 @@ export function StatisticsClientContent({ articlesPerYearData, acceptanceRateDat
   }));
   console.log("StatisticsClientContent: pieChartData calculated:", pieChartData);
 
-  // Helper function to render loading or no data message
-  const renderFallback = (message: string) => {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <Loader2 className="h-6 w-6 animate-spin text-primary" />
-        <p className="ml-2 text-sm text-muted-foreground">Memuat grafik...</p>
-      </div>
-    );
+  // Helper component to render chart content or fallback
+  const ChartContent = ({ mounted, data, message, children }: { mounted: boolean; data: any[]; message: string; children: React.ReactNode }) => {
+    if (!mounted) {
+      return (
+        <div className="flex items-center justify-center h-full">
+          <Loader2 className="h-6 w-6 animate-spin text-primary" />
+          <p className="ml-2 text-sm text-muted-foreground">Memuat grafik...</p>
+        </div>
+      );
+    }
+    if (data.length === 0) {
+      return (
+        <p className="text-center text-muted-foreground p-4 h-full flex items-center justify-center">{message}</p>
+      );
+    }
+    return children;
   };
 
   return (
@@ -82,10 +90,8 @@ export function StatisticsClientContent({ articlesPerYearData, acceptanceRateDat
             <CardTitle className="text-xl font-semibold">Artikel Diterbitkan per Tahun</CardTitle>
           </CardHeader>
           <CardContent className="h-[300px]">
-            {!mounted ? renderFallback("Memuat grafik...") : articlesPerYearData.length === 0 ? (
-              <p className="text-center text-muted-foreground p-4">Data artikel per tahun tidak tersedia.</p>
-            ) : (
-              <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%">
+              <ChartContent mounted={mounted} data={articlesPerYearData} message="Data artikel per tahun tidak tersedia.">
                 <BarChart data={articlesPerYearData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="year" />
@@ -94,8 +100,8 @@ export function StatisticsClientContent({ articlesPerYearData, acceptanceRateDat
                   <Legend />
                   <Bar dataKey="articles" fill="hsl(var(--primary))" name="Jumlah Artikel" />
                 </BarChart>
-              </ResponsiveContainer>
-            )}
+              </ChartContent>
+            </ResponsiveContainer>
           </CardContent>
         </Card>
 
@@ -105,10 +111,8 @@ export function StatisticsClientContent({ articlesPerYearData, acceptanceRateDat
             <CardTitle className="text-xl font-semibold">Tingkat Penerimaan Artikel</CardTitle>
           </CardHeader>
           <CardContent className="h-[300px] flex items-center justify-center">
-            {!mounted ? renderFallback("Memuat grafik...") : (pieChartData.length === 0 || totalAcceptedRejected === 0) ? (
-              <p className="text-center text-muted-foreground p-4">Data tingkat penerimaan tidak tersedia.</p>
-            ) : (
-              <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%">
+              <ChartContent mounted={mounted} data={pieChartData} message="Data tingkat penerimaan tidak tersedia.">
                 <PieChart>
                   <Pie
                     data={pieChartData}
@@ -128,8 +132,8 @@ export function StatisticsClientContent({ articlesPerYearData, acceptanceRateDat
                   <Tooltip />
                   <Legend />
                 </PieChart>
-              </ResponsiveContainer>
-            )}
+              </ChartContent>
+            </ResponsiveContainer>
           </CardContent>
         </Card>
 
@@ -139,10 +143,8 @@ export function StatisticsClientContent({ articlesPerYearData, acceptanceRateDat
             <CardTitle className="text-xl font-semibold">Total Sitasi (Google Scholar)</CardTitle>
           </CardHeader>
           <CardContent className="h-[300px]">
-            {!mounted ? renderFallback("Memuat grafik...") : totalCitationsData.length === 0 ? (
-              <p className="text-center text-muted-foreground p-4">Data sitasi tidak tersedia.</p>
-            ) : (
-              <ResponsiveContainer width="100%" height="100%">
+            <ResponsiveContainer width="100%" height="100%">
+              <ChartContent mounted={mounted} data={totalCitationsData} message="Data sitasi tidak tersedia.">
                 <LineChart data={totalCitationsData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="month" />
@@ -151,8 +153,8 @@ export function StatisticsClientContent({ articlesPerYearData, acceptanceRateDat
                   <Legend />
                   <Line type="monotone" dataKey="citations" stroke="hsl(var(--chart-1))" activeDot={{ r: 8 }} name="Jumlah Sitasi" />
                 </LineChart>
-              </ResponsiveContainer>
-            )}
+              </ChartContent>
+            </ResponsiveContainer>
           </CardContent>
         </Card>
       </div>
