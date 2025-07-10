@@ -44,7 +44,7 @@ export function Header() {
   return (
     <header className="bg-primary text-primary-foreground p-4 shadow-md sticky top-0 z-50 w-full">
       <div className="container mx-auto flex items-center justify-between">
-        {/* Left side: MobileNav, Logo, Journal Info */}
+        {/* Left side: MobileNav, Logo, Journal Info, and E-ISSN */}
         <div className="flex items-center gap-4">
           <MobileNav />
           <Link href="/" className="flex items-center gap-2">
@@ -56,18 +56,16 @@ export function Header() {
               className="rounded-full"
             />
             <div className="flex flex-col">
-              <span className="text-lg font-bold">JIMEKA</span>
-              {/* Added whitespace-nowrap to prevent text from wrapping */}
-              <span className="text-[0.6rem] leading-tight sm:text-xs whitespace-nowrap">FAKULTAS EKONOMI DAN BISNIS UNIVERSITAS PERCOBAAN NANDA</span>
+              <span className="text-base font-bold">JIMEKA</span> {/* Reduced from text-lg */}
+              <span className="text-[0.55rem] leading-tight sm:text-[0.65rem] whitespace-nowrap">FAKULTAS EKONOMI DAN BISNIS UNIVERSITAS PERCOBAAN NANDA</span> {/* Adjusted font size */}
+              {/* E-ISSN moved here, with margin-top and margin-left for indentation */}
+              <span className="hidden md:block text-[0.55rem] leading-tight sm:text-[0.65rem] text-primary-foreground/80 whitespace-nowrap mt-1 ml-2">E-ISSN: 2581-1002</span> {/* Adjusted font size */}
             </div>
           </Link>
         </div>
 
-        {/* Right side: E-ISSN, Desktop Nav, User Actions, Mode Toggle */}
-        <div className="hidden md:flex items-center gap-x-4"> {/* Main right container with spacing */}
-          {/* E-ISSN */}
-          <span className="text-[0.6rem] sm:text-xs text-primary-foreground/80">E-ISSN: 2581-1002</span>
-
+        {/* Right side: Desktop Nav, User Actions, Mode Toggle */}
+        <div className="hidden md:flex items-center gap-x-4 ml-auto"> {/* ml-auto pushes this group to the far right */}
           {/* Desktop Main Navigation */}
           <nav className="flex items-center gap-x-2"> {/* Tighter spacing for nav items */}
             {desktopNavItems.map((item) => (
@@ -75,7 +73,7 @@ export function Header() {
                 key={item.name}
                 variant="ghost"
                 asChild
-                className={`text-primary-foreground hover:bg-primary-foreground/10 ${
+                className={`text-sm text-primary-foreground hover:bg-primary-foreground/10 ${ // Reduced from default button size
                   pathname === item.href ? "font-bold underline" : ""
                 }`}
               >
@@ -91,7 +89,7 @@ export function Header() {
                 <Button
                   variant="ghost"
                   asChild
-                  className={`text-primary-foreground hover:bg-primary-foreground/10 ${
+                  className={`text-sm text-primary-foreground hover:bg-primary-foreground/10 ${ // Reduced from default button size
                     pathname === "/profile" ? "font-bold underline" : ""
                   }`}
                 >
@@ -101,7 +99,7 @@ export function Header() {
                   <Button
                     variant="ghost"
                     asChild
-                    className={`text-primary-foreground hover:bg-primary-foreground/10 ${
+                    className={`text-sm text-primary-foreground hover:bg-primary-foreground/10 ${ // Reduced from default button size
                       pathname === "/admin" ? "font-bold underline" : ""
                     }`}
                   >
@@ -110,7 +108,7 @@ export function Header() {
                 )}
                 <Button
                   variant="ghost"
-                  className="text-primary-foreground hover:bg-primary-foreground/10"
+                  className="text-sm text-primary-foreground hover:bg-primary-foreground/10" // Reduced from default button size
                   onClick={handleLogout}
                 >
                   LOGOUT
@@ -121,7 +119,7 @@ export function Header() {
                 <Button
                   variant="ghost"
                   asChild
-                  className={`text-primary-foreground hover:bg-primary-foreground/10 ${
+                  className={`text-sm text-primary-foreground hover:bg-primary-foreground/10 ${ // Reduced from default button size
                     pathname === "/login" ? "font-bold underline" : ""
                   }`}
                 >
@@ -130,7 +128,7 @@ export function Header() {
                 <Button
                   variant="ghost"
                   asChild
-                  className={`text-primary-foreground hover:bg-primary-foreground/10 ${
+                  className={`text-sm text-primary-foreground hover:bg-primary-foreground/10 ${ // Reduced from default button size
                     pathname === "/register" ? "font-bold underline" : ""
                   }`}
                 >
@@ -141,7 +139,7 @@ export function Header() {
           </div>
 
           {/* Mode Toggle */}
-          <ModeToggle />
+          <ModeToggle className="hidden md:block ml-4" />
         </div>
 
         {/* Mobile Header Nav (only visible on mobile, pushed to far right) */}
