@@ -32,22 +32,22 @@ const profileFormSchema = z.object({
   signature: z.string().optional(),
   email: z.string().email("Email tidak valid.").min(1, "Email wajib diisi."),
   orcid_id: z.string().optional(),
-  url: z.string().url("URL tidak valid.").or(z.literal("")).optional(), // Diperbarui di sini
+  url: z.string().url("URL tidak valid.").or(z.literal("")).optional(),
   phone: z.string().optional(),
   fax: z.string().optional(),
   mailing_address: z.string().optional(),
   bio_statement: z.string().optional(),
   country: z.string().optional(),
-  is_reader: z.boolean(), // Changed from .default(true)
-  is_author: z.boolean(), // Changed from .default(false)
-  profile_image_url: z.string().url("URL gambar profil tidak valid.").or(z.literal("")).optional(), // Diperbarui di sini
-  role: z.string().optional(), // Add role to schema, but it's read-only
+  is_reader: z.boolean(),
+  is_author: z.boolean(),
+  profile_image_url: z.string().url("URL gambar profil tidak valid.").or(z.literal("")).optional(),
+  role: z.string().optional(),
 });
 
 type ProfileFormValues = z.infer<typeof profileFormSchema>;
 
 export default function ProfilePage() {
-  const { supabase, session, profile } = useSupabase(); // Get profile from useSupabase
+  const { supabase, session, profile } = useSupabase();
   const router = useRouter();
   const [loading, setLoading] = useState(true);
 
@@ -71,10 +71,10 @@ export default function ProfilePage() {
       mailing_address: "",
       bio_statement: "",
       country: "",
-      is_reader: true, // Explicit default
-      is_author: false, // Explicit default
+      is_reader: true,
+      is_author: false,
       profile_image_url: "",
-      role: "user", // Default role
+      role: "user",
     },
     mode: "onChange",
   });
@@ -88,7 +88,6 @@ export default function ProfilePage() {
 
     const fetchProfile = async () => {
       setLoading(true);
-      // Profile data is now available from useSupabase context
       if (profile) {
         form.reset({
           username: profile.username ?? "",
@@ -100,7 +99,7 @@ export default function ProfilePage() {
           gender: (profile.gender as ProfileFormValues['gender']) ?? "Tidak Disebutkan",
           affiliation: profile.affiliation ?? "",
           signature: profile.signature ?? "",
-          email: session.user.email ?? "", // Email from auth.users
+          email: session.user.email ?? "",
           orcid_id: profile.orcid_id ?? "",
           url: profile.url ?? "",
           phone: profile.phone ?? "",
@@ -111,16 +110,15 @@ export default function ProfilePage() {
           is_reader: profile.is_reader,
           is_author: profile.is_author,
           profile_image_url: profile.profile_image_url ?? "",
-          role: profile.role, // Set role from profile
+          role: profile.role,
         });
       } else {
-        // If no profile exists, initialize with user's email and default names from auth.users
         form.reset({
           email: session.user.email ?? "",
           first_name: session.user.user_metadata?.first_name ?? "",
           last_name: session.user.user_metadata?.last_name ?? "",
-          is_reader: true, // Explicit default
-          is_author: false, // Explicit default
+          is_reader: true,
+          is_author: false,
           username: "",
           salutation: "",
           middle_name: "",
@@ -136,17 +134,16 @@ export default function ProfilePage() {
           bio_statement: "",
           country: "",
           profile_image_url: "",
-          role: "user", // Default role for new profiles
+          role: "user",
         });
       }
       setLoading(false);
     };
 
-    // Only fetch profile if session and profile are available from context
     if (session) {
       fetchProfile();
     }
-  }, [session, router, supabase, form, profile]); // Add profile to dependency array
+  }, [session, router, supabase, form, profile]);
 
   async function onSubmit(values: ProfileFormValues) {
     if (!session) {
@@ -160,11 +157,11 @@ export default function ProfilePage() {
       .from("profiles")
       .upsert({
         id: session.user.id,
-        username: values.username || null, // Store empty strings as null in DB if optional
+        username: values.username || null,
         salutation: values.salutation || null,
-        first_name: values.first_name, // Required
+        first_name: values.first_name,
         middle_name: values.middle_name || null,
-        last_name: values.last_name, // Required
+        last_name: values.last_name,
         initials: values.initials || null,
         gender: values.gender || null,
         affiliation: values.affiliation || null,
@@ -179,15 +176,14 @@ export default function ProfilePage() {
         is_reader: values.is_reader,
         is_author: values.is_author,
         profile_image_url: values.profile_image_url || null,
-        role: profile?.role || 'user', // Keep existing role, or default to 'user'
-      }, { onConflict: 'id' }); // Use onConflict to handle both insert and update
+        role: profile?.role || 'user',
+      }, { onConflict: 'id' });
 
     if (error) {
       toast.error(`Gagal memperbarui profil: ${error.message}`);
       console.error("Error updating profile:", error);
     } else {
       toast.success("Profil berhasil diperbarui!");
-      // Optionally, update user_metadata in auth.users if names are changed
       await supabase.auth.updateUser({
         data: {
           first_name: values.first_name,
@@ -199,7 +195,7 @@ export default function ProfilePage() {
   }
 
   if (!session) {
-    return null; // Redirect handled by useEffect
+    return null;
   }
 
   return (

@@ -1,4 +1,4 @@
-import { supabase } from "@/integrations/supabase/client";
+import { supabaseAdmin } from "@/integrations/supabase/server"; // Menggunakan supabaseAdmin
 
 export interface Announcement {
   id: string;
@@ -9,7 +9,7 @@ export interface Announcement {
 }
 
 export async function getAllAnnouncements(): Promise<Announcement[]> {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin // Menggunakan supabaseAdmin untuk GET
     .from('announcements')
     .select('*')
     .order('publication_date', { ascending: false });
@@ -32,7 +32,7 @@ export async function getAllAnnouncements(): Promise<Announcement[]> {
 }
 
 export async function getAnnouncementById(id: string): Promise<Announcement | null> {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin // Menggunakan supabaseAdmin untuk GET
     .from('announcements')
     .select('*')
     .eq('id', id)
@@ -56,7 +56,7 @@ export async function getAnnouncementById(id: string): Promise<Announcement | nu
 }
 
 export async function insertAnnouncement(announcement: Omit<Announcement, 'id'>): Promise<{ data: Announcement | null; error: Error | null }> {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin // Menggunakan supabaseAdmin untuk INSERT
     .from('announcements')
     .insert({
       title: announcement.title,
@@ -75,7 +75,7 @@ export async function insertAnnouncement(announcement: Omit<Announcement, 'id'>)
 }
 
 export async function updateAnnouncement(id: string, announcement: Partial<Omit<Announcement, 'id'>>): Promise<{ data: Announcement | null; error: Error | null }> {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin // Menggunakan supabaseAdmin untuk UPDATE
     .from('announcements')
     .update({
       title: announcement.title,
@@ -95,7 +95,7 @@ export async function updateAnnouncement(id: string, announcement: Partial<Omit<
 }
 
 export async function deleteAnnouncement(id: string): Promise<{ success: boolean; error: Error | null }> {
-  const { error } = await supabase
+  const { error } = await supabaseAdmin // Menggunakan supabaseAdmin untuk DELETE
     .from('announcements')
     .delete()
     .eq('id', id);

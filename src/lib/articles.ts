@@ -1,4 +1,4 @@
-import { supabase } from "@/integrations/supabase/client";
+import { supabaseAdmin } from "@/integrations/supabase/server"; // Menggunakan supabaseAdmin
 import { v4 as uuidv4 } from 'uuid'; // Import uuid
 
 export interface Article {
@@ -9,11 +9,11 @@ export interface Article {
   fullContent: string;
   publicationDate: string;
   keywords: string[];
-  issueId: string | null; // Add issueId to the interface
+  issueId: string | null;
 }
 
 export async function getArticleById(id: string): Promise<Article | undefined> {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin // Menggunakan supabaseAdmin untuk GET
     .from('articles')
     .select('*')
     .eq('id', id)
@@ -40,7 +40,7 @@ export async function getArticleById(id: string): Promise<Article | undefined> {
 }
 
 export async function getAllArticles(): Promise<Article[]> {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin // Menggunakan supabaseAdmin untuk GET
     .from('articles')
     .select('*')
     .order('publication_date', { ascending: false });
@@ -66,7 +66,7 @@ export async function getAllArticles(): Promise<Article[]> {
 }
 
 export async function getArticlesByIssueId(issueId: string): Promise<Article[]> {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin // Menggunakan supabaseAdmin untuk GET
     .from('articles')
     .select('*')
     .eq('issue_id', issueId)
@@ -93,11 +93,11 @@ export async function getArticlesByIssueId(issueId: string): Promise<Article[]> 
 }
 
 export async function insertArticle(article: Omit<Article, 'id'>): Promise<{ data: Article | null; error: Error | null }> {
-  const newId = uuidv4(); // Generate a new UUID for the article ID
-  const { data, error } = await supabase
+  const newId = uuidv4();
+  const { data, error } = await supabaseAdmin // Menggunakan supabaseAdmin untuk INSERT
     .from('articles')
     .insert({
-      id: newId, // Use the generated ID
+      id: newId,
       title: article.title,
       authors: article.authors,
       abstract: article.abstract,
@@ -117,7 +117,7 @@ export async function insertArticle(article: Omit<Article, 'id'>): Promise<{ dat
 }
 
 export async function updateArticle(id: string, article: Partial<Omit<Article, 'id'>>): Promise<{ data: Article | null; error: Error | null }> {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin // Menggunakan supabaseAdmin untuk UPDATE
     .from('articles')
     .update({
       title: article.title,
@@ -140,7 +140,7 @@ export async function updateArticle(id: string, article: Partial<Omit<Article, '
 }
 
 export async function deleteArticle(id: string): Promise<{ success: boolean; error: Error | null }> {
-  const { error } = await supabase
+  const { error } = await supabaseAdmin // Menggunakan supabaseAdmin untuk DELETE
     .from('articles')
     .delete()
     .eq('id', id);

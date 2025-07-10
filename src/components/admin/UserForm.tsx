@@ -63,25 +63,25 @@ export function UserForm({ initialData, onSuccess, onCancel }: UserFormProps) {
     resolver: zodResolver(userFormSchema),
     defaultValues: {
       email: initialData.email,
-      username: initialData.username ?? undefined,
-      salutation: initialData.salutation ?? undefined,
+      username: initialData.username ?? "", // Changed to ""
+      salutation: initialData.salutation ?? "", // Changed to ""
       first_name: initialData.first_name ?? "",
-      middle_name: initialData.middle_name ?? undefined,
+      middle_name: initialData.middle_name ?? "", // Changed to ""
       last_name: initialData.last_name ?? "",
-      initials: initialData.initials ?? undefined,
+      initials: initialData.initials ?? "", // Changed to ""
       gender: (initialData.gender as UserFormValues['gender']) ?? "Tidak Disebutkan",
-      affiliation: initialData.affiliation ?? undefined,
-      signature: initialData.signature ?? undefined,
-      orcid_id: initialData.orcid_id ?? undefined,
-      url: initialData.url ?? undefined,
-      phone: initialData.phone ?? undefined,
-      fax: initialData.fax ?? undefined,
-      mailing_address: initialData.mailing_address ?? undefined,
-      bio_statement: initialData.bio_statement ?? undefined,
-      country: initialData.country ?? undefined,
+      affiliation: initialData.affiliation ?? "", // Changed to ""
+      signature: initialData.signature ?? "", // Changed to ""
+      orcid_id: initialData.orcid_id ?? "", // Changed to ""
+      url: initialData.url ?? "", // Changed to ""
+      phone: initialData.phone ?? "", // Changed to ""
+      fax: initialData.fax ?? "", // Changed to ""
+      mailing_address: initialData.mailing_address ?? "", // Changed to ""
+      bio_statement: initialData.bio_statement ?? "", // Changed to ""
+      country: initialData.country ?? "", // Changed to ""
       is_reader: initialData.is_reader,
       is_author: initialData.is_author,
-      profile_image_url: initialData.profile_image_url ?? undefined,
+      profile_image_url: initialData.profile_image_url ?? "", // Changed to ""
       role: (initialData.role as UserFormValues['role']) || "user",
     },
     mode: "onChange",
@@ -125,7 +125,7 @@ export function UserForm({ initialData, onSuccess, onCancel }: UserFormProps) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(payload),
-      credentials: 'include', // Tambahkan ini
+      credentials: 'include',
     });
     const result = await res.json();
 

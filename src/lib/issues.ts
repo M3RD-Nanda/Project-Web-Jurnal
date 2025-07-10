@@ -1,4 +1,4 @@
-import { supabase } from "@/integrations/supabase/client";
+import { supabaseAdmin } from "@/integrations/supabase/server"; // Menggunakan supabaseAdmin
 
 export interface Issue {
   id: string;
@@ -10,7 +10,7 @@ export interface Issue {
 }
 
 export async function getAllIssues(): Promise<Issue[]> {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin // Menggunakan supabaseAdmin untuk GET
     .from('issues')
     .select('*')
     .order('year', { ascending: false })
@@ -35,7 +35,7 @@ export async function getAllIssues(): Promise<Issue[]> {
 }
 
 export async function getIssueById(id: string): Promise<Issue | undefined> {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin // Menggunakan supabaseAdmin untuk GET
     .from('issues')
     .select('*')
     .eq('id', id)
@@ -60,7 +60,7 @@ export async function getIssueById(id: string): Promise<Issue | undefined> {
 }
 
 export async function getLatestIssue(): Promise<Issue | undefined> {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin // Menggunakan supabaseAdmin untuk GET
     .from('issues')
     .select('*')
     .order('publication_date', { ascending: false })
@@ -86,7 +86,7 @@ export async function getLatestIssue(): Promise<Issue | undefined> {
 }
 
 export async function insertIssue(issue: Omit<Issue, 'id'>): Promise<{ data: Issue | null; error: Error | null }> {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin // Menggunakan supabaseAdmin untuk INSERT
     .from('issues')
     .insert({
       volume: issue.volume,
@@ -106,7 +106,7 @@ export async function insertIssue(issue: Omit<Issue, 'id'>): Promise<{ data: Iss
 }
 
 export async function updateIssue(id: string, issue: Partial<Omit<Issue, 'id'>>): Promise<{ data: Issue | null; error: Error | null }> {
-  const { data, error } = await supabase
+  const { data, error } = await supabaseAdmin // Menggunakan supabaseAdmin untuk UPDATE
     .from('issues')
     .update({
       volume: issue.volume,
@@ -127,7 +127,7 @@ export async function updateIssue(id: string, issue: Partial<Omit<Issue, 'id'>>)
 }
 
 export async function deleteIssue(id: string): Promise<{ success: boolean; error: Error | null }> {
-  const { error } = await supabase
+  const { error } = await supabaseAdmin // Menggunakan supabaseAdmin untuk DELETE
     .from('issues')
     .delete()
     .eq('id', id);
