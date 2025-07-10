@@ -41,7 +41,8 @@ export function AcceptancePieChart({ data }: AcceptancePieChartProps) {
           cx="50%"
           cy="50%"
           labelLine={true}
-          outerRadius={100}
+          outerRadius={80} // Disesuaikan untuk lebih banyak ruang
+          innerRadius={60} // Ditambahkan untuk membuat grafik donat
           dataKey="value"
           nameKey="name"
           label={({ name, percent }: { name: string; percent: number }) => `${name}: ${(percent * 100).toFixed(0)}%`}
