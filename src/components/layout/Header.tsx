@@ -43,106 +43,101 @@ export function Header() {
 
   return (
     <header className="bg-primary text-primary-foreground p-4 shadow-md sticky top-0 z-50 w-full">
-      <div className="container mx-auto flex items-center justify-between gap-4">
-        {/* Left section: MobileNav trigger, Logo and Journal Info */}
-        <div className="flex items-center gap-4">
-          <MobileNav /> {/* Left mobile menu trigger */}
-          <Link href="/" className="flex items-center gap-2">
-            <Image
-              src="/jimeka-logo.png"
-              alt="Jurnal Ilmiah Mahasiswa Ekonomi Akuntansi (JIMEKA) Logo Universitas Percobaan Nanda"
-              width={40}
-              height={40}
-              className="rounded-full"
-            />
-            <div className="flex flex-col">
-              <span className="text-lg font-bold">JIMEKA</span>
-              <span className="text-[0.6rem] leading-tight sm:text-xs">FAKULTAS EKONOMI DAN BISNIS UNIVERSITAS PERCOBAAN NANDA</span>
-              <span className="text-[0.6rem] leading-tight sm:text-xs">E-ISSN: 2581-1002</span>
-            </div>
-          </Link>
-        </div>
+      <div className="container mx-auto flex items-center justify-between">
+        {/* Leftmost: MobileNav */}
+        <MobileNav />
 
-        {/* Right section: Desktop Navigation, User Actions, Mode Toggle */}
-        <div className="flex items-center gap-4"> {/* Increased gap for better separation between nav groups */}
-          {/* Desktop Main Navigation */}
-          <nav className="hidden md:flex flex-wrap justify-end gap-2"> {/* Increased gap for nav items */}
-            {desktopNavItems.map((item) => (
+        {/* Logo and Journal Info */}
+        <Link href="/" className="flex items-center gap-2 ml-4">
+          <Image
+            src="/jimeka-logo.png"
+            alt="Jurnal Ilmiah Mahasiswa Ekonomi Akuntansi (JIMEKA) Logo Universitas Percobaan Nanda"
+            width={40}
+            height={40}
+            className="rounded-full"
+          />
+          <div className="flex flex-col">
+            <span className="text-lg font-bold">JIMEKA</span>
+            <span className="text-[0.6rem] leading-tight sm:text-xs">FAKULTAS EKONOMI DAN BISNIS UNIVERSITAS PERCOBAAN NANDA</span>
+          </div>
+        </Link>
+
+        {/* E-ISSN (Desktop only, positioned to the right of logo block) */}
+        <span className="hidden md:block text-[0.6rem] sm:text-xs text-primary-foreground/80 ml-auto mr-4">E-ISSN: 2581-1002</span>
+
+        {/* Desktop Main Navigation & User Actions */}
+        <nav className="hidden md:flex items-center gap-2">
+          {desktopNavItems.map((item) => (
+            <Button
+              key={item.name}
+              variant="ghost"
+              asChild
+              className={`text-primary-foreground hover:bg-primary-foreground/10 ${
+                pathname === item.href ? "font-bold underline" : ""
+              }`}
+            >
+              <Link href={item.href}>{item.name}</Link>
+            </Button>
+          ))}
+          {session ? (
+            <>
               <Button
-                key={item.name}
                 variant="ghost"
                 asChild
                 className={`text-primary-foreground hover:bg-primary-foreground/10 ${
-                  pathname === item.href ? "font-bold underline" : ""
+                  pathname === "/profile" ? "font-bold underline" : ""
                 }`}
               >
-                <Link href={item.href}>{item.name}</Link>
+                <Link href="/profile">PROFILE</Link>
               </Button>
-            ))}
-          </nav>
+              {profile?.role === 'admin' && (
+                <Button
+                  variant="ghost"
+                  asChild
+                  className={`text-primary-foreground hover:bg-primary-foreground/10 ${
+                    pathname === "/admin" ? "font-bold underline" : ""
+                  }`}
+                >
+                  <Link href="/admin">ADMIN</Link>
+                </Button>
+              )}
+              <Button
+                variant="ghost"
+                className="text-primary-foreground hover:bg-primary-foreground/10"
+                onClick={handleLogout}
+              >
+                LOGOUT
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button
+                variant="ghost"
+                asChild
+                className={`text-primary-foreground hover:bg-primary-foreground/10 ${
+                  pathname === "/login" ? "font-bold underline" : ""
+                }`}
+              >
+                <Link href="/login">LOGIN</Link>
+              </Button>
+              <Button
+                variant="ghost"
+                asChild
+                className={`text-primary-foreground hover:bg-primary-foreground/10 ${
+                  pathname === "/register" ? "font-bold underline" : ""
+                }`}
+              >
+                <Link href="/register">REGISTER</Link>
+              </Button>
+            </>
+          )}
+        </nav>
 
-          {/* Desktop User/Auth Actions */}
-          <div className="hidden md:flex items-center gap-2"> {/* Group user actions */}
-            {session ? (
-              <>
-                <Button
-                  variant="ghost"
-                  asChild
-                  className={`text-primary-foreground hover:bg-primary-foreground/10 ${
-                    pathname === "/profile" ? "font-bold underline" : ""
-                  }`}
-                >
-                  <Link href="/profile">PROFILE</Link>
-                </Button>
-                {profile?.role === 'admin' && (
-                  <Button
-                    variant="ghost"
-                    asChild
-                    className={`text-primary-foreground hover:bg-primary-foreground/10 ${
-                      pathname === "/admin" ? "font-bold underline" : ""
-                    }`}
-                  >
-                    <Link href="/admin">ADMIN</Link>
-                  </Button>
-                )}
-                <Button
-                  variant="ghost"
-                  className="text-primary-foreground hover:bg-primary-foreground/10"
-                  onClick={handleLogout}
-                >
-                  LOGOUT
-                </Button>
-              </>
-            ) : (
-              <>
-                <Button
-                  variant="ghost"
-                  asChild
-                  className={`text-primary-foreground hover:bg-primary-foreground/10 ${
-                    pathname === "/login" ? "font-bold underline" : ""
-                  }`}
-                >
-                  <Link href="/login">LOGIN</Link>
-                </Button>
-                <Button
-                  variant="ghost"
-                  asChild
-                  className={`text-primary-foreground hover:bg-primary-foreground/10 ${
-                    pathname === "/register" ? "font-bold underline" : ""
-                  }`}
-                >
-                  <Link href="/register">REGISTER</Link>
-                </Button>
-              </>
-            )}
-          </div>
-
-          {/* Mobile Header Nav (for smaller screens) */}
-          <MobileHeaderNav navItems={baseNavItems} session={session} handleLogout={handleLogout} />
-          
-          {/* Mode Toggle (always visible, but hidden on mobile if MobileHeaderNav has it) */}
-          <ModeToggle className="hidden md:block" /> {/* Keep this for desktop only */}
-        </div>
+        {/* Mobile Header Nav (for smaller screens) */}
+        <MobileHeaderNav navItems={baseNavItems} session={session} handleLogout={handleLogout} />
+        
+        {/* Mode Toggle (always visible, but hidden on mobile if MobileHeaderNav has it) */}
+        <ModeToggle className="hidden md:block ml-4" />
       </div>
     </header>
   );
