@@ -7,14 +7,14 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { usePathname } from "next/navigation";
-import { useForm } from "react-hook-form"; // Perbaikan di sini: Mengubah import dari @hookform/resolvers/zod
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { toast } from "sonner";
 import { VisitorChart } from "@/components/VisitorChart";
-import { useSupabase } from "@/components/SessionProvider"; // Import useSupabase hook
-import { RatingDialog } from "@/components/RatingDialog"; // Import RatingDialog
+import { useSupabase } from "@/components/SessionProvider";
+import { RatingDialog } from "@/components/RatingDialog";
 
 const sidebarLoginFormSchema = z.object({
   username: z.string().min(1, { message: "Nama pengguna tidak boleh kosong." }),
@@ -34,9 +34,9 @@ const sidebarNavItems = [
   { name: "PUBLICATION FEE", href: "/publication-fee" },
   { name: "ARTICLE TEMPLATE", href: "/article-template" },
   { name: "OJS GUIDELENCE", href: "/ojs-guidelines" },
-  { name: "FAQ", href: "/faq" }, // Menambahkan kembali item FAQ
+  { name: "FAQ", href: "/faq" },
   { name: "STATISTICS", href: "/statistics" },
-  { name: "RATING WEB", href: "/ratings" }, // New navigation item
+  { name: "RATING WEB", href: "/ratings" },
 ];
 
 interface SidebarContentProps {
@@ -45,7 +45,7 @@ interface SidebarContentProps {
 
 export function SidebarContent({ onLinkClick }: SidebarContentProps) {
   const pathname = usePathname();
-  const { supabase, session, profile } = useSupabase(); // Get profile from useSupabase
+  const { supabase, session, profile } = useSupabase();
 
   const form = useForm<z.infer<typeof sidebarLoginFormSchema>>({
     resolver: zodResolver(sidebarLoginFormSchema),
@@ -55,9 +55,6 @@ export function SidebarContent({ onLinkClick }: SidebarContentProps) {
     },
   });
 
-  // Fungsi onSubmit ini tidak lagi digunakan untuk login sebenarnya,
-  // karena login ditangani oleh Auth UI di halaman /login.
-  // Ini hanya sebagai placeholder jika Anda ingin menambahkan fungsionalitas lain.
   function onSubmit(values: z.infer<typeof sidebarLoginFormSchema>) {
     console.log(values);
     toast.info("Login ditangani di halaman Login utama.");
@@ -71,7 +68,6 @@ export function SidebarContent({ onLinkClick }: SidebarContentProps) {
       toast.error(`Gagal logout: ${error.message}`);
     } else {
       console.log("Logout successful (Sidebar), SessionProvider should handle redirect.");
-      // SessionProvider akan menangani redirect dan toast sukses
     }
   };
 
@@ -103,7 +99,7 @@ export function SidebarContent({ onLinkClick }: SidebarContentProps) {
                   <Button
                     asChild
                     variant="ghost"
-                    className={`w-full justify-start text-left transition-colors duration-200 text-[0.75rem] ${ // Adjusted font size
+                    className={`w-full justify-start text-left transition-colors duration-200 text-[0.75rem] ${
                       pathname === "/admin/announcements"
                         ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
                         : "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
@@ -114,7 +110,7 @@ export function SidebarContent({ onLinkClick }: SidebarContentProps) {
                   <Button
                     asChild
                     variant="ghost"
-                    className={`w-full justify-start text-left transition-colors duration-200 text-[0.75rem] ${ // Adjusted font size
+                    className={`w-full justify-start text-left transition-colors duration-200 text-[0.75rem] ${
                       pathname === "/admin/articles"
                         ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
                         : "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
@@ -125,7 +121,7 @@ export function SidebarContent({ onLinkClick }: SidebarContentProps) {
                   <Button
                     asChild
                     variant="ghost"
-                    className={`w-full justify-start text-left transition-colors duration-200 text-[0.75rem] ${ // Adjusted font size
+                    className={`w-full justify-start text-left transition-colors duration-200 text-[0.75rem] ${
                       pathname === "/admin/issues"
                         ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
                         : "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
@@ -136,7 +132,7 @@ export function SidebarContent({ onLinkClick }: SidebarContentProps) {
                   <Button
                     asChild
                     variant="ghost"
-                    className={`w-full justify-start text-left transition-colors duration-200 text-[0.75rem] ${ // Adjusted font size
+                    className={`w-full justify-start text-left transition-colors duration-200 text-[0.75rem] ${
                       pathname === "/admin/users"
                         ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
                         : "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
@@ -192,7 +188,7 @@ export function SidebarContent({ onLinkClick }: SidebarContentProps) {
           <Button
             key={item.name}
             variant="ghost"
-            className={`w-full justify-start text-left transition-colors duration-200 ${
+            className={`w-full justify-start text-left transition-colors duration-200 text-sm ${ // Changed text-base to text-sm
               pathname === item.href
                 ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
                 : "hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
