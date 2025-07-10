@@ -3,13 +3,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { getIssueById } from "@/lib/issues";
-import { getArticlesByIssueId, Article } from "@/lib/articles"; // Memperbaiki '=>' menjadi 'from' dan mengimpor tipe Article
+import { getArticlesByIssueId } from "@/lib/articles";
 import { notFound } from "next/navigation";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
 
 type IssuePageProps = {
-  params: any; // Tetap 'any' untuk params sebagai upaya terakhir untuk kompilasi
+  params: Record<string, string>; // Mengubah tipe params menjadi Record<string, string>
   searchParams?: { [key: string]: string | string[] | undefined };
 };
 
@@ -43,7 +43,7 @@ export default async function IssueDetailPage({ params }: IssuePageProps) {
           <h3 className="text-xl font-semibold">Daftar Artikel</h3>
           {articlesInIssue.length > 0 ? (
             <ul className="space-y-3">
-              {articlesInIssue.map((article: Article) => ( // Menambahkan tipe eksplisit untuk 'article'
+              {articlesInIssue.map((article) => (
                 <li key={article.id} className="border-b pb-3 last:border-b-0 last:pb-0">
                   <Link href={`/articles/${article.id}`} className="text-primary hover:underline text-lg font-medium">
                     {article.title}
