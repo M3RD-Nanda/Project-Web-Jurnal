@@ -7,13 +7,13 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 import { MobileNav } from "./MobileNav";
-import { useSupabase } from "@/components/SessionProvider"; // Import useSupabase hook
+import { useSupabase } from "@/components/SessionProvider";
 import { toast } from "sonner";
-import { MobileHeaderNav } from "./MobileHeaderNav"; // Import the new MobileHeaderNav
+import { MobileHeaderNav } from "./MobileHeaderNav";
 
 export function Header() {
   const pathname = usePathname();
-  const { supabase, session, profile } = useSupabase(); // Get profile from useSupabase
+  const { supabase, session, profile } = useSupabase();
 
   const handleLogout = async () => {
     console.log("Attempting to log out from Header...");
@@ -23,7 +23,6 @@ export function Header() {
       toast.error(`Gagal logout: ${error.message}`);
     } else {
       console.log("Logout successful (Header), SessionProvider should handle redirect.");
-      // SessionProvider akan menangani redirect dan toast sukses
     }
   };
 
@@ -45,8 +44,9 @@ export function Header() {
   return (
     <header className="bg-primary text-primary-foreground p-4 shadow-md sticky top-0 z-50 w-full">
       <div className="container mx-auto flex items-center justify-between gap-4">
+        {/* Left section: MobileNav trigger, Logo and Journal Info */}
         <div className="flex items-center gap-4">
-          <MobileNav /> {/* Left mobile menu */}
+          <MobileNav /> {/* Left mobile menu trigger */}
           <Link href="/" className="flex items-center gap-2">
             <Image
               src="/jimeka-logo.png"
@@ -56,19 +56,17 @@ export function Header() {
               className="rounded-full"
             />
             <div className="flex flex-col">
-              <span className="text-lg font-bold">JIMEKA</span> {/* Always show JIMEKA */}
-              {/* Show on mobile, hide on small screens and up */}
-              <span className="text-[0.6rem] leading-tight block sm:hidden">FAKULTAS EKONOMI DAN BISNIS UNIVERSITAS PERCOBAAN NANDA</span>
-              <span className="text-[0.6rem] leading-tight block sm:hidden">E-ISSN: 2581-1002</span>
-              {/* Show on small screens and up */}
-              <span className="text-xs hidden sm:block">FAKULTAS EKONOMI DAN BISNIS UNIVERSITAS PERCOBAAN NANDA</span>
+              <span className="text-lg font-bold">JIMEKA</span>
+              <span className="text-[0.6rem] leading-tight sm:text-xs">FAKULTAS EKONOMI DAN BISNIS UNIVERSITAS PERCOBAAN NANDA</span>
+              <span className="text-[0.6rem] leading-tight sm:text-xs">E-ISSN: 2581-1002</span>
             </div>
           </Link>
-          <span className="text-sm ml-2 hidden md:block">E-ISSN: 2581-1002</span>
         </div>
-        {/* Right-aligned items for desktop and mobile */}
-        <div className="flex items-center gap-2">
-          <nav className="hidden md:flex flex-wrap justify-end gap-1"> {/* Desktop nav, reduced gap */}
+
+        {/* Right section: Desktop Navigation, User Actions, Mode Toggle */}
+        <div className="flex items-center gap-4"> {/* Increased gap for better separation between nav groups */}
+          {/* Desktop Main Navigation */}
+          <nav className="hidden md:flex flex-wrap justify-end gap-2"> {/* Increased gap for nav items */}
             {desktopNavItems.map((item) => (
               <Button
                 key={item.name}
@@ -81,6 +79,10 @@ export function Header() {
                 <Link href={item.href}>{item.name}</Link>
               </Button>
             ))}
+          </nav>
+
+          {/* Desktop User/Auth Actions */}
+          <div className="hidden md:flex items-center gap-2"> {/* Group user actions */}
             {session ? (
               <>
                 <Button
@@ -133,10 +135,13 @@ export function Header() {
                 </Button>
               </>
             )}
-          </nav>
-          {/* MobileHeaderNav will still show FAQ as per its own logic, if needed */}
+          </div>
+
+          {/* Mobile Header Nav (for smaller screens) */}
           <MobileHeaderNav navItems={baseNavItems} session={session} handleLogout={handleLogout} />
-          <ModeToggle className="hidden md:block" /> {/* ModeToggle for desktop */}
+          
+          {/* Mode Toggle (always visible, but hidden on mobile if MobileHeaderNav has it) */}
+          <ModeToggle className="hidden md:block" /> {/* Keep this for desktop only */}
         </div>
       </div>
     </header>
