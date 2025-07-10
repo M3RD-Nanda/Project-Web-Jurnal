@@ -2,8 +2,8 @@ import { NextResponse } from 'next/server';
 import { updateAnnouncement, deleteAnnouncement } from '@/lib/announcements';
 import { supabaseAdmin } from '@/integrations/supabase/server';
 
-export async function PUT(request: Request, { params }: { params: { id: string } }) {
-  const { id } = params;
+export async function PUT(request: Request, context: { params: { id: string } }) {
+  const { id } = context.params;
   const authHeader = request.headers.get('Authorization');
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
@@ -37,8 +37,8 @@ export async function PUT(request: Request, { params }: { params: { id: string }
   return NextResponse.json({ data });
 }
 
-export async function DELETE(request: Request, { params }: { params: { id: string } }) {
-  const { id } = params;
+export async function DELETE(request: Request, context: { params: { id: string } }) {
+  const { id } = context.params;
   const authHeader = request.headers.get('Authorization');
 
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
