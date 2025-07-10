@@ -7,6 +7,11 @@ export default async function StatisticsPage() {
   const acceptanceRateData = await getAcceptanceRates();
   const totalCitationsData = await getCitations();
 
+  console.log("Data passed to StatisticsClientContent:");
+  console.log("articlesPerYearData:", articlesPerYearData);
+  console.log("acceptanceRateData:", acceptanceRateData);
+  console.log("totalCitationsData:", totalCitationsData);
+
   return (
     <StaticContentPage title="STATISTICS">
       <StatisticsClientContent

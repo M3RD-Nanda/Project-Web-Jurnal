@@ -17,6 +17,7 @@ export interface CitationData {
 }
 
 export async function getArticlesPerYear(): Promise<ArticlesPerYearData[]> {
+  console.log("Fetching articles per year data...");
   const { data, error } = await supabaseAdmin // Menggunakan supabaseAdmin
     .from('articles_per_year')
     .select('*')
@@ -26,10 +27,12 @@ export async function getArticlesPerYear(): Promise<ArticlesPerYearData[]> {
     console.error("Error fetching articles per year:", error);
     return [];
   }
+  console.log("Articles per year data fetched:", data);
   return data || [];
 }
 
 export async function getAcceptanceRates(): Promise<AcceptanceRateData[]> {
+  console.log("Fetching acceptance rates data...");
   const { data, error } = await supabaseAdmin // Menggunakan supabaseAdmin
     .from('acceptance_rates')
     .select('*');
@@ -38,10 +41,12 @@ export async function getAcceptanceRates(): Promise<AcceptanceRateData[]> {
     console.error("Error fetching acceptance rates:", error);
     return [];
   }
+  console.log("Acceptance rates data fetched:", data);
   return data || [];
 }
 
 export async function getCitations(): Promise<CitationData[]> {
+  console.log("Fetching citations data...");
   const { data, error } = await supabaseAdmin // Menggunakan supabaseAdmin
     .from('citations')
     .select('*')
@@ -51,5 +56,6 @@ export async function getCitations(): Promise<CitationData[]> {
     console.error("Error fetching citations:", error);
     return [];
   }
+  console.log("Citations data fetched:", data);
   return data || [];
 }
