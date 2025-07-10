@@ -115,7 +115,7 @@ export default function AdminArticlesPage() {
                 <PlusCircle className="mr-2 h-4 w-4" /> Tambah Artikel
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[800px]">
+            <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto"> {/* Added max-h and overflow-y-auto */}
               <DialogHeader>
                 <DialogTitle>{editingArticle ? "Edit Artikel" : "Tambah Artikel Baru"}</DialogTitle>
                 <CardDescription>
