@@ -44,7 +44,7 @@ export function Header() {
   return (
     <header className="bg-primary text-primary-foreground p-4 shadow-md sticky top-0 z-50 w-full">
       <div className="container mx-auto flex items-center justify-between">
-        {/* Left side: MobileNav, Logo, Journal Info, and E-ISSN */}
+        {/* Left Group: MobileNav, Logo, Journal Info, and E-ISSN */}
         <div className="flex items-center gap-4">
           <MobileNav />
           <Link href="/" className="flex items-center gap-2">
@@ -56,24 +56,23 @@ export function Header() {
               className="rounded-full"
             />
             <div className="flex flex-col">
-              <span className="text-base font-bold">JIMEKA</span> {/* Reduced from text-lg */}
-              <span className="text-[0.55rem] leading-tight sm:text-[0.65rem] whitespace-nowrap">FAKULTAS EKONOMI DAN BISNIS UNIVERSITAS PERCOBAAN NANDA</span> {/* Adjusted font size */}
-              {/* E-ISSN moved here, with margin-top and margin-left for indentation */}
-              <span className="hidden md:block text-[0.55rem] leading-tight sm:text-[0.65rem] text-primary-foreground/80 whitespace-nowrap mt-1 ml-2">E-ISSN: 2581-1002</span> {/* Adjusted font size */}
+              <span className="text-lg font-bold">JIMEKA</span>
+              <span className="text-[0.6rem] leading-tight whitespace-nowrap">FAKULTAS EKONOMI DAN BISNIS UNIVERSITAS PERCOBAAN NANDA</span>
+              <span className="text-[0.6rem] leading-tight text-primary-foreground/80 whitespace-nowrap mt-1">E-ISSN: 2581-1002</span>
             </div>
           </Link>
         </div>
 
-        {/* Right side: Desktop Nav, User Actions, Mode Toggle */}
-        <div className="hidden md:flex items-center gap-x-4 ml-auto"> {/* ml-auto pushes this group to the far right */}
+        {/* Right Group: Desktop Nav, User Actions, Mode Toggle */}
+        <div className="hidden md:flex items-center gap-x-4">
           {/* Desktop Main Navigation */}
-          <nav className="flex items-center gap-x-2"> {/* Tighter spacing for nav items */}
+          <nav className="flex items-center gap-x-2">
             {desktopNavItems.map((item) => (
               <Button
                 key={item.name}
                 variant="ghost"
                 asChild
-                className={`text-sm text-primary-foreground hover:bg-primary-foreground/10 ${ // Reduced from default button size
+                className={`text-xs text-primary-foreground hover:bg-primary-foreground/10 ${
                   pathname === item.href ? "font-bold underline" : ""
                 }`}
               >
@@ -83,13 +82,13 @@ export function Header() {
           </nav>
 
           {/* Desktop User/Auth Actions */}
-          <div className="flex items-center gap-x-2"> {/* Tighter spacing for auth buttons */}
+          <div className="flex items-center gap-x-2">
             {session ? (
               <>
                 <Button
                   variant="ghost"
                   asChild
-                  className={`text-sm text-primary-foreground hover:bg-primary-foreground/10 ${ // Reduced from default button size
+                  className={`text-xs text-primary-foreground hover:bg-primary-foreground/10 ${
                     pathname === "/profile" ? "font-bold underline" : ""
                   }`}
                 >
@@ -99,7 +98,7 @@ export function Header() {
                   <Button
                     variant="ghost"
                     asChild
-                    className={`text-sm text-primary-foreground hover:bg-primary-foreground/10 ${ // Reduced from default button size
+                    className={`text-xs text-primary-foreground hover:bg-primary-foreground/10 ${
                       pathname === "/admin" ? "font-bold underline" : ""
                     }`}
                   >
@@ -108,7 +107,7 @@ export function Header() {
                 )}
                 <Button
                   variant="ghost"
-                  className="text-sm text-primary-foreground hover:bg-primary-foreground/10" // Reduced from default button size
+                  className="text-xs text-primary-foreground hover:bg-primary-foreground/10"
                   onClick={handleLogout}
                 >
                   LOGOUT
@@ -119,7 +118,7 @@ export function Header() {
                 <Button
                   variant="ghost"
                   asChild
-                  className={`text-sm text-primary-foreground hover:bg-primary-foreground/10 ${ // Reduced from default button size
+                  className={`text-xs text-primary-foreground hover:bg-primary-foreground/10 ${
                     pathname === "/login" ? "font-bold underline" : ""
                   }`}
                 >
@@ -128,7 +127,7 @@ export function Header() {
                 <Button
                   variant="ghost"
                   asChild
-                  className={`text-sm text-primary-foreground hover:bg-primary-foreground/10 ${ // Reduced from default button size
+                  className={`text-xs text-primary-foreground hover:bg-primary-foreground/10 ${
                     pathname === "/register" ? "font-bold underline" : ""
                   }`}
                 >
@@ -139,7 +138,7 @@ export function Header() {
           </div>
 
           {/* Mode Toggle */}
-          <ModeToggle className="hidden md:block ml-4" />
+          <ModeToggle />
         </div>
 
         {/* Mobile Header Nav (only visible on mobile, pushed to far right) */}
