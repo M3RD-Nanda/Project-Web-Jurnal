@@ -54,8 +54,15 @@ export async function getAcceptanceRates(): Promise<AcceptanceRateData[]> {
     console.error("Error fetching acceptance rates:", error);
     return [];
   }
+  
+  // Filter out English status names if they exist, keeping only Indonesian
+  const filteredData = data ? data.filter(item => {
+    const lowerStatus = item.status.toLowerCase();
+    return lowerStatus === 'diterima' || lowerStatus === 'ditolak';
+  }) : [];
+
   // Map 'count' to 'value' for Recharts Pie component
-  return data ? data.map(item => ({ ...item, value: item.count })) : [];
+  return filteredData.map(item => ({ ...item, value: item.count }));
 }
 
 export async function getCitations(): Promise<CitationData[]> {
