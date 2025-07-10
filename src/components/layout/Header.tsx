@@ -9,7 +9,7 @@ import { usePathname } from "next/navigation";
 import { MobileNav } from "./MobileNav";
 import { useSupabase } from "@/components/SessionProvider";
 import { toast } from "sonner";
-// import { MobileHeaderNav } from "./MobileHeaderNav"; // Removed this import
+import { MobileHeaderNav } from "./MobileHeaderNav"; // Re-import MobileHeaderNav
 
 export function Header() {
   const pathname = usePathname();
@@ -45,20 +45,20 @@ export function Header() {
     <header className="bg-primary text-primary-foreground p-4 shadow-md sticky top-0 z-50 w-full">
       <div className="container mx-auto flex items-center justify-between">
         {/* Left Group: MobileNav, Logo, Journal Info, and E-ISSN */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2"> {/* Reduced gap from 4 to 2 */}
           <MobileNav />
           <Link href="/" className="flex items-center gap-2">
             <Image
               src="/jimeka-logo.png"
               alt="Jurnal Ilmiah Mahasiswa Ekonomi Akuntansi (JIMEKA) Logo Universitas Percobaan Nanda"
-              width={40}
-              height={40}
+              width={32} // Reduced width
+              height={32} // Reduced height
               className="rounded-full"
             />
             <div className="flex flex-col">
-              <span className="text-lg font-bold">JIMEKA</span>
-              <span className="text-[0.6rem] leading-tight">FAKULTAS EKONOMI DAN BISNIS UNIVERSITAS PERCOBAAN NANDA</span> {/* Removed whitespace-nowrap */}
-              <span className="text-[0.6rem] leading-tight text-primary-foreground/80 whitespace-nowrap mt-1">E-ISSN: 2581-1002</span>
+              <span className="text-base font-bold">JIMEKA</span> {/* Reduced text-lg to text-base */}
+              <span className="text-[0.55rem] leading-tight">FAKULTAS EKONOMI DAN BISNIS UNIVERSITAS PERCOBAAN NANDA</span> {/* Reduced text-[0.6rem] to text-[0.55rem] */}
+              <span className="text-[0.55rem] leading-tight text-primary-foreground/80 whitespace-nowrap mt-1">E-ISSN: 2581-1002</span> {/* Reduced text-[0.6rem] to text-[0.55rem] */}
             </div>
           </Link>
         </div>
@@ -141,8 +141,10 @@ export function Header() {
           <ModeToggle />
         </div>
 
-        {/* Mobile Header Nav is removed as MobileNav handles all mobile navigation */}
-        {/* <MobileHeaderNav navItems={baseNavItems} session={session} handleLogout={handleLogout} /> */}
+        {/* Mobile Header Nav (Right side) */}
+        <div className="md:hidden">
+          <MobileHeaderNav />
+        </div>
       </div>
     </header>
   );

@@ -1,0 +1,189 @@
+"use client";
+
+import React, { useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { Menu } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import { cn } from "@/lib/utils";
+import { ModeToggle } from "@/components/ui/mode-toggle";
+import { Session } from "@supabase/supabase-js";
+import { useSupabase } from "@/components/SessionProvider";
+import { toast } from "sonner"; // Import toast
+
+interface MobileHeaderNavProps {
+  // No longer needs navItems, session, handleLogout as props, will use useSupabase
+}
+
+export function MobileHeaderNav() {
+  const [isOpen, setIsOpen] = useState(false);
+  const pathname = usePathname();
+  const { supabase, session, profile } = useSupabase();
+
+  const handleLogout = async () => {
+    console.log("Attempting to log out from MobileHeaderNav...");
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error("Logout error (MobileHeaderNav):", error);
+      toast.error(`Gagal logout: ${error.message}`);
+    } else {
+      console.log("Logout successful (MobileHeaderNav), SessionProvider should handle redirect.");
+    }
+  };
+
+  return (
+    <Sheet open={isOpen} onOpenChange={setIsOpen}>
+      <SheetTrigger asChild>
+        <Button variant="ghost" size="icon" className="md:hidden text-primary-foreground">
+          <Menu className="h-6 w-6" />
+          <span className="sr-only">Toggle header navigation menu</span>
+        </Button>
+      </SheetTrigger>
+      <SheetContent side="right" className="w-64 p-0 bg-sidebar text-sidebar-foreground border-l border-sidebar-border flex flex-col">
+        <SheetHeader className="p-4 border-b border-sidebar-border flex flex-row items-center justify-between">
+          <SheetTitle className="text-lg font-semibold text-sidebar-primary">Opsi Pengguna</SheetTitle>
+          <ModeToggle />
+        </SheetHeader>
+        <nav className="flex flex-col p-4 space-y-1 flex-1 overflow-y-auto">
+          {session ? (
+            <>
+              <Button
+                variant="ghost"
+                asChild
+                className={cn(
+                  "w-full justify-start text-left transition-colors duration-200 text-sm",
+                  "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+                  pathname === "/profile"
+                    ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
+                    : ""
+                )}
+                onClick={() => setIsOpen(false)}
+              >
+                <Link href="/profile">PROFILE</Link>
+              </Button>
+              {profile?.role === 'admin' && (
+                <>
+                  <Button
+                    variant="ghost"
+                    asChild
+                    className={cn(
+                      "w-full justify-start text-left transition-colors duration-200 text-sm",
+                      "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+                      pathname === "/admin"
+                        ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
+                          : ""
+                    )}
+                    onClick={() => setIsOpen(false)}
+                  >
+                    <Link href="/admin">ADMIN DASHBOARD</Link>
+                  </Button>
+                  <div className="border-t border-sidebar-border pt-3 mt-3 space-y-1">
+                    <p className="text-xs font-semibold text-muted-foreground px-3">ADMIN MENU</p>
+                    <Button
+                      variant="ghost"
+                      asChild
+                      className={cn(
+                        "w-full justify-start text-left transition-colors duration-200 text-sm",
+                        "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+                        pathname === "/admin/announcements"
+                          ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
+                          : ""
+                      )}
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <Link href="/admin/announcements">Kelola Pengumuman</Link>
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      asChild
+                      className={cn(
+                        "w-full justify-start text-left transition-colors duration-200 text-sm",
+                        "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+                        pathname === "/admin/articles"
+                          ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
+                          : ""
+                      )}
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <Link href="/admin/articles">Kelola Artikel</Link>
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      asChild
+                      className={cn(
+                        "w-full justify-start text-left transition-colors duration-200 text-sm",
+                        "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+                        pathname === "/admin/issues"
+                          ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
+                          : ""
+                      )}
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <Link href="/admin/issues">Kelola Edisi</Link>
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      asChild
+                      className={cn(
+                        "w-full justify-start text-left transition-colors duration-200 text-sm",
+                        "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+                        pathname === "/admin/users"
+                          ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
+                          : ""
+                      )}
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <Link href="/admin/users">Kelola Pengguna</Link>
+                    </Button>
+                  </div>
+                </>
+              )}
+              <Button
+                variant="ghost"
+                className="w-full justify-start text-left transition-colors duration-200 text-sm text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                onClick={() => {
+                  handleLogout();
+                  setIsOpen(false);
+                }}
+              >
+                LOGOUT
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button
+                variant="ghost"
+                asChild
+                className={cn(
+                  "w-full justify-start text-left transition-colors duration-200 text-sm",
+                  "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+                  pathname === "/login"
+                    ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
+                    : ""
+                )}
+                onClick={() => setIsOpen(false)}
+              >
+                <Link href="/login">LOGIN</Link>
+              </Button>
+              <Button
+                variant="ghost"
+                asChild
+                className={cn(
+                  "w-full justify-start text-left transition-colors duration-200 text-sm",
+                  "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+                  pathname === "/register"
+                    ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
+                    : ""
+                )}
+                onClick={() => setIsOpen(false)}
+              >
+                <Link href="/register">REGISTER</Link>
+              </Button>
+            </>
+          )}
+        </nav>
+      </SheetContent>
+    </Sheet>
+  );
+}
