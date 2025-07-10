@@ -23,6 +23,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 
 import { UserProfile } from "@/lib/users";
+import { updateProfileAdminAction } from "@/actions/users"; // Import Server Action
 
 const userFormSchema = z.object({
   email: z.string().email("Email tidak valid.").min(1, "Email wajib diisi."),
@@ -90,47 +91,37 @@ export function UserForm({ initialData, onSuccess, onCancel }: UserFormProps) {
   async function onSubmit(values: UserFormValues) {
     setIsSubmitting(true);
     
-    const payload = {
-      profileData: {
-        username: values.username || null,
-        salutation: values.salutation || null,
-        first_name: values.first_name,
-        middle_name: values.middle_name || null,
-        last_name: values.last_name,
-        initials: values.initials || null,
-        gender: values.gender || null,
-        affiliation: values.affiliation || null,
-        signature: values.signature || null,
-        orcid_id: values.orcid_id || null,
-        url: values.url || null,
-        phone: values.phone || null,
-        fax: values.fax || null,
-        mailing_address: values.mailing_address || null,
-        bio_statement: values.bio_statement || null,
-        country: values.country || null,
-        is_reader: values.is_reader,
-        is_author: values.is_author,
-        profile_image_url: values.profile_image_url || null,
-        role: values.role,
-      },
-      authMetadata: {
-        first_name: values.first_name,
-        last_name: values.last_name,
-      }
+    const profileData = {
+      username: values.username || null,
+      salutation: values.salutation || null,
+      first_name: values.first_name,
+      middle_name: values.middle_name || null,
+      last_name: values.last_name,
+      initials: values.initials || null,
+      gender: values.gender || null,
+      affiliation: values.affiliation || null,
+      signature: values.signature || null,
+      orcid_id: values.orcid_id || null,
+      url: values.url || null,
+      phone: values.phone || null,
+      fax: values.fax || null,
+      mailing_address: values.mailing_address || null,
+      bio_statement: values.bio_statement || null,
+      country: values.country || null,
+      is_reader: values.is_reader,
+      is_author: values.is_author,
+      profile_image_url: values.profile_image_url || null,
+      role: values.role,
+    };
+    const authMetadata = {
+      first_name: values.first_name,
+      last_name: values.last_name,
     };
 
-    const res = await fetch(`/api/admin/users/${initialData.id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(payload),
-      credentials: 'include',
-    });
-    const result = await res.json();
+    const { data, error } = await updateProfileAdminAction(initialData.id, profileData, authMetadata);
 
-    if (!res.ok) {
-      toast.error(`Gagal memperbarui pengguna: ${result.error?.message || 'Terjadi kesalahan.'}`);
+    if (error) {
+      toast.error(`Gagal memperbarui pengguna: ${error.message}`);
     } else {
       toast.success("Profil pengguna berhasil diperbarui!");
       onSuccess();

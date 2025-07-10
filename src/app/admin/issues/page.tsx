@@ -12,6 +12,7 @@ import { Issue } from "@/lib/issues";
 import { IssueTable } from "@/components/admin/IssueTable";
 import { IssueForm } from "@/components/admin/IssueForm";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { deleteIssueAction } from "@/actions/issues"; // Import Server Action for delete
 
 export default function AdminIssuesPage() {
   const { session, profile } = useSupabase();
@@ -69,16 +70,10 @@ export default function AdminIssuesPage() {
       return;
     }
 
-    const res = await fetch(`/api/admin/issues/${id}`, {
-      method: 'DELETE',
-      headers: {
-        'Authorization': `Bearer ${session.access_token}`,
-      },
-    });
-    const { success, error } = await res.json();
+    const { success, error } = await deleteIssueAction(id); // Call Server Action
 
     if (error) {
-      toast.error(`Gagal menghapus edisi: ${error.message}`);
+      toast.error(`Gagal menghapus edisi: ${error}`);
     } else if (success) {
       toast.success("Edisi berhasil dihapus!");
       fetchIssues(); // Refresh list

@@ -18,6 +18,7 @@ import * as z from "zod";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import React from "react"; // Import React for Fragment
+import { updateProfileAdminAction } from "@/actions/users"; // Import Server Action for profile update
 
 // Zod schema for profile form validation
 const profileFormSchema = z.object({
@@ -153,43 +154,43 @@ export default function ProfilePage() {
     }
 
     setLoading(true);
-    const { error } = await supabase
-      .from("profiles")
-      .upsert({
-        id: session.user.id,
-        username: values.username || null,
-        salutation: values.salutation || null,
-        first_name: values.first_name,
-        middle_name: values.middle_name || null,
-        last_name: values.last_name,
-        initials: values.initials || null,
-        gender: values.gender || null,
-        affiliation: values.affiliation || null,
-        signature: values.signature || null,
-        orcid_id: values.orcid_id || null,
-        url: values.url || null,
-        phone: values.phone || null,
-        fax: values.fax || null,
-        mailing_address: values.mailing_address || null,
-        bio_statement: values.bio_statement || null,
-        country: values.country || null,
-        is_reader: values.is_reader,
-        is_author: values.is_author,
-        profile_image_url: values.profile_image_url || null,
-        role: profile?.role || 'user',
-      }, { onConflict: 'id' });
+
+    const profileData = {
+      username: values.username || null,
+      salutation: values.salutation || null,
+      first_name: values.first_name,
+      middle_name: values.middle_name || null,
+      last_name: values.last_name,
+      initials: values.initials || null,
+      gender: values.gender || null,
+      affiliation: values.affiliation || null,
+      signature: values.signature || null,
+      orcid_id: values.orcid_id || null,
+      url: values.url || null,
+      phone: values.phone || null,
+      fax: values.fax || null,
+      mailing_address: values.mailing_address || null,
+      bio_statement: values.bio_statement || null,
+      country: values.country || null,
+      is_reader: values.is_reader,
+      is_author: values.is_author,
+      profile_image_url: values.profile_image_url || null,
+      role: profile?.role || 'user', // Ensure role is not changed by user
+    };
+
+    const authMetadata = {
+      first_name: values.first_name,
+      last_name: values.last_name,
+    };
+
+    const { error } = await updateProfileAdminAction(session.user.id, profileData, authMetadata);
 
     if (error) {
       toast.error(`Gagal memperbarui profil: ${error.message}`);
       console.error("Error updating profile:", error);
     } else {
       toast.success("Profil berhasil diperbarui!");
-      await supabase.auth.updateUser({
-        data: {
-          first_name: values.first_name,
-          last_name: values.last_name,
-        }
-      });
+      // No need to call supabase.auth.updateUser directly here, as it's handled by the server action
     }
     setLoading(false);
   }

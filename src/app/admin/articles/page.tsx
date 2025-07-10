@@ -12,6 +12,7 @@ import { Article } from "@/lib/articles";
 import { ArticleTable } from "@/components/admin/ArticleTable";
 import { ArticleForm } from "@/components/admin/ArticleForm";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { deleteArticleAction } from "@/actions/articles"; // Import Server Action for delete
 
 export default function AdminArticlesPage() {
   const { session, profile } = useSupabase();
@@ -69,16 +70,10 @@ export default function AdminArticlesPage() {
       return;
     }
 
-    const res = await fetch(`/api/admin/articles/${id}`, {
-      method: 'DELETE',
-      headers: {
-        'Authorization': `Bearer ${session.access_token}`,
-      },
-    });
-    const { success, error } = await res.json();
+    const { success, error } = await deleteArticleAction(id); // Call Server Action
 
     if (error) {
-      toast.error(`Gagal menghapus artikel: ${error.message}`);
+      toast.error(`Gagal menghapus artikel: ${error}`);
     } else if (success) {
       toast.success("Artikel berhasil dihapus!");
       fetchArticles(); // Refresh list

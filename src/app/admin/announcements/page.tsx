@@ -12,6 +12,7 @@ import { Announcement } from "@/lib/announcements";
 import { AnnouncementTable } from "@/components/admin/AnnouncementTable";
 import { AnnouncementForm } from "@/components/admin/AnnouncementForm";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { deleteAnnouncementAction } from "@/actions/announcements"; // Import Server Action for delete
 
 export default function AdminAnnouncementsPage() {
   const { session, profile } = useSupabase();
@@ -27,6 +28,7 @@ export default function AdminAnnouncementsPage() {
       setLoading(false);
       return;
     }
+    // Fetching data via API route is still fine for GET requests
     const res = await fetch('/api/admin/announcements', {
       headers: {
         'Authorization': `Bearer ${session.access_token}`,
@@ -69,16 +71,10 @@ export default function AdminAnnouncementsPage() {
       return;
     }
 
-    const res = await fetch(`/api/admin/announcements/${id}`, {
-      method: 'DELETE',
-      headers: {
-        'Authorization': `Bearer ${session.access_token}`,
-      },
-    });
-    const { success, error } = await res.json();
+    const { success, error } = await deleteAnnouncementAction(id); // Call Server Action
 
     if (error) {
-      toast.error(`Gagal menghapus pengumuman: ${error.message}`);
+      toast.error(`Gagal menghapus pengumuman: ${error}`);
     } else if (success) {
       toast.success("Pengumuman berhasil dihapus!");
       fetchAnnouncements(); // Refresh list

@@ -23,7 +23,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
-import { Announcement, insertAnnouncement, updateAnnouncement } from "@/lib/announcements";
+import { Announcement } from "@/lib/announcements";
+import { createAnnouncementAction, updateAnnouncementAction } from "@/actions/announcements"; // Import Server Actions
 
 const announcementFormSchema = z.object({
   title: z.string().min(1, "Judul wajib diisi.").max(255, "Judul terlalu panjang."),
@@ -65,7 +66,7 @@ export function AnnouncementForm({ initialData, onSuccess, onCancel }: Announcem
 
   async function onSubmit(values: AnnouncementFormValues) { // Explicitly type values
     setIsSubmitting(true);
-    let error: Error | null = null;
+    let resultError: string | null = null;
 
     // Convert undefined to null for Supabase insertion/update
     const dataToSave = {
@@ -76,17 +77,17 @@ export function AnnouncementForm({ initialData, onSuccess, onCancel }: Announcem
     };
 
     if (initialData) {
-      // Update existing announcement
-      const { error: updateError } = await updateAnnouncement(initialData.id, dataToSave);
-      error = updateError;
+      // Update existing announcement using Server Action
+      const { error } = await updateAnnouncementAction(initialData.id, dataToSave);
+      resultError = error;
     } else {
-      // Insert new announcement
-      const { error: insertError } = await insertAnnouncement(dataToSave);
-      error = insertError;
+      // Insert new announcement using Server Action
+      const { error } = await createAnnouncementAction(dataToSave);
+      resultError = error;
     }
 
-    if (error) {
-      toast.error(`Gagal menyimpan pengumuman: ${error.message}`);
+    if (resultError) {
+      toast.error(`Gagal menyimpan pengumuman: ${resultError}`);
     } else {
       toast.success(`Pengumuman berhasil ${initialData ? "diperbarui" : "ditambahkan"}!`);
       onSuccess();

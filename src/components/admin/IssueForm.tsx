@@ -23,7 +23,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
-import { Issue, insertIssue, updateIssue } from "@/lib/issues";
+import { Issue } from "@/lib/issues";
+import { createIssueAction, updateIssueAction } from "@/actions/issues"; // Import Server Actions
 
 const issueFormSchema = z.object({
   volume: z.coerce.number().min(1, "Volume wajib diisi dan harus angka positif."),
@@ -68,7 +69,7 @@ export function IssueForm({ initialData, onSuccess, onCancel }: IssueFormProps) 
 
   async function onSubmit(values: IssueFormValues) {
     setIsSubmitting(true);
-    let error: Error | null = null;
+    let resultError: string | null = null;
 
     const issueData = {
       volume: values.volume,
@@ -79,15 +80,15 @@ export function IssueForm({ initialData, onSuccess, onCancel }: IssueFormProps) 
     };
 
     if (initialData) {
-      const { error: updateError } = await updateIssue(initialData.id, issueData);
-      error = updateError;
+      const { error } = await updateIssueAction(initialData.id, issueData);
+      resultError = error;
     } else {
-      const { error: insertError } = await insertIssue(issueData);
-      error = insertError;
+      const { error } = await createIssueAction(issueData);
+      resultError = error;
     }
 
-    if (error) {
-      toast.error(`Gagal menyimpan edisi: ${error.message}`);
+    if (resultError) {
+      toast.error(`Gagal menyimpan edisi: ${resultError}`);
     } else {
       toast.success(`Edisi berhasil ${initialData ? "diperbarui" : "ditambahkan"}!`);
       onSuccess();

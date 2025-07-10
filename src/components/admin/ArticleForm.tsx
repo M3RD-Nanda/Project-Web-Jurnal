@@ -25,8 +25,9 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
-import { Article, insertArticle, updateArticle } from "@/lib/articles";
+import { Article } from "@/lib/articles";
 import { Issue, getAllIssues } from "@/lib/issues"; // Import Issue and getAllIssues
+import { createArticleAction, updateArticleAction } from "@/actions/articles"; // Import Server Actions
 
 const articleFormSchema = z.object({
   title: z.string().min(1, "Judul wajib diisi.").max(500, "Judul terlalu panjang."),
@@ -89,7 +90,7 @@ export function ArticleForm({ initialData, onSuccess, onCancel }: ArticleFormPro
 
   async function onSubmit(values: ArticleFormValues) {
     setIsSubmitting(true);
-    let error: Error | null = null;
+    let resultError: string | null = null;
 
     const keywordsArray = values.keywords
       ? values.keywords.split(',').map(k => k.trim()).filter(k => k.length > 0)
@@ -106,15 +107,15 @@ export function ArticleForm({ initialData, onSuccess, onCancel }: ArticleFormPro
     };
 
     if (initialData) {
-      const { error: updateError } = await updateArticle(initialData.id, articleData);
-      error = updateError;
+      const { error } = await updateArticleAction(initialData.id, articleData);
+      resultError = error;
     } else {
-      const { error: insertError } = await insertArticle(articleData);
-      error = insertError;
+      const { error } = await createArticleAction(articleData);
+      resultError = error;
     }
 
-    if (error) {
-      toast.error(`Gagal menyimpan artikel: ${error.message}`);
+    if (resultError) {
+      toast.error(`Gagal menyimpan artikel: ${resultError}`);
     } else {
       toast.success(`Artikel berhasil ${initialData ? "diperbarui" : "ditambahkan"}!`);
       onSuccess();

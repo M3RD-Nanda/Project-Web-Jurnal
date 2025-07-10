@@ -1,78 +1,51 @@
 import { NextResponse } from 'next/server';
-import { updateAnnouncement, deleteAnnouncement } from '@/lib/announcements';
 import { supabaseAdmin } from '@/integrations/supabase/server';
 
-export async function PUT(request: Request, context: any) {
-  const { id } = context.params;
-  const authHeader = request.headers.get('Authorization');
+// This file is now only for reference. PUT and DELETE operations are handled by Server Actions.
+// The GET and POST operations for /api/admin/announcements are in route.ts
+// This file can be deleted if no other specific ID-based GET/POST is needed.
 
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return NextResponse.json({ error: { message: 'Unauthorized: No valid Authorization header' } }, { status: 401 });
-  }
+// Example of how you might have handled GET by ID if needed, but it's not the current issue.
+// export async function GET(request: Request, context: any) {
+//   const { id } = context.params;
+//   const authHeader = request.headers.get('Authorization');
 
-  const accessToken = authHeader.replace('Bearer ', '');
-  const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(accessToken);
+//   if (!authHeader || !authHeader.startsWith('Bearer ')) {
+//     return NextResponse.json({ error: { message: 'Unauthorized: No valid Authorization header' } }, { status: 401 });
+//   }
 
-  if (authError || !user) {
-    console.error("API Admin Announcements PUT: Auth error or no user:", authError?.message);
-    return NextResponse.json({ error: { message: 'Unauthorized: Invalid token' } }, { status: 401 });
-  }
+//   const accessToken = authHeader.replace('Bearer ', '');
+//   const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(accessToken);
 
-  const { data: profile, error: profileError } = await supabaseAdmin
-    .from('profiles')
-    .select('role')
-    .eq('id', user.id)
-    .single();
+//   if (authError || !user) {
+//     console.error("API Admin Announcements GET by ID: Auth error or no user:", authError?.message);
+//     return NextResponse.json({ error: { message: 'Unauthorized: Invalid token' } }, { status: 401 });
+//   }
 
-  if (profileError || profile?.role !== 'admin') {
-    console.error("API Admin Announcements PUT: Profile error or not admin:", profileError?.message || "Role not admin");
-    return NextResponse.json({ error: { message: 'Forbidden: Not an admin' } }, { status: 403 });
-  }
+//   const { data: profile, error: profileError } = await supabaseAdmin
+//     .from('profiles')
+//     .select('role')
+//     .eq('id', user.id)
+//     .single();
 
-  const body = await request.json();
-  const { data, error } = await updateAnnouncement(id, body);
+//   if (profileError || profile?.role !== 'admin') {
+//     console.error("API Admin Announcements GET by ID: Profile error or not admin:", profileError?.message || "Role not admin");
+//     return NextResponse.json({ error: { message: 'Forbidden: Not an admin' } }, { status: 403 });
+//   }
 
-  if (error) {
-    console.error("API Admin Announcements PUT: Error updating announcement:", error.message);
-    return NextResponse.json({ error: { message: error.message } }, { status: 500 });
-  }
+//   const announcement = await getAnnouncementById(id); // Assuming getAnnouncementById is still in lib
+//   if (!announcement) {
+//     return NextResponse.json({ error: { message: 'Announcement not found' } }, { status: 404 });
+//   }
+//   return NextResponse.json({ data: announcement });
+// }
 
-  return NextResponse.json({ data });
+// PUT and DELETE are now handled by Server Actions.
+// The API routes for these operations are no longer needed.
+export async function PUT() {
+  return NextResponse.json({ message: "PUT operation is now handled by Server Actions." }, { status: 200 });
 }
 
-export async function DELETE(request: Request, context: any) {
-  const { id } = context.params;
-  const authHeader = request.headers.get('Authorization');
-
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return NextResponse.json({ error: { message: 'Unauthorized: No valid Authorization header' } }, { status: 401 });
-  }
-
-  const accessToken = authHeader.replace('Bearer ', '');
-  const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(accessToken);
-
-  if (authError || !user) {
-    console.error("API Admin Announcements DELETE: Auth error or no user:", authError?.message);
-    return NextResponse.json({ error: { message: 'Unauthorized: Invalid token' } }, { status: 401 });
-  }
-
-  const { data: profile, error: profileError } = await supabaseAdmin
-    .from('profiles')
-    .select('role')
-    .eq('id', user.id)
-    .single();
-
-  if (profileError || profile?.role !== 'admin') {
-    console.error("API Admin Announcements DELETE: Profile error or not admin:", profileError?.message || "Role not admin");
-    return NextResponse.json({ error: { message: 'Forbidden: Not an admin' } }, { status: 403 });
-  }
-
-  const { success, error } = await deleteAnnouncement(id);
-
-  if (error) {
-    console.error("API Admin Announcements DELETE: Error deleting announcement:", error.message);
-    return NextResponse.json({ error: { message: error.message } }, { status: 500 });
-  }
-
-  return NextResponse.json({ success });
+export async function DELETE() {
+  return NextResponse.json({ message: "DELETE operation is now handled by Server Actions." }, { status: 200 });
 }
