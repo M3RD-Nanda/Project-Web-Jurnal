@@ -9,7 +9,7 @@ import { usePathname } from "next/navigation";
 import { MobileNav } from "./MobileNav";
 import { useSupabase } from "@/components/SessionProvider";
 import { toast } from "sonner";
-import { MobileHeaderNav } from "./MobileHeaderNav";
+// import { MobileHeaderNav } from "./MobileHeaderNav"; // Removed this import
 
 export function Header() {
   const pathname = usePathname();
@@ -57,7 +57,7 @@ export function Header() {
             />
             <div className="flex flex-col">
               <span className="text-lg font-bold">JIMEKA</span>
-              <span className="text-[0.6rem] leading-tight whitespace-nowrap">FAKULTAS EKONOMI DAN BISNIS UNIVERSITAS PERCOBAAN NANDA</span>
+              <span className="text-[0.6rem] leading-tight">FAKULTAS EKONOMI DAN BISNIS UNIVERSITAS PERCOBAAN NANDA</span> {/* Removed whitespace-nowrap */}
               <span className="text-[0.6rem] leading-tight text-primary-foreground/80 whitespace-nowrap mt-1">E-ISSN: 2581-1002</span>
             </div>
           </Link>
@@ -141,8 +141,8 @@ export function Header() {
           <ModeToggle />
         </div>
 
-        {/* Mobile Header Nav (only visible on mobile, pushed to far right) */}
-        <MobileHeaderNav navItems={baseNavItems} session={session} handleLogout={handleLogout} />
+        {/* Mobile Header Nav is removed as MobileNav handles all mobile navigation */}
+        {/* <MobileHeaderNav navItems={baseNavItems} session={session} handleLogout={handleLogout} /> */}
       </div>
     </header>
   );
