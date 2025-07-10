@@ -45,9 +45,9 @@ export function Header() {
     <header className="bg-primary text-primary-foreground p-3 shadow-md sticky top-0 z-50 w-full">
       <div className="container mx-auto flex items-center justify-between">
         {/* Left Group: MobileNav, Logo, Journal Info, and E-ISSN */}
-        <div className="flex items-center gap-0"> {/* Mengurangi gap dari 1 menjadi 0 untuk merapatkan ke MobileNav */}
+        <div className="flex items-center gap-0">
           <MobileNav />
-          <Link href="/" className="flex items-center gap-2"> {/* Menambah gap dari 0 menjadi 2 untuk jarak dengan teks */}
+          <Link href="/" className="flex items-center gap-2">
             <Image
               src="/jimeka-logo.png"
               alt="Jurnal Ilmiah Mahasiswa Ekonomi Akuntansi (JIMEKA) Logo Universitas Percobaan Nanda"
@@ -55,10 +55,12 @@ export function Header() {
               height={35}
               className="rounded-full"
             />
-            <div className="flex flex-col">
-              <span className="text-base font-bold">JIMEKA</span>
-              <span className="text-[7px] leading-tight whitespace-nowrap">FAKULTAS EKONOMI DAN BISNIS UNIVERSITAS PERCOBAAN NANDA</span>
-              <span className="text-[7px] leading-tight text-primary-foreground/80 whitespace-nowrap mt-1">E-ISSN: 2581-1002</span>
+            <div className="flex flex-col w-max"> {/* Added w-max to make container fit content */}
+              <div className="flex justify-between items-baseline w-full"> {/* Inner div for JIMEKA and E-ISSN */}
+                <span className="text-base font-bold">JIMEKA</span>
+                <span className="text-[7px] leading-tight text-primary-foreground/80 whitespace-nowrap">E-ISSN: 2581-1002</span> {/* Removed mt-1 */}
+              </div>
+              <span className="text-[10px] leading-tight whitespace-nowrap">FAKULTAS EKONOMI DAN BISNIS UNIVERSITAS PERCOBAAN NANDA</span> {/* Increased font size */}
             </div>
           </Link>
         </div>
