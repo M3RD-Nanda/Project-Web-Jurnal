@@ -26,8 +26,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 import { Article } from "@/lib/articles";
-import { Issue, getAllIssues } from "@/lib/issues"; // Import Issue and getAllIssues
 import { createArticleAction, updateArticleAction } from "@/actions/articles"; // Import Server Actions
+import { getIssuesForArticleForm } from "@/actions/issues-data"; // Import the new Server Action
 
 const articleFormSchema = z.object({
   title: z.string().min(1, "Judul wajib diisi.").max(500, "Judul terlalu panjang."),
@@ -51,7 +51,7 @@ interface ArticleFormProps {
 
 export function ArticleForm({ initialData, onSuccess, onCancel }: ArticleFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [issues, setIssues] = useState<Issue[]>([]);
+  const [issues, setIssues] = useState<any[]>([]); // Use any[] for now, or import Issue interface
   const [issuesLoading, setIssuesLoading] = useState(true);
 
   const form = useForm<ArticleFormValues>({
@@ -81,7 +81,8 @@ export function ArticleForm({ initialData, onSuccess, onCancel }: ArticleFormPro
   useEffect(() => {
     const fetchIssues = async () => {
       setIssuesLoading(true);
-      const fetchedIssues = await getAllIssues();
+      // Call the new Server Action to fetch issues
+      const fetchedIssues = await getIssuesForArticleForm();
       setIssues(fetchedIssues);
       setIssuesLoading(false);
     };
