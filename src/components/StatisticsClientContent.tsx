@@ -10,19 +10,19 @@ import { ArticlesPerYearData, AcceptanceRateData, CitationData } from "@/lib/sta
 
 // Dynamically import individual Recharts components and explicitly type them as React.ComponentType<any>
 // This helps bypass strict type checking issues with Recharts' defaultProps when used with next/dynamic.
-const ResponsiveContainer: React.ComponentType<any> = dynamic(() => import("recharts").then((mod) => mod.ResponsiveContainer), { ssr: false });
-const BarChart: React.ComponentType<any> = dynamic(() => import("recharts").then((mod) => mod.BarChart), { ssr: false });
-const Bar: React.ComponentType<any> = dynamic(() => import("recharts").then((mod) => mod.Bar), { ssr: false });
-const XAxis: React.ComponentType<any> = dynamic(() => import("recharts").then((mod) => mod.XAxis), { ssr: false });
-const YAxis: React.ComponentType<any> = dynamic(() => import("recharts").then((mod) => mod.YAxis), { ssr: false });
-const CartesianGrid: React.ComponentType<any> = dynamic(() => import("recharts").then((mod) => mod.CartesianGrid), { ssr: false });
-const Tooltip: React.ComponentType<any> = dynamic(() => import("recharts").then((mod) => mod.Tooltip), { ssr: false });
-const Legend: React.ComponentType<any> = dynamic(() => import("recharts").then((mod) => mod.Legend), { ssr: false });
-const PieChart: React.ComponentType<any> = dynamic(() => import("recharts").then((mod) => mod.PieChart), { ssr: false });
-const Pie: React.ComponentType<any> = dynamic(() => import("recharts").then((mod) => mod.Pie), { ssr: false });
-const Cell: React.ComponentType<any> = dynamic(() => import("recharts").then((mod) => mod.Cell), { ssr: false });
-const LineChart: React.ComponentType<any> = dynamic(() => import("recharts").then((mod) => mod.LineChart), { ssr: false });
-const Line: React.ComponentType<any> = dynamic(() => import("recharts").then((mod) => mod.Line), { ssr: false });
+const ResponsiveContainer: React.ComponentType<any> = dynamic(() => import("recharts").then((mod: any) => mod.ResponsiveContainer), { ssr: false });
+const BarChart: React.ComponentType<any> = dynamic(() => import("recharts").then((mod: any) => mod.BarChart), { ssr: false });
+const Bar: React.ComponentType<any> = dynamic(() => import("recharts").then((mod: any) => mod.Bar), { ssr: false });
+const XAxis: React.ComponentType<any> = dynamic(() => import("recharts").then((mod: any) => mod.XAxis), { ssr: false });
+const YAxis: React.ComponentType<any> = dynamic(() => import("recharts").then((mod: any) => mod.YAxis), { ssr: false });
+const CartesianGrid: React.ComponentType<any> = dynamic(() => import("recharts").then((mod: any) => mod.CartesianGrid), { ssr: false });
+const Tooltip: React.ComponentType<any> = dynamic(() => import("recharts").then((mod: any) => mod.Tooltip), { ssr: false });
+const Legend: React.ComponentType<any> = dynamic(() => import("recharts").then((mod: any) => mod.Legend), { ssr: false });
+const PieChart: React.ComponentType<any> = dynamic(() => import("recharts").then((mod: any) => mod.PieChart), { ssr: false });
+const Pie: React.ComponentType<any> = dynamic(() => import("recharts").then((mod: any) => mod.Pie), { ssr: false });
+const Cell: React.ComponentType<any> = dynamic(() => import("recharts").then((mod: any) => mod.Cell), { ssr: false });
+const LineChart: React.ComponentType<any> = dynamic(() => import("recharts").then((mod: any) => mod.LineChart), { ssr: false });
+const Line: React.ComponentType<any> = dynamic(() => import("recharts").then((mod: any) => mod.Line), { ssr: false });
 
 
 interface StatisticsClientContentProps {
