@@ -23,7 +23,7 @@ export function VisitorChart() {
   }, []);
 
   // Helper component to render chart content or fallback
-  const ChartContent = ({ mounted, data, message, children }: { mounted: boolean; data: any[]; message: string; children: React.ReactNode }) => {
+  const ChartContent = ({ data, message, children }: { data: any[]; message: string; children: React.ReactNode }) => {
     if (!mounted) {
       return (
         <div className="flex items-center justify-center h-full">
@@ -46,8 +46,8 @@ export function VisitorChart() {
         <CardTitle className="text-sm font-semibold text-sidebar-primary">VISITORS (Mingguan)</CardTitle>
       </CardHeader>
       <CardContent className="h-[150px] p-2">
-        <ResponsiveContainer width="100%" height="100%">
-          <ChartContent mounted={mounted} data={data} message="Tidak ada data kunjungan.">
+        <ResponsiveContainer width="100%" height="100%" key={mounted ? "visitor-chart-mounted" : "visitor-chart-unmounted"}>
+          <ChartContent data={data} message="Tidak ada data kunjungan.">
             <BarChart data={data} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--sidebar-border))" />
               <XAxis dataKey="date" stroke="hsl(var(--sidebar-foreground))" tickLine={false} axisLine={false} />
