@@ -1,143 +1,43 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { useSupabase } from "@/components/SessionProvider";
-import { StaticContentPage } from "@/components/StaticContentPage";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { toast } from "sonner";
-import { Loader2, PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Article } from "@/lib/articles";
-import { ArticleTable } from "@/components/admin/ArticleTable";
-import { ArticleForm } from "@/components/admin/ArticleForm";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { ArticleForm } from "./_components/article-form";
+import { DataTable } from "@/components/ui/data-table";
+import { columns } from "./_components/columns";
+import { getAllArticles } from "@/lib/articles"; // Mengubah dari getArticles menjadi getAllArticles
+import { useState } from "react";
 
-export default function AdminArticlesPage() {
-  const { session, profile } = useSupabase();
-  const router = useRouter();
-  const [loading, setLoading] = useState(true);
-  const [articles, setArticles] = useState<Article[]>([]);
-  const [isFormOpen, setIsFormOpen] = useState(false);
-  const [editingArticle, setEditingArticle] = useState<Article | null>(null);
-
-  const fetchArticles = async () => {
-    setLoading(true);
-    if (!session) {
-      setLoading(false);
-      return;
-    }
-    const res = await fetch('/api/admin/articles', {
-      headers: {
-        'Authorization': `Bearer ${session.access_token}`,
-      },
-    });
-    const result = await res.json();
-
-    if (res.ok) {
-      setArticles(result.data);
-    } else {
-      toast.error(`Gagal memuat artikel: ${result.error?.message || 'Terjadi kesalahan.'}`);
-      setArticles([]);
-    }
-    setLoading(false);
-  };
-
-  useEffect(() => {
-    if (!session) {
-      toast.error("Anda harus login untuk mengakses halaman ini.");
-      router.push("/login");
-      return;
-    }
-    if (profile && profile.role !== 'admin') {
-      toast.error("Anda tidak memiliki izin untuk mengakses halaman ini.");
-      router.push("/");
-      return;
-    }
-    fetchArticles();
-  }, [session, profile, router]);
-
-  const handleEdit = (article: Article) => {
-    setEditingArticle(article);
-    setIsFormOpen(true);
-  };
-
-  const handleDelete = async (id: string) => {
-    if (!confirm("Apakah Anda yakin ingin menghapus artikel ini?")) return;
-    if (!session) {
-      toast.error("Anda tidak terautentikasi.");
-      return;
-    }
-
-    const res = await fetch(`/api/admin/articles/${id}`, {
-      method: 'DELETE',
-      headers: {
-        'Authorization': `Bearer ${session.access_token}`,
-      },
-    });
-    const { success, error } = await res.json();
-
-    if (error) {
-      toast.error(`Gagal menghapus artikel: ${error.message}`);
-    } else if (success) {
-      toast.success("Artikel berhasil dihapus!");
-      fetchArticles(); // Refresh list
-    }
-  };
-
-  const handleFormSuccess = () => {
-    setIsFormOpen(false);
-    setEditingArticle(null);
-    fetchArticles(); // Refresh list
-  };
-
-  if (!session || !profile || loading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <p className="ml-2">Memuat...</p>
-      </div>
-    );
-  }
-
-  if (profile.role !== 'admin') {
-    return null; // Redirect handled by useEffect
-  }
+export default async function AdminArticlesPage() {
+  const articles = await getAllArticles();
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   return (
-    <StaticContentPage title="Kelola Artikel">
-      <Card className="w-full">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-2xl font-bold">Daftar Artikel</CardTitle>
-          <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+    <Card>
+      <CardHeader>
+        <CardTitle>Kelola Artikel</CardTitle>
+        <CardDescription>
+          Tambahkan, edit, atau hapus artikel jurnal.
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="flex justify-end mb-4">
+          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
-              <Button onClick={() => { setEditingArticle(null); setIsFormOpen(true); }}>
-                <PlusCircle className="mr-2 h-4 w-4" /> Tambah Artikel
-              </Button>
+              <Button>Tambah Artikel</Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto"> {/* Added max-h and overflow-y-auto */}
+            <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto">
               <DialogHeader>
-                <DialogTitle>{editingArticle ? "Edit Artikel" : "Tambah Artikel Baru"}</DialogTitle>
-                <CardDescription>
-                  {editingArticle ? "Perbarui detail artikel." : "Isi detail untuk artikel baru."}
-                </CardDescription>
+                <DialogTitle>Tambah Artikel</DialogTitle>
+                <DialogDescription>
+                  Isi detail artikel baru di sini. Klik simpan saat selesai.
+                </DialogDescription>
               </DialogHeader>
-              <ArticleForm
-                initialData={editingArticle}
-                onSuccess={handleFormSuccess}
-                onCancel={() => setIsFormOpen(false)}
-              />
+              <ArticleForm onSave={() => setIsDialogOpen(false)} />
             </DialogContent>
           </Dialog>
-        </CardHeader>
-        <CardContent>
-          <ArticleTable
-            articles={articles}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-          />
-        </CardContent>
-      </Card>
-    </StaticContentPage>
+        </div>
+        <DataTable columns={columns} data={articles} filterColumnId="title" />
+      </CardContent>
+    </Card>
   );
 }

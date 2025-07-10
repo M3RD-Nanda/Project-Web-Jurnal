@@ -1,15 +1,15 @@
 import { StaticContentPage } from "@/components/StaticContentPage";
-import { getArticleById } from "@/lib/articles";
+import { getArticleById, Article } from "@/lib/articles"; // Mengimpor tipe Article
 import { notFound } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 
 type ArticlePageProps = {
-  params: Record<string, string>; // Mengubah tipe params menjadi Record<string, string>
+  params: any; // Tetap 'any' untuk params sebagai upaya terakhir untuk kompilasi
   searchParams?: { [key: string]: string | string[] | undefined };
 };
 
 export default async function ArticlePage({ params }: ArticlePageProps) {
-  const article = await getArticleById(params.id); // Menggunakan await untuk mengambil data
+  const article = await getArticleById(params.id);
 
   if (!article) {
     notFound();
