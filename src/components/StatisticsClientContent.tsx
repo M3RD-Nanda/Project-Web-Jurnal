@@ -1,28 +1,28 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import dynamic from "next/dynamic";
-import { Loader2 } from "lucide-react";
+import { ChartWrapper } from "./ChartWrapper";
 
 // Import interfaces for data
 import { ArticlesPerYearData, AcceptanceRateData, CitationData } from "@/lib/statistics";
 
 // Dynamically import individual Recharts components with ssr: false
-// Explicitly cast the imported module to 'any' to resolve TypeScript compile errors
-const ResponsiveContainer: React.ComponentType<any> = dynamic(() => import("recharts").then((mod: any) => mod.ResponsiveContainer), { ssr: false });
-const BarChart: React.ComponentType<any> = dynamic(() => import("recharts").then((mod: any) => mod.BarChart), { ssr: false });
-const Bar: React.ComponentType<any> = dynamic(() => import("recharts").then((mod: any) => mod.Bar), { ssr: false });
-const XAxis: React.ComponentType<any> = dynamic(() => import("recharts").then((mod: any) => mod.XAxis), { ssr: false });
-const YAxis: React.ComponentType<any> = dynamic(() => import("recharts").then((mod: any) => mod.YAxis), { ssr: false });
-const CartesianGrid: React.ComponentType<any> = dynamic(() => import("recharts").then((mod: any) => mod.CartesianGrid), { ssr: false });
-const Tooltip: React.ComponentType<any> = dynamic(() => import("recharts").then((mod: any) => mod.Tooltip), { ssr: false });
-const Legend: React.ComponentType<any> = dynamic(() => import("recharts").then((mod: any) => mod.Legend), { ssr: false });
-const PieChart: React.ComponentType<any> = dynamic(() => import("recharts").then((mod: any) => mod.PieChart), { ssr: false });
-const Pie: React.ComponentType<any> = dynamic(() => import("recharts").then((mod: any) => mod.Pie), { ssr: false });
-const Cell: React.ComponentType<any> = dynamic(() => import("recharts").then((mod: any) => mod.Cell), { ssr: false });
-const LineChart: React.ComponentType<any> = dynamic(() => import("recharts").then((mod: any) => mod.LineChart), { ssr: false });
-const Line: React.ComponentType<any> = dynamic(() => import("recharts").then((mod: any) => mod.Line), { ssr: false });
+// Explicitly cast the imported module's component to 'unknown' then to 'React.ComponentType<any>'
+const ResponsiveContainer: React.ComponentType<any> = dynamic(() => import("recharts").then((mod) => mod.ResponsiveContainer as React.ComponentType<any>), { ssr: false });
+const BarChart: React.ComponentType<any> = dynamic(() => import("recharts").then((mod) => mod.BarChart as React.ComponentType<any>), { ssr: false });
+const Bar: React.ComponentType<any> = dynamic(() => import("recharts").then((mod) => mod.Bar as unknown as React.ComponentType<any>), { ssr: false }); // Fixed
+const XAxis: React.ComponentType<any> = dynamic(() => import("recharts").then((mod) => mod.XAxis as React.ComponentType<any>), { ssr: false });
+const YAxis: React.ComponentType<any> = dynamic(() => import("recharts").then((mod) => mod.YAxis as React.ComponentType<any>), { ssr: false });
+const CartesianGrid: React.ComponentType<any> = dynamic(() => import("recharts").then((mod) => mod.CartesianGrid as React.ComponentType<any>), { ssr: false });
+const Tooltip: React.ComponentType<any> = dynamic(() => import("recharts").then((mod) => mod.Tooltip as React.ComponentType<any>), { ssr: false });
+const Legend: React.ComponentType<any> = dynamic(() => import("recharts").then((mod) => mod.Legend as React.ComponentType<any>), { ssr: false });
+const PieChart: React.ComponentType<any> = dynamic(() => import("recharts").then((mod) => mod.PieChart as React.ComponentType<any>), { ssr: false });
+const Pie: React.ComponentType<any> = dynamic(() => import("recharts").then((mod) => mod.Pie as unknown as React.ComponentType<any>), { ssr: false }); // Fixed
+const Cell: React.ComponentType<any> = dynamic(() => import("recharts").then((mod) => mod.Cell as React.ComponentType<any>), { ssr: false });
+const LineChart: React.ComponentType<any> = dynamic(() => import("recharts").then((mod) => mod.LineChart as React.ComponentType<any>), { ssr: false });
+const Line: React.ComponentType<any> = dynamic(() => import("recharts").then((mod) => mod.Line as React.ComponentType<any>), { ssr: false });
 
 
 interface StatisticsClientContentProps {
@@ -32,15 +32,6 @@ interface StatisticsClientContentProps {
 }
 
 export function StatisticsClientContent({ articlesPerYearData, acceptanceRateData, totalCitationsData }: StatisticsClientContentProps) {
-  const [hasMounted, setHasMounted] = useState(false);
-
-  useEffect(() => {
-    // Set hasMounted to true only after the component has mounted on the client side.
-    // This ensures that Recharts components, which rely on browser APIs (like window.innerWidth),
-    // are only rendered when those APIs are available.
-    setHasMounted(true);
-  }, []);
-
   // Use theme-aware colors for consistency
   const BAR_FILL_COLOR = "hsl(var(--primary))";
   const LINE_STROKE_COLOR = "hsl(var(--chart-1))";
@@ -58,14 +49,6 @@ export function StatisticsClientContent({ articlesPerYearData, acceptanceRateDat
     percent: totalAcceptedRejected > 0 ? item.count / totalAcceptedRejected : 0,
   }));
 
-  // Placeholder for charts during SSR or before mounting
-  const ChartPlaceholder = () => (
-    <div className="flex items-center justify-center h-full">
-      <Loader2 className="h-6 w-6 animate-spin text-primary" />
-      <p className="ml-2 text-sm text-muted-foreground">Memuat grafik...</p>
-    </div>
-  );
-
   return (
     <>
       <p>
@@ -79,8 +62,8 @@ export function StatisticsClientContent({ articlesPerYearData, acceptanceRateDat
             <CardTitle className="text-xl font-semibold">Artikel Diterbitkan per Tahun</CardTitle>
           </CardHeader>
           <CardContent className="h-[300px]">
-            {hasMounted ? (
-              articlesPerYearData.length > 0 ? (
+            <ChartWrapper>
+              {articlesPerYearData.length > 0 ? (
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={articlesPerYearData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke={GRID_STROKE_COLOR} />
@@ -93,10 +76,8 @@ export function StatisticsClientContent({ articlesPerYearData, acceptanceRateDat
                 </ResponsiveContainer>
               ) : (
                 <p className="text-center text-muted-foreground p-4 h-full flex items-center justify-center">Data artikel per tahun tidak tersedia.</p>
-              )
-            ) : (
-              <ChartPlaceholder />
-            )}
+              )}
+            </ChartWrapper>
           </CardContent>
         </Card>
 
@@ -106,8 +87,8 @@ export function StatisticsClientContent({ articlesPerYearData, acceptanceRateDat
             <CardTitle className="text-xl font-semibold">Tingkat Penerimaan Artikel</CardTitle>
           </CardHeader>
           <CardContent className="h-[300px] flex items-center justify-center">
-            {hasMounted ? (
-              (pieChartData.length > 0 && totalAcceptedRejected > 0) ? (
+            <ChartWrapper>
+              {(pieChartData.length > 0 && totalAcceptedRejected > 0) ? (
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
@@ -130,10 +111,8 @@ export function StatisticsClientContent({ articlesPerYearData, acceptanceRateDat
                 </ResponsiveContainer>
               ) : (
                 <p className="text-center text-muted-foreground p-4 h-full flex items-center justify-center">Data tingkat penerimaan tidak tersedia.</p>
-              )
-            ) : (
-              <ChartPlaceholder />
-            )}
+              )}
+            </ChartWrapper>
           </CardContent>
         </Card>
 
@@ -143,8 +122,8 @@ export function StatisticsClientContent({ articlesPerYearData, acceptanceRateDat
             <CardTitle className="text-xl font-semibold">Total Sitasi (Google Scholar)</CardTitle>
           </CardHeader>
           <CardContent className="h-[300px]">
-            {hasMounted ? (
-              totalCitationsData.length > 0 ? (
+            <ChartWrapper>
+              {totalCitationsData.length > 0 ? (
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={totalCitationsData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
                     <CartesianGrid strokeDasharray="3 3" stroke={GRID_STROKE_COLOR} />
@@ -157,10 +136,8 @@ export function StatisticsClientContent({ articlesPerYearData, acceptanceRateDat
                 </ResponsiveContainer>
               ) : (
                 <p className="text-center text-muted-foreground p-4 h-full flex items-center justify-center">Data sitasi tidak tersedia.</p>
-              )
-            ) : (
-              <ChartPlaceholder />
-            )}
+              )}
+            </ChartWrapper>
           </CardContent>
         </Card>
       </div>
