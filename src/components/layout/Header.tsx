@@ -42,23 +42,23 @@ export function Header() {
     : baseNavItems;
 
   return (
-    <header className="bg-primary text-primary-foreground p-4 shadow-md sticky top-0 z-50 w-full">
+    <header className="bg-primary text-primary-foreground p-3 shadow-md sticky top-0 z-50 w-full">
       <div className="container mx-auto flex items-center justify-between">
         {/* Left Group: MobileNav, Logo, Journal Info, and E-ISSN */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
           <MobileNav />
-          <Link href="/" className="flex items-center gap-2">
+          <Link href="/" className="flex items-center gap-1">
             <Image
               src="/jimeka-logo.png"
               alt="Jurnal Ilmiah Mahasiswa Ekonomi Akuntansi (JIMEKA) Logo Universitas Percobaan Nanda"
-              width={40}
-              height={40}
+              width={35}
+              height={35}
               className="rounded-full"
             />
             <div className="flex flex-col">
-              <span className="text-lg font-bold">JIMEKA</span>
-              <span className="text-[8px] leading-tight whitespace-nowrap">FAKULTAS EKONOMI DAN BISNIS UNIVERSITAS PERCOBAAN NANDA</span>
-              <span className="text-[8px] leading-tight text-primary-foreground/80 whitespace-nowrap mt-1">E-ISSN: 2581-1002</span>
+              <span className="text-base font-bold">JIMEKA</span>
+              <span className="text-[7px] leading-tight whitespace-nowrap">FAKULTAS EKONOMI DAN BISNIS UNIVERSITAS PERCOBAAN NANDA</span>
+              <span className="text-[7px] leading-tight text-primary-foreground/80 whitespace-nowrap mt-1">E-ISSN: 2581-1002</span>
             </div>
           </Link>
         </div>
