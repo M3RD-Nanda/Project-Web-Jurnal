@@ -1,5 +1,4 @@
-import { NextResponse } from 'next/server';
-import { supabaseAdmin } from '@/integrations/supabase/server';
+import { NextResponse } from "next/server";
 
 // This file is now only for reference. PUT and DELETE operations are handled by Server Actions.
 // The GET and POST operations for /api/admin/announcements are in route.ts
@@ -43,9 +42,15 @@ import { supabaseAdmin } from '@/integrations/supabase/server';
 // PUT and DELETE are now handled by Server Actions.
 // The API routes for these operations are no longer needed.
 export async function PUT() {
-  return NextResponse.json({ message: "PUT operation is now handled by Server Actions." }, { status: 200 });
+  return NextResponse.json(
+    { message: "PUT operation is now handled by Server Actions." },
+    { status: 200 }
+  );
 }
 
 export async function DELETE() {
-  return NextResponse.json({ message: "DELETE operation is now handled by Server Actions." }, { status: 200 });
+  return NextResponse.json(
+    { message: "DELETE operation is now handled by Server Actions." },
+    { status: 200 }
+  );
 }

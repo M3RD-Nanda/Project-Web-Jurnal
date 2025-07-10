@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
   try {
@@ -23,9 +23,15 @@ export async function POST(request: Request) {
     console.log(`Pesan: ${message}`);
     console.log("----------------------------------");
 
-    return NextResponse.json({ message: "Pesan berhasil diterima!" }, { status: 200 });
-  } catch (error: any) {
+    return NextResponse.json(
+      { message: "Pesan berhasil diterima!" },
+      { status: 200 }
+    );
+  } catch (error: unknown) {
     console.error("Error handling contact form submission:", error);
-    return NextResponse.json({ error: "Gagal memproses pesan Anda." }, { status: 500 });
+    return NextResponse.json(
+      { error: "Gagal memproses pesan Anda." },
+      { status: 500 }
+    );
   }
 }

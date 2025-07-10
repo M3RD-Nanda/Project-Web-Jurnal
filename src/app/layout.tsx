@@ -29,6 +29,14 @@ export const metadata: Metadata = {
   title: "Jurnal Ilmiah Mahasiswa Ekonomi Akuntansi",
   description:
     "Jurnal Ilmiah Mahasiswa Ekonomi Akuntansi (JIMEKA) adalah jurnal peer-review dan open-access yang diterbitkan oleh Universitas Percobaan Nanda.",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/jimeka-logo.png", sizes: "32x32", type: "image/png" },
+    ],
+    shortcut: "/favicon.ico",
+    apple: "/jimeka-logo.png",
+  },
 };
 
 export default async function RootLayout({

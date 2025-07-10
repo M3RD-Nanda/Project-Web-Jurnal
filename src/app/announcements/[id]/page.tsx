@@ -1,12 +1,18 @@
 import { StaticContentPage } from "@/components/StaticContentPage";
 import { getAnnouncementById, getAllAnnouncements } from "@/lib/announcements";
 import { notFound } from "next/navigation";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { format } from "date-fns";
 import { id as dateFnsIdLocale } from "date-fns/locale";
 
 type AnnouncementPageProps = {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 };
 
 export async function generateStaticParams() {
@@ -16,8 +22,10 @@ export async function generateStaticParams() {
   }));
 }
 
-export default async function AnnouncementDetailPage({ params }: AnnouncementPageProps) {
-  const { id } = params;
+export default async function AnnouncementDetailPage({
+  params,
+}: AnnouncementPageProps) {
+  const { id } = await params;
   const announcement = await getAnnouncementById(id);
 
   if (!announcement) {

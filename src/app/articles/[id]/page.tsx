@@ -44,7 +44,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
           />
           <h3 className="text-2xl font-semibold mt-8">Kata Kunci</h3>
           <p className="text-base">
-            {article.keywords.map((keyword, index) => (
+            {article.keywords.map((keyword) => (
               <span
                 key={keyword}
                 className="inline-block bg-muted text-muted-foreground px-3 py-1 rounded-full text-sm mr-2 mb-2"

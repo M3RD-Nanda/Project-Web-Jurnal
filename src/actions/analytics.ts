@@ -1,7 +1,6 @@
 "use server";
 
 import { supabaseAdmin } from "@/integrations/supabase/server";
-import { headers } from "next/headers";
 
 export async function recordPageVisit(path: string) {
   try {
@@ -10,7 +9,7 @@ export async function recordPageVisit(path: string) {
     // const userId = user?.id || null;
 
     const { error } = await supabaseAdmin
-      .from('page_visits')
+      .from("page_visits")
       .insert({ path: path }); // user_id: userId if you add it to the table
 
     if (error) {
