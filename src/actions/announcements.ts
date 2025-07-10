@@ -24,6 +24,7 @@ export async function createAnnouncementAction(announcement: Omit<Announcement, 
   revalidatePath("/admin/announcements");
   revalidatePath("/announcements");
   revalidatePath("/"); // Revalidate home page for latest announcements
+  revalidatePath(`/announcements/${data.id}`); // Revalidate the new announcement's detail page
   return { data: data as Announcement, error: null };
 }
 
@@ -48,6 +49,7 @@ export async function updateAnnouncementAction(id: string, announcement: Partial
   revalidatePath("/admin/announcements");
   revalidatePath("/announcements");
   revalidatePath("/"); // Revalidate home page for latest announcements
+  revalidatePath(`/announcements/${id}`); // Revalidate the updated announcement's detail page
   return { data: data as Announcement, error: null };
 }
 
@@ -65,5 +67,6 @@ export async function deleteAnnouncementAction(id: string): Promise<{ success: b
   revalidatePath("/admin/announcements");
   revalidatePath("/announcements");
   revalidatePath("/"); // Revalidate home page for latest announcements
+  revalidatePath(`/announcements/${id}`); // Revalidate the deleted announcement's detail page
   return { success: true, error: null };
 }
