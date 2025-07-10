@@ -35,18 +35,13 @@ export function StatisticsClientContent({ articlesPerYearData, acceptanceRateDat
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    // Set mounted to true after the component has mounted on the client side.
-    // This ensures that Recharts components, which rely on DOM, only render client-side.
-    setMounted(true);
+    // Add a small delay to ensure the DOM is fully hydrated and dimensions are calculated
+    const timer = setTimeout(() => {
+      setMounted(true);
+    }, 100); // 100ms delay
 
-    // --- Logging untuk debugging ---
-    console.log("StatisticsClientContent: Component mounted.");
-    console.log("StatisticsClientContent: articlesPerYearData received:", articlesPerYearData);
-    console.log("StatisticsClientContent: acceptanceRateData received:", acceptanceRateData);
-    console.log("StatisticsClientContent: totalCitationsData received:", totalCitationsData);
-    // --- Akhir logging ---
-
-  }, [articlesPerYearData, acceptanceRateData, totalCitationsData]); // Depend on data to re-log if it changes
+    return () => clearTimeout(timer); // Cleanup the timer
+  }, []);
 
   const COLORS = ["#0088FE", "#FF8042"]; // Warna untuk Pie Chart
 
@@ -57,7 +52,6 @@ export function StatisticsClientContent({ articlesPerYearData, acceptanceRateDat
     value: item.count,
     percent: totalAcceptedRejected > 0 ? item.count / totalAcceptedRejected : 0,
   }));
-  console.log("StatisticsClientContent: pieChartData calculated:", pieChartData);
 
   return (
     <>
@@ -72,7 +66,7 @@ export function StatisticsClientContent({ articlesPerYearData, acceptanceRateDat
             <CardTitle className="text-xl font-semibold">Artikel Diterbitkan per Tahun</CardTitle>
           </CardHeader>
           <CardContent className="h-[300px]">
-            <ResponsiveContainer width="100%" height="100%" key={mounted ? "articles-chart-mounted" : "articles-chart-unmounted"}>
+            <ResponsiveContainer width="100%" height="100%">
               {mounted && articlesPerYearData.length > 0 ? (
                 <BarChart data={articlesPerYearData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" />
@@ -100,7 +94,7 @@ export function StatisticsClientContent({ articlesPerYearData, acceptanceRateDat
             <CardTitle className="text-xl font-semibold">Tingkat Penerimaan Artikel</CardTitle>
           </CardHeader>
           <CardContent className="h-[300px] flex items-center justify-center">
-            <ResponsiveContainer width="100%" height="100%" key={mounted ? "acceptance-chart-mounted" : "acceptance-chart-unmounted"}>
+            <ResponsiveContainer width="100%" height="100%">
               {mounted && (pieChartData.length > 0 && totalAcceptedRejected > 0) ? (
                 <PieChart>
                   <Pie
@@ -139,7 +133,7 @@ export function StatisticsClientContent({ articlesPerYearData, acceptanceRateDat
             <CardTitle className="text-xl font-semibold">Total Sitasi (Google Scholar)</CardTitle>
           </CardHeader>
           <CardContent className="h-[300px]">
-            <ResponsiveContainer width="100%" height="100%" key={mounted ? "citations-chart-mounted" : "citations-chart-unmounted"}>
+            <ResponsiveContainer width="100%" height="100%">
               {mounted && totalCitationsData.length > 0 ? (
                 <LineChart data={totalCitationsData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" />
