@@ -13,7 +13,7 @@ export async function GET(request: Request) {
   const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(accessToken);
 
   if (authError || !user) {
-    console.error("API Admin Users GET: Auth error or no user:", authError);
+    console.error("API Admin Users GET: Auth error or no user:", authError?.message);
     return NextResponse.json({ error: { message: 'Unauthorized: Invalid token' } }, { status: 401 });
   }
 
@@ -24,7 +24,7 @@ export async function GET(request: Request) {
     .single();
 
   if (profileError || profile?.role !== 'admin') {
-    console.error("API Admin Users GET: Profile error or not admin:", profileError);
+    console.error("API Admin Users GET: Profile error or not admin:", profileError?.message || "Role not admin");
     return NextResponse.json({ error: { message: 'Forbidden: Not an admin' } }, { status: 403 });
   }
 

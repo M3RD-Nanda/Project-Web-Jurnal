@@ -13,6 +13,7 @@ export async function GET(request: Request) {
   const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(accessToken);
 
   if (authError || !user) {
+    console.error("API Admin Issues GET: Auth error or no user:", authError?.message);
     return NextResponse.json({ error: { message: 'Unauthorized: Invalid token' } }, { status: 401 });
   }
 
@@ -23,6 +24,7 @@ export async function GET(request: Request) {
     .single();
 
   if (profileError || profile?.role !== 'admin') {
+    console.error("API Admin Issues GET: Profile error or not admin:", profileError?.message || "Role not admin");
     return NextResponse.json({ error: { message: 'Forbidden: Not an admin' } }, { status: 403 });
   }
 
@@ -41,6 +43,7 @@ export async function POST(request: Request) {
   const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(accessToken);
 
   if (authError || !user) {
+    console.error("API Admin Issues POST: Auth error or no user:", authError?.message);
     return NextResponse.json({ error: { message: 'Unauthorized: Invalid token' } }, { status: 401 });
   }
 
@@ -51,6 +54,7 @@ export async function POST(request: Request) {
     .single();
 
   if (profileError || profile?.role !== 'admin') {
+    console.error("API Admin Issues POST: Profile error or not admin:", profileError?.message || "Role not admin");
     return NextResponse.json({ error: { message: 'Forbidden: Not an admin' } }, { status: 403 });
   }
 
@@ -58,6 +62,7 @@ export async function POST(request: Request) {
   const { data, error } = await insertIssue(body);
 
   if (error) {
+    console.error("API Admin Issues POST: Error inserting issue:", error.message);
     return NextResponse.json({ error: { message: error.message } }, { status: 500 });
   }
 

@@ -14,6 +14,7 @@ export async function PUT(request: Request, context: any) {
   const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(accessToken);
 
   if (authError || !user) {
+    console.error("API Admin Issues PUT: Auth error or no user:", authError?.message);
     return NextResponse.json({ error: { message: 'Unauthorized: Invalid token' } }, { status: 401 });
   }
 
@@ -24,6 +25,7 @@ export async function PUT(request: Request, context: any) {
     .single();
 
   if (profileError || profile?.role !== 'admin') {
+    console.error("API Admin Issues PUT: Profile error or not admin:", profileError?.message || "Role not admin");
     return NextResponse.json({ error: { message: 'Forbidden: Not an admin' } }, { status: 403 });
   }
 
@@ -31,6 +33,7 @@ export async function PUT(request: Request, context: any) {
   const { data, error } = await updateIssue(id, body);
 
   if (error) {
+    console.error("API Admin Issues PUT: Error updating issue:", error.message);
     return NextResponse.json({ error: { message: error.message } }, { status: 500 });
   }
 
@@ -49,6 +52,7 @@ export async function DELETE(request: Request, context: any) {
   const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(accessToken);
 
   if (authError || !user) {
+    console.error("API Admin Issues DELETE: Auth error or no user:", authError?.message);
     return NextResponse.json({ error: { message: 'Unauthorized: Invalid token' } }, { status: 401 });
   }
 
@@ -59,12 +63,14 @@ export async function DELETE(request: Request, context: any) {
     .single();
 
   if (profileError || profile?.role !== 'admin') {
+    console.error("API Admin Issues DELETE: Profile error or not admin:", profileError?.message || "Role not admin");
     return NextResponse.json({ error: { message: 'Forbidden: Not an admin' } }, { status: 403 });
   }
 
   const { success, error } = await deleteIssue(id);
 
   if (error) {
+    console.error("API Admin Issues DELETE: Error deleting issue:", error.message);
     return NextResponse.json({ error: { message: error.message } }, { status: 500 });
   }
 
