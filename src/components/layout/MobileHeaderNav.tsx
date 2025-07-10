@@ -42,7 +42,7 @@ export function MobileHeaderNav({ navItems, session, handleLogout }: MobileHeade
               variant="ghost"
               asChild
               className={cn(
-                "w-full justify-start text-left transition-colors duration-200 text-sm", // Changed text-base to text-sm
+                "w-full justify-start text-left transition-colors duration-200 text-xs", // Changed text-sm to text-xs
                 "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
                 pathname === item.href
                   ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
@@ -58,7 +58,7 @@ export function MobileHeaderNav({ navItems, session, handleLogout }: MobileHeade
             variant="ghost"
             asChild
             className={cn(
-              "w-full justify-start text-left transition-colors duration-200 text-sm", // Changed text-base to text-sm
+              "w-full justify-start text-left transition-colors duration-200 text-xs", // Changed text-sm to text-xs
               "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
               pathname === "/ratings"
                 ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
@@ -74,7 +74,7 @@ export function MobileHeaderNav({ navItems, session, handleLogout }: MobileHeade
                 variant="ghost"
                 asChild
                 className={cn(
-                  "w-full justify-start text-left transition-colors duration-200 text-sm", // Changed text-base to text-sm
+                  "w-full justify-start text-left transition-colors duration-200 text-xs", // Changed text-sm to text-xs
                   "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
                   pathname === "/profile"
                     ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
@@ -90,7 +90,7 @@ export function MobileHeaderNav({ navItems, session, handleLogout }: MobileHeade
                     variant="ghost"
                     asChild
                     className={cn(
-                      "w-full justify-start text-left transition-colors duration-200 text-sm", // Changed text-base to text-sm
+                      "w-full justify-start text-left transition-colors duration-200 text-xs", // Changed text-sm to text-xs
                       "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
                       pathname === "/admin"
                         ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
@@ -106,7 +106,7 @@ export function MobileHeaderNav({ navItems, session, handleLogout }: MobileHeade
                       variant="ghost"
                       asChild
                       className={cn(
-                        "w-full justify-start text-left transition-colors duration-200 text-sm", // Changed text-base to text-sm
+                        "w-full justify-start text-left transition-colors duration-200 text-xs", // Changed text-sm to text-xs
                         "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
                         pathname === "/admin/announcements"
                           ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
@@ -120,7 +120,7 @@ export function MobileHeaderNav({ navItems, session, handleLogout }: MobileHeade
                       variant="ghost"
                       asChild
                       className={cn(
-                        "w-full justify-start text-left transition-colors duration-200 text-sm", // Changed text-base to text-sm
+                        "w-full justify-start text-left transition-colors duration-200 text-xs", // Changed text-sm to text-xs
                         "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
                         pathname === "/admin/articles"
                           ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
@@ -134,7 +134,7 @@ export function MobileHeaderNav({ navItems, session, handleLogout }: MobileHeade
                       variant="ghost"
                       asChild
                       className={cn(
-                        "w-full justify-start text-left transition-colors duration-200 text-sm", // Changed text-base to text-sm
+                        "w-full justify-start text-left transition-colors duration-200 text-xs", // Changed text-sm to text-xs
                         "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
                         pathname === "/admin/issues"
                           ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
@@ -148,7 +148,7 @@ export function MobileHeaderNav({ navItems, session, handleLogout }: MobileHeade
                       variant="ghost"
                       asChild
                       className={cn(
-                        "w-full justify-start text-left transition-colors duration-200 text-sm", // Changed text-base to text-sm
+                        "w-full justify-start text-left transition-colors duration-200 text-xs", // Changed text-sm to text-xs
                         "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
                         pathname === "/admin/users"
                           ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
@@ -163,7 +163,7 @@ export function MobileHeaderNav({ navItems, session, handleLogout }: MobileHeade
               )}
               <Button
                 variant="ghost"
-                className="w-full justify-start text-left transition-colors duration-200 text-sm text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground" // Changed text-base to text-sm
+                className="w-full justify-start text-left transition-colors duration-200 text-xs text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground" // Changed text-sm to text-xs
                 onClick={() => {
                   handleLogout();
                   setIsOpen(false);
@@ -178,7 +178,7 @@ export function MobileHeaderNav({ navItems, session, handleLogout }: MobileHeade
                 variant="ghost"
                 asChild
                 className={cn(
-                  "w-full justify-start text-left transition-colors duration-200 text-sm", // Changed text-base to text-sm
+                  "w-full justify-start text-left transition-colors duration-200 text-xs", // Changed text-sm to text-xs
                   "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
                   pathname === "/login"
                     ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
@@ -192,7 +192,7 @@ export function MobileHeaderNav({ navItems, session, handleLogout }: MobileHeade
                 variant="ghost"
                 asChild
                 className={cn(
-                  "w-full justify-start text-left transition-colors duration-200 text-sm", // Changed text-base to text-sm
+                  "w-full justify-start text-left transition-colors duration-200 text-xs", // Changed text-sm to text-xs
                   "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
                   pathname === "/register"
                     ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
