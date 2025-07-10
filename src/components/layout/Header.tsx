@@ -45,9 +45,9 @@ export function Header() {
     <header className="bg-primary text-primary-foreground p-3 shadow-md sticky top-0 z-50 w-full">
       <div className="container mx-auto flex items-center justify-between">
         {/* Left Group: MobileNav, Logo, Journal Info, and E-ISSN */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1"> {/* Mengurangi gap dari 2 menjadi 1 */}
           <MobileNav />
-          <Link href="/" className="flex items-center gap-1">
+          <Link href="/" className="flex items-center gap-0"> {/* Mengurangi gap dari 1 menjadi 0 */}
             <Image
               src="/jimeka-logo.png"
               alt="Jurnal Ilmiah Mahasiswa Ekonomi Akuntansi (JIMEKA) Logo Universitas Percobaan Nanda"
