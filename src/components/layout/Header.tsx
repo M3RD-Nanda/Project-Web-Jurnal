@@ -57,8 +57,8 @@ export function Header() {
             />
             <div className="flex flex-col">
               <span className="text-lg font-bold">JIMEKA</span>
-              <span className="text-[0.6rem] leading-tight whitespace-nowrap">FAKULTAS EKONOMI DAN BISNIS UNIVERSITAS PERCOBAAN NANDA</span>
-              <span className="text-[0.6rem] leading-tight text-primary-foreground/80 whitespace-nowrap mt-1">E-ISSN: 2581-1002</span>
+              <span className="text-[0.5rem] leading-tight whitespace-nowrap">FAKULTAS EKONOMI DAN BISNIS UNIVERSITAS PERCOBAAN NANDA</span>
+              <span className="text-[0.5rem] leading-tight text-primary-foreground/80 whitespace-nowrap mt-1">E-ISSN: 2581-1002</span>
             </div>
           </Link>
         </div>
