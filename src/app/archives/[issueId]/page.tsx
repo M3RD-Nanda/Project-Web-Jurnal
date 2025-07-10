@@ -9,10 +9,8 @@ import { format } from "date-fns";
 import { id } from "date-fns/locale";
 
 type IssuePageProps = {
-  params: {
-    issueId: string;
-  };
-  searchParams?: { [key: string]: string | string[] | undefined }; // Added searchParams
+  params: Record<string, string>; // Mengubah tipe params menjadi Record<string, string>
+  searchParams?: { [key: string]: string | string[] | undefined };
 };
 
 export default async function IssueDetailPage({ params }: IssuePageProps) {

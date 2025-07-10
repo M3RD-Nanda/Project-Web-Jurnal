@@ -4,10 +4,8 @@ import { notFound } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 
 type ArticlePageProps = {
-  params: {
-    id: string;
-  };
-  searchParams?: { [key: string]: string | string[] | undefined }; // Added searchParams
+  params: Record<string, string>; // Mengubah tipe params menjadi Record<string, string>
+  searchParams?: { [key: string]: string | string[] | undefined };
 };
 
 export default async function ArticlePage({ params }: ArticlePageProps) {
