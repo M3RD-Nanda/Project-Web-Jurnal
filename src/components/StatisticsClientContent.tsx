@@ -59,24 +59,6 @@ export function StatisticsClientContent({ articlesPerYearData, acceptanceRateDat
   }));
   console.log("StatisticsClientContent: pieChartData calculated:", pieChartData);
 
-  // Helper component to render chart content or fallback
-  const ChartContent = ({ data, message, children }: { data: any[]; message: string; children: React.ReactNode }) => {
-    if (!mounted) {
-      return (
-        <div className="flex items-center justify-center h-full">
-          <Loader2 className="h-6 w-6 animate-spin text-primary" />
-          <p className="ml-2 text-sm text-muted-foreground">Memuat grafik...</p>
-        </div>
-      );
-    }
-    if (data.length === 0) {
-      return (
-        <p className="text-center text-muted-foreground p-4 h-full flex items-center justify-center">{message}</p>
-      );
-    }
-    return children;
-  };
-
   return (
     <>
       <p>
@@ -91,7 +73,7 @@ export function StatisticsClientContent({ articlesPerYearData, acceptanceRateDat
           </CardHeader>
           <CardContent className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%" key={mounted ? "articles-chart-mounted" : "articles-chart-unmounted"}>
-              <ChartContent data={articlesPerYearData} message="Data artikel per tahun tidak tersedia.">
+              {mounted && articlesPerYearData.length > 0 ? (
                 <BarChart data={articlesPerYearData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="year" />
@@ -100,7 +82,14 @@ export function StatisticsClientContent({ articlesPerYearData, acceptanceRateDat
                   <Legend />
                   <Bar dataKey="articles" fill="hsl(var(--primary))" name="Jumlah Artikel" />
                 </BarChart>
-              </ChartContent>
+              ) : mounted ? (
+                <p className="text-center text-muted-foreground p-4 h-full flex items-center justify-center">Data artikel per tahun tidak tersedia.</p>
+              ) : (
+                <div className="flex items-center justify-center h-full">
+                  <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                  <p className="ml-2 text-sm text-muted-foreground">Memuat grafik...</p>
+                </div>
+              )}
             </ResponsiveContainer>
           </CardContent>
         </Card>
@@ -112,7 +101,7 @@ export function StatisticsClientContent({ articlesPerYearData, acceptanceRateDat
           </CardHeader>
           <CardContent className="h-[300px] flex items-center justify-center">
             <ResponsiveContainer width="100%" height="100%" key={mounted ? "acceptance-chart-mounted" : "acceptance-chart-unmounted"}>
-              <ChartContent data={pieChartData} message="Data tingkat penerimaan tidak tersedia.">
+              {mounted && (pieChartData.length > 0 && totalAcceptedRejected > 0) ? (
                 <PieChart>
                   <Pie
                     data={pieChartData}
@@ -132,7 +121,14 @@ export function StatisticsClientContent({ articlesPerYearData, acceptanceRateDat
                   <Tooltip />
                   <Legend />
                 </PieChart>
-              </ChartContent>
+              ) : mounted ? (
+                <p className="text-center text-muted-foreground p-4 h-full flex items-center justify-center">Data tingkat penerimaan tidak tersedia.</p>
+              ) : (
+                <div className="flex items-center justify-center h-full">
+                  <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                  <p className="ml-2 text-sm text-muted-foreground">Memuat grafik...</p>
+                </div>
+              )}
             </ResponsiveContainer>
           </CardContent>
         </Card>
@@ -144,7 +140,7 @@ export function StatisticsClientContent({ articlesPerYearData, acceptanceRateDat
           </CardHeader>
           <CardContent className="h-[300px]">
             <ResponsiveContainer width="100%" height="100%" key={mounted ? "citations-chart-mounted" : "citations-chart-unmounted"}>
-              <ChartContent data={totalCitationsData} message="Data sitasi tidak tersedia.">
+              {mounted && totalCitationsData.length > 0 ? (
                 <LineChart data={totalCitationsData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
                   <CartesianGrid strokeDasharray="3 3" />
                   <XAxis dataKey="month" />
@@ -153,7 +149,14 @@ export function StatisticsClientContent({ articlesPerYearData, acceptanceRateDat
                   <Legend />
                   <Line type="monotone" dataKey="citations" stroke="hsl(var(--chart-1))" activeDot={{ r: 8 }} name="Jumlah Sitasi" />
                 </LineChart>
-              </ChartContent>
+              ) : mounted ? (
+                <p className="text-center text-muted-foreground p-4 h-full flex items-center justify-center">Data sitasi tidak tersedia.</p>
+              ) : (
+                <div className="flex items-center justify-center h-full">
+                  <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                  <p className="ml-2 text-sm text-muted-foreground">Memuat grafik...</p>
+                </div>
+              )}
             </ResponsiveContainer>
           </CardContent>
         </Card>

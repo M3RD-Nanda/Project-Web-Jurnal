@@ -22,24 +22,6 @@ export function VisitorChart() {
     fetchVisits();
   }, []);
 
-  // Helper component to render chart content or fallback
-  const ChartContent = ({ data, message, children }: { data: any[]; message: string; children: React.ReactNode }) => {
-    if (!mounted) {
-      return (
-        <div className="flex items-center justify-center h-full">
-          <Loader2 className="h-6 w-6 animate-spin text-sidebar-primary" />
-          <p className="ml-2 text-sm text-sidebar-foreground">Memuat data...</p>
-        </div>
-      );
-    }
-    if (data.length === 0) {
-      return (
-        <p className="text-center text-sm text-muted-foreground h-full flex items-center justify-center">{message}</p>
-      );
-    }
-    return children;
-  };
-
   return (
     <Card className="bg-sidebar-accent text-sidebar-accent-foreground border-sidebar-border shadow-none">
       <CardHeader className="pb-2">
@@ -47,7 +29,7 @@ export function VisitorChart() {
       </CardHeader>
       <CardContent className="h-[150px] p-2">
         <ResponsiveContainer width="100%" height="100%" key={mounted ? "visitor-chart-mounted" : "visitor-chart-unmounted"}>
-          <ChartContent data={data} message="Tidak ada data kunjungan.">
+          {mounted && data.length > 0 ? (
             <BarChart data={data} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--sidebar-border))" />
               <XAxis dataKey="date" stroke="hsl(var(--sidebar-foreground))" tickLine={false} axisLine={false} />
@@ -64,7 +46,14 @@ export function VisitorChart() {
               />
               <Bar dataKey="visitors" fill="hsl(var(--sidebar-primary))" radius={[4, 4, 0, 0]} />
             </BarChart>
-          </ChartContent>
+          ) : mounted ? (
+            <p className="text-center text-sm text-muted-foreground h-full flex items-center justify-center">Tidak ada data kunjungan.</p>
+          ) : (
+            <div className="flex items-center justify-center h-full">
+              <Loader2 className="h-6 w-6 animate-spin text-sidebar-primary" />
+              <p className="ml-2 text-sm text-sidebar-foreground">Memuat data...</p>
+            </div>
+          )}
         </ResponsiveContainer>
       </CardContent>
     </Card>
