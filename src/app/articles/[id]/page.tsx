@@ -7,7 +7,7 @@ type ArticlePageProps = {
   params: {
     id: string;
   };
-  searchParams?: { [key: string]: string | string[] | undefined };
+  searchParams?: { [key: string]: string | string[] | undefined }; // Added searchParams
 };
 
 export default async function ArticlePage({ params }: ArticlePageProps) {

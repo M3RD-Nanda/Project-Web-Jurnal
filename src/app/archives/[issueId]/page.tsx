@@ -12,6 +12,7 @@ type IssuePageProps = {
   params: {
     issueId: string;
   };
+  searchParams?: { [key: string]: string | string[] | undefined }; // Added searchParams
 };
 
 export default async function IssueDetailPage({ params }: IssuePageProps) {
