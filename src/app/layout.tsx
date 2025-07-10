@@ -15,6 +15,12 @@ import { Analytics } from "@vercel/analytics/next";
 import { recordPageVisit } from "@/actions/analytics";
 import { headers } from "next/headers";
 import { createSupabaseServerClient } from "@/integrations/supabase/server-actions"; // Import server client
+import {
+  generateMetadata as generateSEOMetadata,
+  SITE_CONFIG,
+  generateOrganizationStructuredData,
+  generateWebsiteStructuredData,
+} from "@/lib/metadata";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -26,19 +32,22 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "Jurnal Ilmiah Mahasiswa Ekonomi Akuntansi",
-  description:
-    "Jurnal Ilmiah Mahasiswa Ekonomi Akuntansi (JIMEKA) adalah jurnal peer-review dan open-access yang diterbitkan oleh Universitas Percobaan Nanda.",
-  icons: {
-    icon: [
-      { url: "/favicon.ico", sizes: "any" },
-      { url: "/jimeka-logo.png", sizes: "32x32", type: "image/png" },
-    ],
-    shortcut: "/favicon.ico",
-    apple: "/jimeka-logo.png",
+export const metadata: Metadata = generateSEOMetadata({
+  title: SITE_CONFIG.shortName,
+  description: SITE_CONFIG.description,
+  canonical: SITE_CONFIG.url,
+  openGraph: {
+    type: "website",
+    image: `${SITE_CONFIG.url}/api/og?title=${encodeURIComponent(
+      SITE_CONFIG.name
+    )}&subtitle=${encodeURIComponent(
+      "Peer-review dan Open Access"
+    )}&type=website`,
   },
-};
+  twitter: {
+    card: "summary_large_image",
+  },
+});
 
 export default async function RootLayout({
   children,
@@ -69,7 +78,22 @@ export default async function RootLayout({
   }
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="id" suppressHydrationWarning>
+      <head>
+        {/* Structured Data */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(generateOrganizationStructuredData()),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(generateWebsiteStructuredData()),
+          }}
+        />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         suppressHydrationWarning

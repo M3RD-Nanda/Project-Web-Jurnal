@@ -10,6 +10,8 @@ import {
 } from "@/components/ui/card";
 import { format } from "date-fns";
 import { id as dateFnsIdLocale } from "date-fns/locale";
+import { generateAnnouncementMetadata, SITE_CONFIG } from "@/lib/metadata";
+import type { Metadata } from "next";
 
 type AnnouncementPageProps = {
   params: Promise<{ id: string }>;
@@ -20,6 +22,27 @@ export async function generateStaticParams() {
   return announcements.map((announcement) => ({
     id: announcement.id,
   }));
+}
+
+export async function generateMetadata({
+  params,
+}: AnnouncementPageProps): Promise<Metadata> {
+  const { id } = await params;
+  const announcement = await getAnnouncementById(id);
+
+  if (!announcement) {
+    return {
+      title: "Pengumuman Tidak Ditemukan | JIMEKA",
+      description: "Pengumuman yang Anda cari tidak ditemukan.",
+    };
+  }
+
+  return generateAnnouncementMetadata({
+    title: announcement.title,
+    content: announcement.description,
+    publishedDate: announcement.publicationDate,
+    slug: id,
+  });
 }
 
 export default async function AnnouncementDetailPage({
