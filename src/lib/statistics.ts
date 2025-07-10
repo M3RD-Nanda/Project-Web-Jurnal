@@ -1,4 +1,4 @@
-import { supabaseAdmin } from "@/integrations/supabase/server"; // Menggunakan supabaseAdmin
+// src/lib/statistics.ts
 
 export interface ArticlesPerYearData {
   year: number;
@@ -7,55 +7,25 @@ export interface ArticlesPerYearData {
 
 export interface AcceptanceRateData {
   status: string;
-  count: number;
+  value: number; // This 'value' might be used by Recharts Pie, but 'count' is the actual data
+  count: number; // This is the actual count from the DB
 }
 
 export interface CitationData {
-  id: string; // Added id for consistent primary key handling
+  id: string; // Assuming an ID for unique keys
   month: string;
   citations: number;
 }
 
-export async function getArticlesPerYear(): Promise<ArticlesPerYearData[]> {
-  console.log("Fetching articles per year data...");
-  const { data, error } = await supabaseAdmin // Menggunakan supabaseAdmin
-    .from('articles_per_year')
-    .select('*')
-    .order('year', { ascending: true });
-
-  if (error) {
-    console.error("Error fetching articles per year:", error);
-    return [];
-  }
-  console.log("Articles per year data fetched:", data);
-  return data || [];
+// New interfaces for chart component props
+export interface ArticlesBarChartProps {
+  data: ArticlesPerYearData[];
 }
 
-export async function getAcceptanceRates(): Promise<AcceptanceRateData[]> {
-  console.log("Fetching acceptance rates data...");
-  const { data, error } = await supabaseAdmin // Menggunakan supabaseAdmin
-    .from('acceptance_rates')
-    .select('*');
-
-  if (error) {
-    console.error("Error fetching acceptance rates:", error);
-    return [];
-  }
-  console.log("Acceptance rates data fetched:", data);
-  return data || [];
+export interface AcceptancePieChartProps {
+  data: AcceptanceRateData[];
 }
 
-export async function getCitations(): Promise<CitationData[]> {
-  console.log("Fetching citations data...");
-  const { data, error } = await supabaseAdmin // Menggunakan supabaseAdmin
-    .from('citations')
-    .select('*')
-    .order('id', { ascending: true }); // Assuming 'id' or a specific order column for months
-
-  if (error) {
-    console.error("Error fetching citations:", error);
-    return [];
-  }
-  console.log("Citations data fetched:", data);
-  return data || [];
+export interface CitationsLineChartProps {
+  data: CitationData[];
 }
