@@ -27,7 +27,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Jurnal Ilmiah Mahasiswa Ekonomi Akuntansi",
-  description: "Jurnal Ilmiah Mahasiswa Ekonomi Akuntansi (JIMEKA) adalah jurnal peer-review dan open-access yang diterbitkan oleh Universitas Percobaan Nanda.",
+  description:
+    "Jurnal Ilmiah Mahasiswa Ekonomi Akuntansi (JIMEKA) adalah jurnal peer-review dan open-access yang diterbitkan oleh Universitas Percobaan Nanda.",
 };
 
 export default async function RootLayout({
@@ -37,17 +38,20 @@ export default async function RootLayout({
 }>) {
   // Record page visit on every page load
   const headersList = await headers();
-  const path = headersList.get('x-pathname') || '/';
+  const path = headersList.get("x-pathname") || "/";
   await recordPageVisit(path);
 
   // Fetch initial session on the server
   const supabase = await createSupabaseServerClient();
-  const { data: { session: initialSession } } = await supabase.auth.getSession();
+  const {
+    data: { session: initialSession },
+  } = await supabase.auth.getSession();
 
   return (
     <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        suppressHydrationWarning
       >
         <ThemeProvider
           attribute="class"
@@ -61,9 +65,7 @@ export default async function RootLayout({
               <Header />
               <div className="flex flex-1 flex-col md:flex-row">
                 <Sidebar />
-                <main className="flex-1">
-                  {children}
-                </main>
+                <main className="flex-1">{children}</main>
               </div>
               <Footer />
             </div>
