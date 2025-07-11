@@ -4,15 +4,11 @@ export default function FocusScopePage() {
   return (
     <StaticContentPage title="FOCUS AND SCOPE">
       <p>
-        Jurnal Ekonomi Bisnis dan Akuntansi Mahasiswa (JEBAKA) berfokus pada
-        publikasi penelitian orisinal di berbagai aspek Ekonomi dan Akuntansi.
-        Kami menyambut kontribusi dari mahasiswa, akademisi, dan praktisi.
+        Jurnal Ilmiah Mahasiswa Ekonomi Akuntansi (JIMEKA) berfokus pada publikasi penelitian orisinal di berbagai aspek Ekonomi dan Akuntansi. Kami menyambut kontribusi dari mahasiswa, akademisi, dan praktisi.
       </p>
       <h3 className="text-2xl font-semibold mt-8">Fokus Jurnal:</h3>
       <p>
-        JEBAKA berfokus pada penyebaran hasil penelitian yang inovatif dan
-        relevan yang berkontribusi pada pengembangan teori dan praktik di bidang
-        Ekonomi dan Akuntansi.
+        JIMEKA berfokus pada penyebaran hasil penelitian yang inovatif dan relevan yang berkontribusi pada pengembangan teori dan praktik di bidang Ekonomi dan Akuntansi.
       </p>
       <h3 className="text-2xl font-semibold mt-8">Ruang Lingkup:</h3>
       <ul className="list-disc list-inside space-y-2">
@@ -31,8 +27,7 @@ export default function FocusScopePage() {
         <li>Dan topik terkait lainnya.</li>
       </ul>
       <p>
-        Kami mendorong pengiriman artikel yang menggunakan metodologi penelitian
-        yang kuat dan memberikan implikasi praktis atau kebijakan yang jelas.
+        Kami mendorong pengiriman artikel yang menggunakan metodologi penelitian yang kuat dan memberikan implikasi praktis atau kebijakan yang jelas.
       </p>
     </StaticContentPage>
   );

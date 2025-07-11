@@ -19,11 +19,6 @@ const nextConfig: NextConfig = {
       "@radix-ui/react-icons",
     ],
   },
-  env: {
-    // Suppress Lit dev mode warnings in production
-    LIT_DISABLE_DEV_MODE:
-      process.env.NODE_ENV === "production" ? "true" : "false",
-  },
   webpack: (config, { isServer }) => {
     if (process.env.NODE_ENV === "development") {
       config.module.rules.push({
@@ -41,59 +36,8 @@ const nextConfig: NextConfig = {
         fs: false,
         net: false,
         tls: false,
-        crypto: false,
-        stream: false,
-        http: false,
-        https: false,
-        os: false,
-        url: false,
-        zlib: false,
-        path: false,
-        assert: false,
-        util: false,
-        querystring: false,
-        "pino-pretty": false,
-      };
-    } else {
-      // Add polyfills for server-side
-      config.resolve.fallback = {
-        ...config.resolve.fallback,
-        indexedDB: false,
       };
     }
-
-    // Ignore pino-pretty in client-side bundles (only for client-side)
-    if (!isServer) {
-      const webpack = require("webpack");
-      config.plugins.push(
-        new webpack.IgnorePlugin({
-          resourceRegExp: /^pino-pretty$/,
-        })
-      );
-    }
-
-    // Improve chunk loading reliability
-    config.optimization = {
-      ...config.optimization,
-      splitChunks: {
-        ...config.optimization.splitChunks,
-        cacheGroups: {
-          ...config.optimization.splitChunks?.cacheGroups,
-          vendor: {
-            test: /[\\/]node_modules[\\/]/,
-            name: "vendors",
-            chunks: "all",
-            priority: 10,
-          },
-          web3: {
-            test: /[\\/]node_modules[\\/](@rainbow-me|wagmi|viem|@walletconnect)[\\/]/,
-            name: "web3",
-            chunks: "all",
-            priority: 20,
-          },
-        },
-      },
-    };
 
     return config;
   },

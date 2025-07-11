@@ -5,23 +5,15 @@ import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/sonner";
 import { MadeWithDyad } from "@/components/made-with-dyad";
 import { SessionProvider } from "@/components/SessionProvider";
-import { Web3Provider } from "@/components/Web3Provider";
 import React from "react";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
-import { createClient } from "@/integrations/supabase/server"; // Import server client
-import { PageTracker } from "@/components/PageTracker";
-import {
-  generateMetadata as generateSEOMetadata,
-  SITE_CONFIG,
-  generateOrganizationStructuredData,
-  generateWebsiteStructuredData,
-} from "@/lib/metadata";
-// Import warning suppression for development
-import "@/lib/suppress-warnings";
+import { recordPageVisit } from "@/actions/analytics";
+import { headers } from "next/headers";
+import { createSupabaseServerClient } from "@/integrations/supabase/server-actions"; // Import server client
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,67 +25,38 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = generateSEOMetadata({
-  title: SITE_CONFIG.shortName,
-  description: SITE_CONFIG.description,
-  canonical: SITE_CONFIG.url,
-  openGraph: {
-    type: "website",
-    image: `${SITE_CONFIG.url}/api/og?title=${encodeURIComponent(
-      SITE_CONFIG.name
-    )}&subtitle=${encodeURIComponent(
-      "Peer-review dan Open Access"
-    )}&type=website`,
+export const metadata: Metadata = {
+  title: "Jurnal Ilmiah Mahasiswa Ekonomi Akuntansi",
+  description:
+    "Jurnal Ilmiah Mahasiswa Ekonomi Akuntansi (JIMEKA) adalah jurnal peer-review dan open-access yang diterbitkan oleh Universitas Percobaan Nanda.",
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/jimeka-logo.png", sizes: "32x32", type: "image/png" },
+    ],
+    shortcut: "/favicon.ico",
+    apple: "/jimeka-logo.png",
   },
-  twitter: {
-    card: "summary_large_image",
-  },
-});
+};
 
 export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Record page visit for analytics (using default path since middleware is disabled)
-  // Individual pages will record their own visits via client-side analytics
-  // await recordPageVisit("/"); // Disabled to avoid duplicate recording
+  // Record page visit on every page load
+  const headersList = await headers();
+  const path = headersList.get("x-pathname") || "/";
+  await recordPageVisit(path);
 
   // Fetch initial session on the server
-  const supabase = await createClient();
+  const supabase = await createSupabaseServerClient();
   const {
     data: { session: initialSession },
   } = await supabase.auth.getSession();
 
-  // Add polyfill for indexedDB on server-side
-  if (typeof globalThis.indexedDB === "undefined") {
-    globalThis.indexedDB = {
-      open: () =>
-        Promise.reject(new Error("IndexedDB not available on server")),
-      deleteDatabase: () =>
-        Promise.reject(new Error("IndexedDB not available on server")),
-      databases: () =>
-        Promise.reject(new Error("IndexedDB not available on server")),
-    } as any;
-  }
-
   return (
-    <html lang="id" suppressHydrationWarning>
-      <head>
-        {/* Structured Data */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(generateOrganizationStructuredData()),
-          }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(generateWebsiteStructuredData()),
-          }}
-        />
-      </head>
+    <html lang="en" suppressHydrationWarning>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         suppressHydrationWarning
@@ -104,20 +67,17 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Web3Provider>
-            {/* Pass initialSession to SessionProvider */}
-            <SessionProvider initialSession={initialSession}>
-              <PageTracker />
-              <div className="min-h-screen flex flex-col">
-                <Header />
-                <div className="flex flex-1 flex-col md:flex-row">
-                  <Sidebar />
-                  <main className="flex-1">{children}</main>
-                </div>
-                <Footer />
+          {/* Pass initialSession to SessionProvider */}
+          <SessionProvider initialSession={initialSession}>
+            <div className="min-h-screen flex flex-col">
+              <Header />
+              <div className="flex flex-1 flex-col md:flex-row">
+                <Sidebar />
+                <main className="flex-1">{children}</main>
               </div>
-            </SessionProvider>
-          </Web3Provider>
+              <Footer />
+            </div>
+          </SessionProvider>
         </ThemeProvider>
         <Toaster />
         <MadeWithDyad />

@@ -1,13 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Star } from "lucide-react";
 import { Rating } from "@/lib/ratings";
 import { cn } from "@/lib/utils";
@@ -18,9 +12,7 @@ interface RatingsClientContentProps {
   initialRatings: Rating[];
 }
 
-export function RatingsClientContent({
-  initialRatings,
-}: RatingsClientContentProps) {
+export function RatingsClientContent({ initialRatings }: RatingsClientContentProps) {
   const [ratings, setRatings] = useState<Rating[]>(initialRatings);
   const [loading, setLoading] = useState(false); // Tidak lagi memuat data awal di sini
 
@@ -31,26 +23,19 @@ export function RatingsClientContent({
   return (
     <>
       <p>
-        Lihat apa kata pengunjung lain tentang Jurnal Ekonomi Bisnis dan
-        Akuntansi Mahasiswa (JEBAKA).
+        Lihat apa kata pengunjung lain tentang Jurnal Ilmiah Mahasiswa Ekonomi Akuntansi (JIMEKA).
       </p>
 
       {loading ? (
-        <div className="text-center text-muted-foreground p-8">
-          Memuat rating...
-        </div>
+        <div className="text-center text-muted-foreground p-8">Memuat rating...</div>
       ) : ratings.length === 0 ? (
         <div className="text-center text-muted-foreground p-8 border rounded-md bg-muted/20">
-          Belum ada rating yang tersedia saat ini. Jadilah yang pertama
-          memberikan rating!
+          Belum ada rating yang tersedia saat ini. Jadilah yang pertama memberikan rating!
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
           {ratings.map((rating) => (
-            <Card
-              key={rating.id}
-              className="hover:shadow-lg transition-shadow duration-300"
-            >
+            <Card key={rating.id} className="hover:shadow-lg transition-shadow duration-300">
               <CardHeader className="pb-2">
                 <div className="flex items-center gap-1 mb-2">
                   {[1, 2, 3, 4, 5].map((starCount) => (
@@ -58,26 +43,18 @@ export function RatingsClientContent({
                       key={starCount}
                       className={cn(
                         "h-5 w-5",
-                        rating.stars >= starCount
-                          ? "fill-yellow-400 text-yellow-400"
-                          : "fill-muted stroke-muted-foreground"
+                        rating.stars >= starCount ? "fill-yellow-400 text-yellow-400" : "fill-muted stroke-muted-foreground"
                       )}
                     />
                   ))}
                 </div>
-                <CardTitle className="text-lg font-semibold">
-                  {rating.name || "Anonim"}
-                </CardTitle>
+                <CardTitle className="text-lg font-semibold">{rating.name || "Anonim"}</CardTitle>
                 <CardDescription className="text-sm text-muted-foreground">
-                  {format(new Date(rating.created_at), "dd MMMM yyyy, HH:mm", {
-                    locale: id,
-                  })}
+                  {format(new Date(rating.created_at), "dd MMMM yyyy, HH:mm", { locale: id })}
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <p className="text-sm italic">
-                  "{rating.comment || "Tidak ada komentar."}"
-                </p>
+                <p className="text-sm italic">"{rating.comment || "Tidak ada komentar."}"</p>
               </CardContent>
             </Card>
           ))}
