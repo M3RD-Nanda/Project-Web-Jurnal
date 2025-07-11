@@ -29,6 +29,7 @@ interface UserProfile {
   is_reader: boolean;
   is_author: boolean;
   profile_image_url: string | null;
+  wallet_address: string | null;
 }
 
 interface SupabaseContextType {
@@ -37,28 +38,35 @@ interface SupabaseContextType {
   profile: UserProfile | null;
 }
 
-const SupabaseContext = createContext<SupabaseContextType | undefined>(undefined);
+const SupabaseContext = createContext<SupabaseContextType | undefined>(
+  undefined
+);
 
 interface SessionProviderProps {
   children: React.ReactNode;
   initialSession: Session | null; // Add initialSession prop
 }
 
-export function SessionProvider({ children, initialSession }: SessionProviderProps) {
+export function SessionProvider({
+  children,
+  initialSession,
+}: SessionProviderProps) {
   const [session, setSession] = useState<Session | null>(initialSession);
   const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
   // Function to fetch profile based on session
   const fetchProfile = async (currentSession: Session | null) => {
     if (currentSession) {
       const { data: profileData, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', currentSession.user.id)
+        .from("profiles")
+        .select("*")
+        .eq("id", currentSession.user.id)
         .single();
 
-      if (error && error.code !== 'PGRST116') { // PGRST116 means no rows found
+      if (error && error.code !== "PGRST116") {
+        // PGRST116 means no rows found
         console.error("Error fetching profile:", error);
         setProfile(null);
       } else if (profileData) {
@@ -76,24 +84,79 @@ export function SessionProvider({ children, initialSession }: SessionProviderPro
     fetchProfile(initialSession);
   }, [initialSession]);
 
+  // Initialize session on mount
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, currentSession) => {
+    const initializeSession = async () => {
+      try {
+        // Get current session from Supabase
+        const {
+          data: { session: currentSession },
+          error,
+        } = await supabase.auth.getSession();
+
+        if (error) {
+          console.error("Error getting session:", error);
+        }
+
+        // Use current session if no initial session was provided
+        const sessionToUse = currentSession || initialSession;
+        setSession(sessionToUse);
+
+        if (sessionToUse) {
+          await fetchProfile(sessionToUse);
+        }
+      } catch (error) {
+        console.error("Error initializing session:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    initializeSession();
+
+    // Set up periodic session refresh to handle token expiration
+    const refreshInterval = setInterval(async () => {
+      try {
+        const {
+          data: { session: refreshedSession },
+          error,
+        } = await supabase.auth.getSession();
+        if (!error && refreshedSession) {
+          setSession(refreshedSession);
+        }
+      } catch (error) {
+        console.error("Error refreshing session:", error);
+      }
+    }, 5 * 60 * 1000); // Refresh every 5 minutes
+
+    return () => clearInterval(refreshInterval);
+  }, [initialSession]);
+
+  useEffect(() => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, currentSession) => {
+      console.log("Auth state change:", event, currentSession?.user?.email);
+
       setSession(currentSession);
-      await fetchProfile(currentSession); // Fetch profile on auth state change
+      await fetchProfile(currentSession);
 
       if (currentSession) {
-        if (event === 'SIGNED_IN' || event === 'USER_UPDATED') {
+        if (event === "SIGNED_IN") {
           toast.success("Anda berhasil masuk!");
-          router.push("/"); // Redirect ke halaman utama setelah login
+          router.push("/");
+        } else if (event === "TOKEN_REFRESHED") {
+          console.log("Token refreshed successfully");
         }
-      } else if (event === 'SIGNED_OUT') {
+      } else if (event === "SIGNED_OUT") {
+        setProfile(null);
         toast.info("Anda telah keluar.");
-        router.push("/login"); // Redirect ke halaman login setelah logout
+        router.push("/login");
       }
     });
 
     return () => subscription.unsubscribe();
-  }, [router]); // Removed supabase.auth from dependency array as it's stable
+  }, [router]);
 
   return (
     <SupabaseContext.Provider value={{ supabase, session, profile }}>

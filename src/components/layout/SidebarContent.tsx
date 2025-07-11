@@ -19,44 +19,12 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { toast } from "sonner";
-import dynamic from "next/dynamic";
+import { AnalyticsMinimal } from "@/components/AnalyticsMinimal";
+import { AnalyticsDebug } from "@/components/AnalyticsDebug";
 
-// Dynamically import VisitorChart with SSR disabled and fallback
-const VisitorChart = dynamic(
-  () =>
-    import("@/components/VisitorChart")
-      .then((mod) => ({
-        default: mod.VisitorChart,
-      }))
-      .catch(() =>
-        // Fallback to simple chart if main chart fails to load
-        import("@/components/VisitorChartSimple").then((mod) => ({
-          default: mod.VisitorChartSimple,
-        }))
-      ),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="bg-sidebar-accent text-sidebar-accent-foreground border-sidebar-border shadow-none rounded-lg border p-4">
-        <div className="pb-2">
-          <h3 className="text-sm font-semibold text-sidebar-primary">
-            VISITORS (Mingguan)
-          </h3>
-        </div>
-        <div className="h-[150px] p-2 flex items-center justify-center">
-          <div className="flex items-center">
-            <div className="h-4 w-4 animate-spin rounded-full border-2 border-sidebar-primary border-t-transparent"></div>
-            <p className="ml-2 text-sm text-sidebar-foreground">
-              Memuat grafik...
-            </p>
-          </div>
-        </div>
-      </div>
-    ),
-  }
-);
 import { useSupabase } from "@/components/SessionProvider";
 import { RatingDialog } from "@/components/RatingDialog";
+import { useLogout } from "@/hooks/useLogout";
 
 const sidebarLoginFormSchema = z.object({
   username: z.string().min(1, { message: "Nama pengguna tidak boleh kosong." }),
@@ -79,6 +47,7 @@ const sidebarNavItems = [
   { name: "ARTICLE TEMPLATE", href: "/article-template" },
   { name: "OJS GUIDELENCE", href: "/ojs-guidelines" },
   { name: "FAQ", href: "/faq" },
+  { name: "CRYPTO WALLET", href: "/wallet" },
   { name: "STATISTICS", href: "/statistics" },
   { name: "RATING WEB", href: "/ratings" },
 ];
@@ -90,6 +59,7 @@ interface SidebarContentProps {
 export function SidebarContent({ onLinkClick }: SidebarContentProps) {
   const pathname = usePathname();
   const { supabase, session, profile } = useSupabase();
+  const { logout } = useLogout();
 
   const form = useForm<z.infer<typeof sidebarLoginFormSchema>>({
     resolver: zodResolver(sidebarLoginFormSchema),
@@ -106,15 +76,7 @@ export function SidebarContent({ onLinkClick }: SidebarContentProps) {
 
   const handleLogout = async () => {
     console.log("Attempting to log out from Sidebar...");
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      console.error("Logout error (Sidebar):", error);
-      toast.error(`Gagal logout: ${error.message}`);
-    } else {
-      console.log(
-        "Logout successful (Sidebar), SessionProvider should handle redirect."
-      );
-    }
+    await logout();
   };
 
   return (
@@ -298,7 +260,8 @@ export function SidebarContent({ onLinkClick }: SidebarContentProps) {
         ))}
       </nav>
 
-      <VisitorChart />
+      {/* Analytics Component */}
+      <AnalyticsMinimal />
     </div>
   );
 }
