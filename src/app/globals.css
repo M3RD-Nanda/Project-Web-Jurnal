@@ -63,9 +63,9 @@
     --popover: 222.2 47.4% 11.2%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 217.2 65% 45%; /* Reduced saturation and lightness for softer blue */
+    --primary: 217.2 91.2% 59.8%; /* A vibrant blue for contrast */
     --primary-foreground: 0 0% 98%; /* Corrected: Light foreground for text on primary in dark mode */
-    --primary-hover: 217.2 70% 35%; /* Darker shade of primary for hover in dark mode */
+    --primary-hover: 217.2 91.2% 45%; /* Darker shade of primary for hover in dark mode */
 
     --secondary: 217.2 32.6% 17.5%; /* Darker grey-blue */
     --secondary-foreground: 210 40% 98%;
@@ -81,26 +81,26 @@
 
     --border: 217.2 32.6% 17.5%; /* Darker grey-blue border */
     --input: 217.2 32.6% 17.5%;
-    --ring: 217.2 65% 45%; /* Match with primary for consistency */
+    --ring: 217.2 91.2% 59.8%;
 
-    --chart-1: 220 60% 40%; /* Reduced brightness for charts */
-    --chart-2: 160 50% 35%;
-    --chart-3: 30 70% 45%;
-    --chart-4: 280 55% 50%;
-    --chart-5: 340 65% 45%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
 
     --radius: 0.75rem;
 
     --sidebar-background: 222.2 47.4% 10%; /* Even darker, almost black-blue */
     --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 217.2 75% 65%; /* Brighter for better visibility of section headers */
+    --sidebar-primary: 217.2 91.2% 59.8%;
     --sidebar-primary-foreground: 222.2 47.4% 11.2%;
     --sidebar-accent: 217.2 32.6% 15%; /* Slightly lighter dark hover state */
     --sidebar-accent-foreground: 210 40% 98%;
     --sidebar-border: 217.2 32.6% 15%;
-    --sidebar-ring: 217.2 75% 65%; /* Match with sidebar primary for consistency */
+    --sidebar-ring: 217.2 91.2% 59.8%;
 
-    --jimeka-blue: 210 75% 50%; /* Reduced saturation and lightness for softer appearance */
+    --jimeka-blue: 210 100% 66%; /* HSL for #52a9ff */
   }
 }
 

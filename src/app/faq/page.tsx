@@ -9,41 +9,29 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import {
-  Dialog,
-  DialogContent,
-  DialogTrigger,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-} from "@/components/ui/dialog"; // Import DialogHeader, DialogTitle, DialogDescription
+import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"; // Import DialogHeader, DialogTitle, DialogDescription
 
 export default function FAQPage() {
   const faqs = [
     {
-      question: "Bagaimana cara mengirimkan artikel ke JEBAKA?",
-      answer:
-        "Anda dapat mengirimkan artikel Anda melalui sistem Open Journal Systems (OJS) kami. Silakan kunjungi halaman 'Submission Guidelines' untuk detail lebih lanjut.",
+      question: "Bagaimana cara mengirimkan artikel ke JIMEKA?",
+      answer: "Anda dapat mengirimkan artikel Anda melalui sistem Open Journal Systems (OJS) kami. Silakan kunjungi halaman 'Submission Guidelines' untuk detail lebih lanjut.",
     },
     {
-      question: "Apakah JEBAKA mengenakan biaya publikasi?",
-      answer:
-        "Ya, JEBAKA menerapkan Biaya Pemrosesan Artikel (APC) untuk mendukung model open-access. Rincian biaya dan kebijakan pengabaian dapat ditemukan di halaman 'Publication Fee'.",
+      question: "Apakah JIMEKA mengenakan biaya publikasi?",
+      answer: "Ya, JIMEKA menerapkan Biaya Pemrosesan Artikel (APC) untuk mendukung model open-access. Rincian biaya dan kebijakan pengabaian dapat ditemukan di halaman 'Publication Fee'.",
     },
     {
       question: "Berapa lama proses peninjauan artikel?",
-      answer:
-        "Waktu rata-rata proses peninjauan bervariasi, tetapi kami berusaha untuk menyelesaikan proses peninjauan dalam waktu 4-8 minggu. Anda dapat melacak status naskah Anda melalui akun OJS Anda.",
+      answer: "Waktu rata-rata proses peninjauan bervariasi, tetapi kami berusaha untuk menyelesaikan proses peninjauan dalam waktu 4-8 minggu. Anda dapat melacak status naskah Anda melalui akun OJS Anda.",
     },
     {
-      question: "Apakah JEBAKA diindeks di Scopus?",
-      answer:
-        "JEBAKA sedang dalam proses pengajuan untuk diindeks di Scopus. Kami terus berupaya untuk memenuhi standar kualitas yang diperlukan. Informasi lebih lanjut tersedia di halaman 'Citedness in Scopus'.",
+      question: "Apakah JIMEKA diindeks di Scopus?",
+      answer: "JIMEKA sedang dalam proses pengajuan untuk diindeks di Scopus. Kami terus berupaya untuk memenuhi standar kualitas yang diperlukan. Informasi lebih lanjut tersedia di halaman 'Citedness in Scopus'.",
     },
     {
-      question: "Bagaimana cara menjadi reviewer untuk JEBAKA?",
-      answer:
-        "Jika Anda tertarik untuk menjadi reviewer, silakan hubungi tim editorial kami dengan menyertakan CV dan bidang keahlian Anda. Kami selalu mencari reviewer yang berkualitas.",
+      question: "Bagaimana cara menjadi reviewer untuk JIMEKA?",
+      answer: "Jika Anda tertarik untuk menjadi reviewer, silakan hubungi tim editorial kami dengan menyertakan CV dan bidang keahlian Anda. Kami selalu mencari reviewer yang berkualitas.",
     },
     {
       question: "Siapa pembuat website jurnal ilmiah ini?",
@@ -68,10 +56,7 @@ Dan lain-lain – sebagai wujud eksplorasi keilmuan yang terus berkembang.`,
   return (
     <StaticContentPage title="FREQUENTLY ASKED QUESTIONS (FAQ)">
       <p>
-        Berikut adalah beberapa pertanyaan yang sering diajukan mengenai Jurnal
-        Ekonomi Bisnis dan Akuntansi Mahasiswa (JEBAKA). Jika Anda tidak
-        menemukan jawaban atas pertanyaan Anda di sini, jangan ragu untuk
-        menghubungi kami.
+        Berikut adalah beberapa pertanyaan yang sering diajukan mengenai Jurnal Ilmiah Mahasiswa Ekonomi Akuntansi (JIMEKA). Jika Anda tidak menemukan jawaban atas pertanyaan Anda di sini, jangan ragu untuk menghubungi kami.
       </p>
       <Accordion type="single" collapsible className="w-full mt-6">
         {faqs.map((faq, index) => (
@@ -90,9 +75,7 @@ Dan lain-lain – sebagai wujud eksplorasi keilmuan yang terus berkembang.`,
       <div className="mt-8">
         <Card className="w-full">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl font-bold">
-              Tentang Pencipta Website
-            </CardTitle>
+            <CardTitle className="text-2xl font-bold">Tentang Pencipta Website</CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col items-center text-center space-y-4">
             <Dialog>
@@ -106,13 +89,9 @@ Dan lain-lain – sebagai wujud eksplorasi keilmuan yang terus berkembang.`,
                 />
               </DialogTrigger>
               <DialogContent className="sm:max-w-[600px] p-0 overflow-hidden">
-                <DialogHeader className="p-4">
-                  {" "}
-                  {/* Added DialogHeader */}
+                <DialogHeader className="p-4"> {/* Added DialogHeader */}
                   <DialogTitle>Foto Muhammad Trinanda</DialogTitle>
-                  <DialogDescription>
-                    Gambar profil pencipta website.
-                  </DialogDescription>
+                  <DialogDescription>Gambar profil pencipta website.</DialogDescription>
                 </DialogHeader>
                 <Image
                   src="/images/muhammad-trinanda.jpg"
@@ -125,17 +104,12 @@ Dan lain-lain – sebagai wujud eksplorasi keilmuan yang terus berkembang.`,
             </Dialog>
             <h3 className="text-xl font-semibold">Muhammad Trinanda</h3>
             <p className="text-muted-foreground">
-              Pencipta dan pengembang utama website Jurnal Ekonomi Bisnis dan
-              Akuntansi Mahasiswa (JEBAKA). Dengan keahlian di berbagai bidang
-              teknologi, desain, dan ilmu terapan, website ini dibuat sebagai
-              contoh edukasi dan eksplorasi keilmuan.
+              Pencipta dan pengembang utama website Jurnal Ilmiah Mahasiswa Ekonomi Akuntansi (JIMEKA).
+              Dengan keahlian di berbagai bidang teknologi, desain, dan ilmu terapan,
+              website ini dibuat sebagai contoh edukasi dan eksplorasi keilmuan.
             </p>
             <Button asChild>
-              <Link
-                href="https://www.linkedin.com/in/mtrinanda/"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <Link href="https://www.linkedin.com/in/mtrinanda/" target="_blank" rel="noopener noreferrer">
                 Lihat Profil LinkedIn
               </Link>
             </Button>

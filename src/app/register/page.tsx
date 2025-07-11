@@ -1,15 +1,9 @@
 "use client";
 
-import { Auth } from "@supabase/auth-ui-react";
-import { ThemeSupa } from "@supabase/auth-ui-shared";
+import { Auth } from '@supabase/auth-ui-react';
+import { ThemeSupa } from '@supabase/auth-ui-shared';
 import { useSupabase } from "@/components/SessionProvider"; // Import useSupabase hook
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 
 export default function RegisterPage() {
   const { supabase } = useSupabase();
@@ -19,40 +13,31 @@ export default function RegisterPage() {
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold">Daftar Akun Baru</CardTitle>
-          <CardDescription>
-            Buat akun untuk mulai mengirimkan artikel.
-          </CardDescription>
+          <CardDescription>Buat akun untuk mulai mengirimkan artikel.</CardDescription>
         </CardHeader>
         <CardContent>
           <Auth
             supabaseClient={supabase}
-            providers={[]}
-            view="sign_up"
+            providers={[]} // Anda bisa menambahkan 'google', 'github', dll. di sini
             appearance={{
               theme: ThemeSupa,
               variables: {
                 default: {
                   colors: {
-                    brand: "hsl(var(--primary))",
-                    brandAccent: "hsl(var(--primary-hover))",
-                    inputBackground: "hsl(var(--background))",
-                    inputBorder: "hsl(var(--border))",
-                    inputBorderHover: "hsl(var(--ring))",
-                    inputBorderFocus: "hsl(var(--ring))",
-                    inputText: "hsl(var(--foreground))",
+                    brand: 'hsl(var(--primary))',
+                    brandAccent: 'hsl(var(--primary-hover))', // Menggunakan variabel baru untuk warna hover
+                    inputBackground: 'hsl(var(--background))',
+                    inputBorder: 'hsl(var(--border))',
+                    inputBorderHover: 'hsl(var(--ring))',
+                    inputBorderFocus: 'hsl(var(--ring))',
+                    inputText: 'hsl(var(--foreground))',
                   },
                 },
               },
             }}
-            theme="light"
-            redirectTo={
-              typeof window !== "undefined"
-                ? window.location.origin
-                : "http://localhost:3000"
-            }
-            onlyThirdPartyProviders={false}
-            magicLink={false}
-            showLinks={true}
+            theme="light" // Sesuaikan dengan tema aplikasi Anda
+            redirectTo={`${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/`} // Redirect ke root setelah registrasi
+            view="sign_up" // Ini yang akan memastikan tampilan pendaftaran
           />
         </CardContent>
       </Card>
