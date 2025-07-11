@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { MadeWithDyad } from "@/components/made-with-dyad";
 import { SessionProvider } from "@/components/SessionProvider";
 import { Web3Provider } from "@/components/Web3Provider";
+import { SolanaProvider } from "@/components/SolanaProvider";
 import React from "react";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
@@ -62,11 +63,33 @@ export default async function RootLayout({
   const path = headersList.get("x-pathname") || "/";
   await recordPageVisit(path);
 
-  // Fetch initial session on the server
+  // Fetch initial session on the server with proper security verification
+  // First verify the user is authenticated, then get session if needed
   const supabase = await createClient();
-  const {
-    data: { session: initialSession },
-  } = await supabase.auth.getSession();
+  let initialSession = null;
+
+  try {
+    // Verify user authentication first for security
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+
+    // Only get session if user is properly authenticated
+    if (!userError && user) {
+      const {
+        data: { session },
+        error: sessionError,
+      } = await supabase.auth.getSession();
+
+      if (!sessionError) {
+        initialSession = session;
+      }
+    }
+  } catch (error) {
+    console.error("Error fetching initial session:", error);
+    // Continue with null session - client will handle authentication
+  }
 
   // Add polyfill for indexedDB on server-side
   if (typeof globalThis.indexedDB === "undefined") {
@@ -108,17 +131,19 @@ export default async function RootLayout({
           disableTransitionOnChange
         >
           <Web3Provider>
-            {/* Pass initialSession to SessionProvider */}
-            <SessionProvider initialSession={initialSession}>
-              <div className="min-h-screen flex flex-col">
-                <Header />
-                <div className="flex flex-1 flex-col md:flex-row">
-                  <Sidebar />
-                  <main className="flex-1">{children}</main>
+            <SolanaProvider>
+              {/* Pass initialSession to SessionProvider */}
+              <SessionProvider initialSession={initialSession}>
+                <div className="min-h-screen flex flex-col">
+                  <Header />
+                  <div className="flex flex-1 flex-col md:flex-row">
+                    <Sidebar />
+                    <main className="flex-1">{children}</main>
+                  </div>
+                  <Footer />
                 </div>
-                <Footer />
-              </div>
-            </SessionProvider>
+              </SessionProvider>
+            </SolanaProvider>
           </Web3Provider>
         </ThemeProvider>
         <Toaster />

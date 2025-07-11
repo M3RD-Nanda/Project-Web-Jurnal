@@ -23,13 +23,13 @@ const nextConfig: NextConfig = {
       "@radix-ui/react-toast",
       "sonner",
     ],
-    // Enable turbo for faster builds
-    turbo: {
-      rules: {
-        "*.svg": {
-          loaders: ["@svgr/webpack"],
-          as: "*.js",
-        },
+  },
+  // Move turbo config to turbopack (new stable location)
+  turbopack: {
+    rules: {
+      "*.svg": {
+        loaders: ["@svgr/webpack"],
+        as: "*.js",
       },
     },
   },
@@ -86,7 +86,7 @@ const nextConfig: NextConfig = {
       );
     }
 
-    // Improve chunk loading reliability
+    // Simplified chunk optimization to avoid CSS conflicts
     config.optimization = {
       ...config.optimization,
       splitChunks: {

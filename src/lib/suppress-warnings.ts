@@ -23,6 +23,15 @@ export function suppressDevWarnings() {
     "eval @",
     "reactive-element.js",
     "issueWarning @",
+    // CSS preload warnings - these are performance optimizations by Next.js
+    "was preloaded using link preload but not used within a few seconds",
+    "Please make sure it has an appropriate `as` value",
+    "_next/static/css/web3.css",
+    "_next/static/css/app/layout.css",
+    // Removed Supabase auth warnings since we fixed the actual security issue
+    // "Using the user object as returned from supabase.auth.getSession()",
+    // "could be insecure! This value comes directly from the storage medium",
+    // "Use supabase.auth.getUser() instead which authenticates the data",
   ];
 
   // Override console.warn

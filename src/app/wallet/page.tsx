@@ -10,6 +10,8 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { WalletButton } from "@/components/wallet/WalletButton";
 import { WalletBalance } from "@/components/wallet/WalletBalance";
 import { WalletProfileIntegration } from "@/components/wallet/WalletProfileIntegration";
+import { SolanaWalletButton } from "@/components/wallet/SolanaWalletButton";
+import { SolanaWalletBalance } from "@/components/wallet/SolanaWalletBalance";
 import { usePersistentWallet } from "@/hooks/usePersistentWallet";
 import {
   Wallet,
@@ -55,44 +57,68 @@ export default function WalletPage() {
         {session && (
           <>
             {/* Wallet Connection Status */}
-            <Card className="border border-border">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-foreground">
-                  <Wallet className="h-5 w-5 text-primary" />
-                  Wallet Connection
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {!isConnected ? (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
+              {/* EVM Wallet (Ethereum, Polygon, etc.) */}
+              <Card className="border border-border">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-foreground">
+                    <Wallet className="h-5 w-5 text-primary" />
+                    EVM Wallet (ETH, MATIC, etc.)
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {!isConnected ? (
+                    <div className="text-center space-y-4">
+                      <p className="text-muted-foreground font-semibold">
+                        Connect your EVM wallet
+                      </p>
+                      <WalletButton />
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between">
+                        <span className="font-bold text-foreground">
+                          Connected:
+                        </span>
+                        <code className="bg-primary/10 text-primary px-3 py-2 rounded-lg text-sm font-mono border border-primary/20 font-bold">
+                          {address?.slice(0, 6)}...{address?.slice(-4)}
+                        </code>
+                      </div>
+                      <WalletButton variant="outline" />
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Solana Wallet */}
+              <Card className="border border-border">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-foreground">
+                    <span className="text-lg">◎</span>
+                    Solana Wallet (SOL)
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
                   <div className="text-center space-y-4">
                     <p className="text-muted-foreground font-semibold">
-                      Connect your crypto wallet to get started
+                      Connect your Solana wallet
                     </p>
-                    <WalletButton />
+                    <SolanaWalletButton />
                   </div>
-                ) : (
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <span className="font-bold text-foreground">
-                        Connected Wallet:
-                      </span>
-                      <code className="bg-primary/10 text-primary px-3 py-2 rounded-lg text-sm font-mono border border-primary/20 font-bold">
-                        {address?.slice(0, 6)}...{address?.slice(-4)}
-                      </code>
-                    </div>
-                    <WalletButton variant="outline" />
-                  </div>
-                )}
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </div>
 
             {/* Main Dashboard Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
-              {/* Wallet Balance */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
+              {/* EVM Wallet Balance */}
               <WalletBalance className="order-1" />
 
+              {/* Solana Wallet Balance */}
+              <SolanaWalletBalance className="order-2" />
+
               {/* Profile Integration */}
-              <WalletProfileIntegration className="order-2" />
+              <WalletProfileIntegration className="order-3 lg:col-span-1" />
             </div>
 
             {/* Quick Actions */}

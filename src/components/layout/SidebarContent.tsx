@@ -90,11 +90,7 @@ export function SidebarContent({ onLinkClick }: SidebarContentProps) {
           </CardHeader>
           <CardContent className="space-y-3">
             <p className="text-base">
-              Halo,{" "}
-              {profile?.first_name ||
-                session.user?.email?.split("@")[0] ||
-                "Pengguna"}
-              !
+              Halo, {profile?.first_name || "Pengguna"}!
             </p>
             <Button
               asChild

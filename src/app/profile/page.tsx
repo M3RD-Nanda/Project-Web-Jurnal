@@ -117,6 +117,12 @@ export default function ProfilePage() {
     const fetchProfile = async () => {
       setLoading(true);
       if (profile) {
+        // Get authenticated user email safely
+        const {
+          data: { user },
+          error: userError,
+        } = await supabase.auth.getUser();
+
         form.reset({
           username: profile.username ?? "",
           salutation: profile.salutation ?? "",
@@ -129,7 +135,7 @@ export default function ProfilePage() {
             "Tidak Disebutkan",
           affiliation: profile.affiliation ?? "",
           signature: profile.signature ?? "",
-          email: session.user.email ?? "",
+          email: !userError && user ? user.email ?? "" : "",
           orcid_id: profile.orcid_id ?? "",
           url: profile.url ?? "",
           phone: profile.phone ?? "",
@@ -143,29 +149,37 @@ export default function ProfilePage() {
           role: profile.role,
         });
       } else {
-        form.reset({
-          email: session.user.email ?? "",
-          first_name: session.user.user_metadata?.first_name ?? "",
-          last_name: session.user.user_metadata?.last_name ?? "",
-          is_reader: true,
-          is_author: false,
-          username: "",
-          salutation: "",
-          middle_name: "",
-          initials: "",
-          gender: "Tidak Disebutkan",
-          affiliation: "",
-          signature: "",
-          orcid_id: "",
-          url: "",
-          phone: "",
-          fax: "",
-          mailing_address: "",
-          bio_statement: "",
-          country: "",
-          profile_image_url: "",
-          role: "user",
-        });
+        // Get authenticated user data safely
+        const {
+          data: { user },
+          error: userError,
+        } = await supabase.auth.getUser();
+
+        if (!userError && user) {
+          form.reset({
+            email: user.email ?? "",
+            first_name: user.user_metadata?.first_name ?? "",
+            last_name: user.user_metadata?.last_name ?? "",
+            is_reader: true,
+            is_author: false,
+            username: "",
+            salutation: "",
+            middle_name: "",
+            initials: "",
+            gender: "Tidak Disebutkan",
+            affiliation: "",
+            signature: "",
+            orcid_id: "",
+            url: "",
+            phone: "",
+            fax: "",
+            mailing_address: "",
+            bio_statement: "",
+            country: "",
+            profile_image_url: "",
+            role: "user",
+          });
+        }
       }
       setLoading(false);
     };
@@ -212,8 +226,20 @@ export default function ProfilePage() {
       last_name: values.last_name,
     };
 
+    // Get authenticated user ID safely
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
+
+    if (userError || !user) {
+      toast.error("Authentication error. Please login again.");
+      setLoading(false);
+      return;
+    }
+
     const { error } = await updateProfileAdminAction(
-      session.user.id,
+      user.id,
       profileData,
       authMetadata
     );

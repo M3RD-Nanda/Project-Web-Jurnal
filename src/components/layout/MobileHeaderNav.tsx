@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
 import { ModeToggle } from "@/components/ui/mode-toggle";
 import { Session } from "@supabase/supabase-js";
 import { useSupabase } from "@/components/SessionProvider";
-import { WalletButton } from "@/components/wallet/WalletButton";
+import { UnifiedWalletButton } from "@/components/wallet/UnifiedWalletButton";
 
 interface MobileHeaderNavProps {
   navItems: { name: string; href: string }[];
@@ -249,7 +249,7 @@ export function MobileHeaderNav({
               CRYPTO WALLET
             </p>
             <div className="px-3">
-              <WalletButton
+              <UnifiedWalletButton
                 variant="default"
                 size="sm"
                 className="w-full font-semibold bg-primary text-primary-foreground hover:bg-primary/90 border-primary transition-all duration-200 shadow-sm"

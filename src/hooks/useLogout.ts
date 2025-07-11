@@ -17,17 +17,25 @@ export function useLogout() {
 
     try {
       // Disconnect wallet and clear from database if mounted and user is logged in
-      if (mounted && session?.user?.id) {
+      if (mounted && session) {
         try {
-          // Clear wallet data from database
-          const { error } = await supabase.rpc("disconnect_wallet", {
-            user_uuid: session.user.id,
-          });
+          // Get authenticated user ID safely
+          const {
+            data: { user },
+            error: userError,
+          } = await supabase.auth.getUser();
 
-          if (error) {
-            console.error("Error clearing saved wallet:", error);
-          } else {
-            console.log("Wallet data cleared from database");
+          if (!userError && user) {
+            // Clear wallet data from database
+            const { error } = await supabase.rpc("disconnect_wallet", {
+              user_uuid: user.id,
+            });
+
+            if (error) {
+              console.error("Error clearing saved wallet:", error);
+            } else {
+              console.log("Wallet data cleared from database");
+            }
           }
 
           // Note: Wallet will be disconnected automatically when Web3Provider unmounts

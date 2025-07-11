@@ -44,10 +44,21 @@ export function WalletProfileIntegration({
 
     setIsLinking(true);
     try {
+      // Get authenticated user ID safely
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
+
+      if (userError || !user) {
+        toast.error("Authentication error. Please login again.");
+        return;
+      }
+
       const { error } = await supabase
         .from("profiles")
         .update({ wallet_address: address })
-        .eq("id", session.user.id);
+        .eq("id", user.id);
 
       if (error) {
         throw error;
@@ -72,10 +83,21 @@ export function WalletProfileIntegration({
 
     setIsUnlinking(true);
     try {
+      // Get authenticated user ID safely
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
+
+      if (userError || !user) {
+        toast.error("Authentication error. Please login again.");
+        return;
+      }
+
       const { error } = await supabase
         .from("profiles")
         .update({ wallet_address: null })
-        .eq("id", session.user.id);
+        .eq("id", user.id);
 
       if (error) {
         throw error;

@@ -26,30 +26,54 @@ export function usePersistentWallet() {
   const { supabase, session } = useSupabase();
   const [isLoading, setIsLoading] = useState(false);
   const [savedWallet, setSavedWallet] = useState<WalletConnection | null>(null);
+  const [authenticatedUserId, setAuthenticatedUserId] = useState<string | null>(
+    null
+  );
+
+  // Get authenticated user ID safely
+  useEffect(() => {
+    const getAuthenticatedUser = async () => {
+      if (session) {
+        const {
+          data: { user },
+          error,
+        } = await supabase.auth.getUser();
+        if (!error && user) {
+          setAuthenticatedUserId(user.id);
+        } else {
+          setAuthenticatedUserId(null);
+        }
+      } else {
+        setAuthenticatedUserId(null);
+      }
+    };
+
+    getAuthenticatedUser();
+  }, [session, supabase]);
 
   // Load saved wallet connection when user logs in
   useEffect(() => {
-    if (session?.user?.id && !isConnected) {
+    if (authenticatedUserId && !isConnected) {
       loadSavedWallet();
     }
-  }, [session?.user?.id, isConnected]);
+  }, [authenticatedUserId, isConnected]);
 
   // Save wallet connection when wallet connects
   useEffect(() => {
-    if (isConnected && address && session?.user?.id) {
+    if (isConnected && address && authenticatedUserId) {
       saveWalletConnection();
     }
-  }, [isConnected, address, chainId, connector, session?.user?.id]);
+  }, [isConnected, address, chainId, connector, authenticatedUserId]);
 
   const loadSavedWallet = async () => {
-    if (!session?.user?.id) return;
+    if (!authenticatedUserId) return;
 
     try {
       setIsLoading(true);
 
       // Call the get_active_wallet function
       const { data, error } = await supabase.rpc("get_active_wallet", {
-        user_uuid: session.user.id,
+        user_uuid: authenticatedUserId,
       });
 
       if (error) {
@@ -93,14 +117,14 @@ export function usePersistentWallet() {
   };
 
   const saveWalletConnection = async () => {
-    if (!session?.user?.id || !address || !connector) return;
+    if (!authenticatedUserId || !address || !connector) return;
 
     try {
       const walletType = connector.name.toLowerCase();
 
       // Call the set_active_wallet function
       const { error } = await supabase.rpc("set_active_wallet", {
-        user_uuid: session.user.id,
+        user_uuid: authenticatedUserId,
         wallet_addr: address,
         wallet_type_param: walletType,
         chain_id_param: chainId,
@@ -128,8 +152,8 @@ export function usePersistentWallet() {
   };
 
   const disconnectAndClear = async () => {
-    if (!session?.user?.id) {
-      // Just disconnect wallet if no session
+    if (!authenticatedUserId) {
+      // Just disconnect wallet if no authenticated user
       disconnect();
       return;
     }
@@ -137,7 +161,7 @@ export function usePersistentWallet() {
     try {
       // Disconnect from database
       const { error } = await supabase.rpc("disconnect_wallet", {
-        user_uuid: session.user.id,
+        user_uuid: authenticatedUserId,
       });
 
       if (error) {
@@ -159,11 +183,11 @@ export function usePersistentWallet() {
   };
 
   const clearSavedWallet = async () => {
-    if (!session?.user?.id) return;
+    if (!authenticatedUserId) return;
 
     try {
       const { error } = await supabase.rpc("disconnect_wallet", {
-        user_uuid: session.user.id,
+        user_uuid: authenticatedUserId,
       });
 
       if (error) {

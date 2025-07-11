@@ -56,13 +56,25 @@ export function SessionProvider({
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
-  // Function to fetch profile based on session
+  // Function to fetch profile based on authenticated user
   const fetchProfile = async (currentSession: Session | null) => {
     if (currentSession) {
+      // Use getUser() to verify the user is authentic
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
+
+      if (userError || !user) {
+        console.error("Error verifying user:", userError);
+        setProfile(null);
+        return;
+      }
+
       const { data: profileData, error } = await supabase
         .from("profiles")
         .select("*")
-        .eq("id", currentSession.user.id)
+        .eq("id", user.id)
         .single();
 
       if (error && error.code !== "PGRST116") {
@@ -88,25 +100,51 @@ export function SessionProvider({
   useEffect(() => {
     const initializeSession = async () => {
       try {
-        // Get current session from Supabase
+        // Verify current user authentication securely
         const {
-          data: { session: currentSession },
-          error,
-        } = await supabase.auth.getSession();
+          data: { user },
+          error: userError,
+        } = await supabase.auth.getUser();
 
-        if (error) {
-          console.error("Error getting session:", error);
+        if (userError) {
+          console.error("Error getting user:", userError);
+          setSession(null);
+          setProfile(null);
+          setIsLoading(false);
+          return;
         }
 
-        // Use current session if no initial session was provided
-        const sessionToUse = currentSession || initialSession;
-        setSession(sessionToUse);
+        // If user is authenticated, get the current session
+        if (user) {
+          const {
+            data: { session: currentSession },
+            error: sessionError,
+          } = await supabase.auth.getSession();
 
-        if (sessionToUse) {
-          await fetchProfile(sessionToUse);
+          if (sessionError) {
+            console.error("Error getting session:", sessionError);
+            setSession(null);
+            setProfile(null);
+          } else {
+            // Use current session if no initial session was provided
+            const sessionToUse = currentSession || initialSession;
+            setSession(sessionToUse);
+
+            if (sessionToUse) {
+              await fetchProfile(sessionToUse);
+            }
+          }
+        } else {
+          // No authenticated user, use initial session if provided
+          setSession(initialSession);
+          if (initialSession) {
+            await fetchProfile(initialSession);
+          }
         }
       } catch (error) {
         console.error("Error initializing session:", error);
+        setSession(null);
+        setProfile(null);
       } finally {
         setIsLoading(false);
       }
@@ -117,12 +155,26 @@ export function SessionProvider({
     // Set up periodic session refresh to handle token expiration
     const refreshInterval = setInterval(async () => {
       try {
+        // First verify user is still authenticated
         const {
-          data: { session: refreshedSession },
-          error,
-        } = await supabase.auth.getSession();
-        if (!error && refreshedSession) {
-          setSession(refreshedSession);
+          data: { user },
+          error: userError,
+        } = await supabase.auth.getUser();
+
+        if (!userError && user) {
+          // User is authenticated, get fresh session
+          const {
+            data: { session: refreshedSession },
+            error: sessionError,
+          } = await supabase.auth.getSession();
+
+          if (!sessionError && refreshedSession) {
+            setSession(refreshedSession);
+          }
+        } else {
+          // User is no longer authenticated
+          setSession(null);
+          setProfile(null);
         }
       } catch (error) {
         console.error("Error refreshing session:", error);
@@ -136,12 +188,30 @@ export function SessionProvider({
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, currentSession) => {
-      console.log("Auth state change:", event, currentSession?.user?.email);
+      console.log("Auth state change:", event);
 
       setSession(currentSession);
-      await fetchProfile(currentSession);
 
+      // For security, verify user authenticity when session exists
       if (currentSession) {
+        const {
+          data: { user },
+          error: userError,
+        } = await supabase.auth.getUser();
+
+        if (userError || !user) {
+          console.error(
+            "Error verifying user during auth state change:",
+            userError
+          );
+          setSession(null);
+          setProfile(null);
+          return;
+        }
+
+        console.log("Verified user:", user.email);
+        await fetchProfile(currentSession);
+
         if (event === "SIGNED_IN") {
           toast.success("Anda berhasil masuk!");
           router.push("/");

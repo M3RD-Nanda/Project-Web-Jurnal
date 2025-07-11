@@ -10,8 +10,9 @@ import {
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useTheme } from "next-themes";
 import { getWagmiConfig } from "@/lib/web3-config";
+import { SolanaProvider } from "@/components/SolanaProvider";
 
-// Import RainbowKit styles
+// Import RainbowKit styles - this will be optimized by Next.js
 import "@rainbow-me/rainbowkit/styles.css";
 
 interface Web3ProviderProps {
@@ -140,23 +141,25 @@ export function Web3Provider({ children }: Web3ProviderProps) {
 
   if (finalConfig) {
     if (isWeb3Available) {
-      // Full Web3 setup with RainbowKit
+      // Full Web3 setup with RainbowKit and Solana
       return (
         <Web3Context.Provider value={contextValue}>
           <WagmiProvider config={finalConfig}>
             <QueryClientProvider client={queryClient}>
-              <RainbowKitThemeProvider>{children}</RainbowKitThemeProvider>
+              <RainbowKitThemeProvider>
+                <SolanaProvider>{children}</SolanaProvider>
+              </RainbowKitThemeProvider>
             </QueryClientProvider>
           </WagmiProvider>
         </Web3Context.Provider>
       );
     } else {
-      // Minimal setup without RainbowKit
+      // Minimal setup without RainbowKit but with Solana
       return (
         <Web3Context.Provider value={contextValue}>
           <WagmiProvider config={finalConfig}>
             <QueryClientProvider client={queryClient}>
-              {children}
+              <SolanaProvider>{children}</SolanaProvider>
             </QueryClientProvider>
           </WagmiProvider>
         </Web3Context.Provider>
@@ -164,10 +167,12 @@ export function Web3Provider({ children }: Web3ProviderProps) {
     }
   }
 
-  // Last resort: just provide context without Web3 providers
+  // Last resort: just provide context with Solana only
   console.warn("No Wagmi config available, some features may not work");
   return (
-    <Web3Context.Provider value={contextValue}>{children}</Web3Context.Provider>
+    <Web3Context.Provider value={contextValue}>
+      <SolanaProvider>{children}</SolanaProvider>
+    </Web3Context.Provider>
   );
 }
 

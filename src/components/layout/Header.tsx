@@ -10,7 +10,7 @@ import { MobileNav } from "./MobileNav";
 import { useSupabase } from "@/components/SessionProvider";
 import { toast } from "sonner";
 import { MobileHeaderNav } from "./MobileHeaderNav";
-import { WalletButton } from "@/components/wallet/WalletButton";
+import { UnifiedWalletButton } from "@/components/wallet/UnifiedWalletButton";
 import { useLogout } from "@/hooks/useLogout";
 
 export function Header() {
@@ -96,7 +96,7 @@ export function Header() {
 
           {/* Wallet Connection */}
           <div className="flex items-center">
-            <WalletButton
+            <UnifiedWalletButton
               variant="outline"
               size="sm"
               className="header-wallet text-[10px] lg:text-xs"

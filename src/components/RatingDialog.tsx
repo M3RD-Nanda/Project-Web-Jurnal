@@ -20,7 +20,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { toast } from "sonner";
 import { useSupabase } from "@/components/SessionProvider";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { submitRating } from "@/app/actions/ratings"; // Perbaikan di sini: Mengubah path ke /app/actions
 
 const ratingFormSchema = z.object({
@@ -35,26 +42,41 @@ interface RatingDialogProps {
 }
 
 export function RatingDialog({ children }: RatingDialogProps) {
-  const { session } = useSupabase();
+  const { session, supabase } = useSupabase();
   const [isOpen, setIsOpen] = useState(false);
   const [stars, setStars] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [userName, setUserName] = useState("");
 
   const form = useForm<RatingFormValues>({
     resolver: zodResolver(ratingFormSchema),
     defaultValues: {
-      name: session?.user?.user_metadata?.first_name || session?.user?.email?.split('@')[0] || "",
+      name: "",
       comment: "",
     },
   });
 
   React.useEffect(() => {
-    if (session) {
-      form.setValue("name", session.user?.user_metadata?.first_name || session.user?.email?.split('@')[0] || "");
-    } else {
-      form.setValue("name", "");
-    }
-  }, [session, form]);
+    const getUserName = async () => {
+      if (session) {
+        const {
+          data: { user },
+          error,
+        } = await supabase.auth.getUser();
+        if (!error && user) {
+          const name =
+            user.user_metadata?.first_name || user.email?.split("@")[0] || "";
+          setUserName(name);
+          form.setValue("name", name);
+        }
+      } else {
+        setUserName("");
+        form.setValue("name", "");
+      }
+    };
+
+    getUserName();
+  }, [session, form, supabase]);
 
   const handleStarClick = (selectedStars: number) => {
     setStars(selectedStars);
@@ -73,13 +95,33 @@ export function RatingDialog({ children }: RatingDialogProps) {
 
     setIsSubmitting(true);
     try {
-      const userId = session.user.id;
+      // Get authenticated user ID safely
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
+
+      if (userError || !user) {
+        toast.error("Authentication error. Please login again.");
+        setIsSubmitting(false);
+        return;
+      }
+
       // Call the server action instead of direct insertRating
-      const { success, error } = await submitRating(stars, values.name || null, values.comment || null, userId);
+      const { success, error } = await submitRating(
+        stars,
+        values.name || null,
+        values.comment || null,
+        user.id
+      );
 
       if (error) {
         console.error("Rating submission failed:", error);
-        toast.error(`Gagal mengirim rating: ${error || 'Terjadi kesalahan tidak dikenal.'}`);
+        toast.error(
+          `Gagal mengirim rating: ${
+            error || "Terjadi kesalahan tidak dikenal."
+          }`
+        );
       } else if (success) {
         toast.success("Terima kasih atas rating Anda!");
         setIsOpen(false);
@@ -89,7 +131,9 @@ export function RatingDialog({ children }: RatingDialogProps) {
       }
     } catch (e: any) {
       console.error("Unexpected error during rating submission:", e);
-      toast.error(`Terjadi kesalahan tak terduga: ${e.message || 'Silakan coba lagi.'}`);
+      toast.error(
+        `Terjadi kesalahan tak terduga: ${e.message || "Silakan coba lagi."}`
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -106,7 +150,10 @@ export function RatingDialog({ children }: RatingDialogProps) {
           </DialogDescription>
         </DialogHeader>
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4 py-4">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="grid gap-4 py-4"
+          >
             {!session && (
               <p className="text-center text-sm text-muted-foreground bg-yellow-100 dark:bg-yellow-900/20 p-2 rounded-md">
                 Anda harus login untuk memberi rating.
@@ -118,13 +165,19 @@ export function RatingDialog({ children }: RatingDialogProps) {
                   key={starCount}
                   className={cn(
                     "h-8 w-8 cursor-pointer transition-colors",
-                    stars >= starCount ? "fill-yellow-400 text-yellow-400" : "fill-muted stroke-muted-foreground"
+                    stars >= starCount
+                      ? "fill-yellow-400 text-yellow-400"
+                      : "fill-muted stroke-muted-foreground"
                   )}
                   onClick={() => handleStarClick(starCount)}
                 />
               ))}
             </div>
-            {stars === 0 && <p className="text-center text-sm text-destructive">Harap pilih jumlah bintang.</p>}
+            {stars === 0 && (
+              <p className="text-center text-sm text-destructive">
+                Harap pilih jumlah bintang.
+              </p>
+            )}
 
             <FormField
               control={form.control}
@@ -133,7 +186,11 @@ export function RatingDialog({ children }: RatingDialogProps) {
                 <FormItem>
                   <FormLabel>Nama Anda (Opsional)</FormLabel>
                   <FormControl>
-                    <Input placeholder="Anonim" {...field} disabled={!session} />
+                    <Input
+                      placeholder="Anonim"
+                      {...field}
+                      disabled={!session}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -147,14 +204,23 @@ export function RatingDialog({ children }: RatingDialogProps) {
                 <FormItem>
                   <FormLabel>Komentar (Opsional)</FormLabel>
                   <FormControl>
-                    <Textarea placeholder="Tulis komentar Anda di sini..." className="resize-none" {...field} disabled={!session} />
+                    <Textarea
+                      placeholder="Tulis komentar Anda di sini..."
+                      className="resize-none"
+                      {...field}
+                      disabled={!session}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            <Button type="submit" disabled={isSubmitting || !session} className="w-full">
+            <Button
+              type="submit"
+              disabled={isSubmitting || !session}
+              className="w-full"
+            >
               {isSubmitting ? "Mengirim..." : "Kirim Rating"}
             </Button>
           </form>
