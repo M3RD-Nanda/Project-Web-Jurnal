@@ -4,12 +4,14 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export function Footer() {
-  const [currentYear, setCurrentYear] = useState(2025);
+  const [currentYear, setCurrentYear] = useState<number | null>(null);
 
   useEffect(() => {
-    // Set the actual current year only on the client side
+    // This ensures the year is only set on the client after hydration,
+    // preventing a mismatch with the server-rendered HTML.
     setCurrentYear(new Date().getFullYear());
   }, []);
+
   const footerNavItems = [
     { name: "Kebijakan Privasi", href: "/privacy-policy" },
     { name: "Syarat & Ketentuan", href: "/terms-of-service" },
@@ -21,7 +23,7 @@ export function Footer() {
       <div className="container mx-auto flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
         <div className="flex flex-col">
           <p className="text-sm">
-            &copy; {currentYear} Jurnal Ilmiah Mahasiswa Ekonomi Akuntansi
+            &copy; {currentYear || "..."} Jurnal Ilmiah Mahasiswa Ekonomi Akuntansi
             (JIMEKA).
           </p>
           <p className="text-xs opacity-80">
