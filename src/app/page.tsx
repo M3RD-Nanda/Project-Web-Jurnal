@@ -1,6 +1,7 @@
 import { JournalContent } from "@/components/JournalContent";
-import { getAllArticles, Article } from "@/lib/articles"; // Import Article interface
-import { getAllAnnouncements, Announcement } from "@/lib/announcements"; // Import Announcement
+import { Article } from "@/lib/articles"; // Import Article interface
+import { Announcement } from "@/lib/announcements"; // Import Announcement
+import { getCachedArticles, getCachedAnnouncements } from "@/lib/cache";
 import {
   generateMetadata as generateSEOMetadata,
   SITE_CONFIG,
@@ -22,9 +23,13 @@ export const metadata: Metadata = generateSEOMetadata({
   },
 });
 
+// Enable static generation with revalidation
+export const revalidate = 3600; // Revalidate every hour
+
 export default async function Home() {
-  const latestArticles: Article[] = await getAllArticles();
-  const announcements: Announcement[] = await getAllAnnouncements();
+  // Use cached functions for better performance
+  const latestArticles: Article[] = await getCachedArticles();
+  const announcements: Announcement[] = await getCachedAnnouncements();
 
   return (
     <JournalContent

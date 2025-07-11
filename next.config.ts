@@ -17,7 +17,21 @@ const nextConfig: NextConfig = {
       "recharts",
       "lucide-react",
       "@radix-ui/react-icons",
+      "@radix-ui/react-dialog",
+      "@radix-ui/react-dropdown-menu",
+      "@radix-ui/react-navigation-menu",
+      "@radix-ui/react-toast",
+      "sonner",
     ],
+    // Enable turbo for faster builds
+    turbo: {
+      rules: {
+        "*.svg": {
+          loaders: ["@svgr/webpack"],
+          as: "*.js",
+        },
+      },
+    },
   },
   env: {
     // Suppress Lit dev mode warnings in production
@@ -79,17 +93,41 @@ const nextConfig: NextConfig = {
         ...config.optimization.splitChunks,
         cacheGroups: {
           ...config.optimization.splitChunks?.cacheGroups,
-          vendor: {
-            test: /[\\/]node_modules[\\/]/,
-            name: "vendors",
+          // React and core libraries
+          react: {
+            test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
+            name: "react",
             chunks: "all",
-            priority: 10,
+            priority: 30,
           },
+          // UI libraries
+          ui: {
+            test: /[\\/]node_modules[\\/](@radix-ui|@headlessui|framer-motion)[\\/]/,
+            name: "ui",
+            chunks: "all",
+            priority: 25,
+          },
+          // Web3 libraries
           web3: {
             test: /[\\/]node_modules[\\/](@rainbow-me|wagmi|viem|@walletconnect)[\\/]/,
             name: "web3",
             chunks: "all",
             priority: 20,
+          },
+          // Charts and visualization
+          charts: {
+            test: /[\\/]node_modules[\\/](recharts|d3)[\\/]/,
+            name: "charts",
+            chunks: "all",
+            priority: 15,
+          },
+          // Other vendor libraries
+          vendor: {
+            test: /[\\/]node_modules[\\/]/,
+            name: "vendors",
+            chunks: "all",
+            priority: 10,
+            minChunks: 2,
           },
         },
       },

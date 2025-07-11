@@ -43,25 +43,34 @@ export const SITE_CONFIG = {
   name: "Jurnal Ekonomi Bisnis dan Akuntansi Mahasiswa (JEBAKA)",
   shortName: "JEBAKA",
   description:
-    "Jurnal Ekonomi Bisnis dan Akuntansi Mahasiswa (JEBAKA) adalah jurnal peer-review dan open-access yang diterbitkan oleh Universitas Percobaan Nanda.",
+    "Jurnal Ekonomi Bisnis dan Akuntansi Mahasiswa (JEBAKA) adalah jurnal peer-review dan open-access yang diterbitkan oleh Universitas Percobaan Nanda. Platform terkemuka untuk publikasi penelitian inovatif di bidang Ekonomi dan Akuntansi.",
   url:
     process.env.NEXT_PUBLIC_SITE_URL ||
     "https://project-web-jurnal.vercel.app/",
   ogImage: "/images/og-default.png",
-  logo: "/jebaka-logo.png",
-  favicon: "/favicon.ico",
+  // Enhanced SEO fields
   keywords: [
-    "jurnal ilmiah",
-    "ekonomi",
-    "akuntansi",
-    "mahasiswa",
-    "peer review",
+    "jurnal ekonomi",
+    "jurnal akuntansi",
+    "jurnal mahasiswa",
+    "penelitian ekonomi",
+    "penelitian akuntansi",
     "open access",
-    "universitas",
-    "penelitian",
-    "akademik",
+    "peer review",
+    "publikasi ilmiah",
+    "universitas percobaan nanda",
     "JEBAKA",
+    "artikel ekonomi",
+    "artikel akuntansi",
+    "jurnal ilmiah",
+    "ekonomi bisnis",
+    "akuntansi mahasiswa",
   ],
+  author: "Universitas Percobaan Nanda",
+  category: "Education",
+  language: "id-ID",
+  logo: "/jimeka-logo.png",
+  favicon: "/favicon.ico",
   authors: ["Universitas Percobaan Nanda"],
   creator: "@jimeka_journal",
   publisher: "Universitas Percobaan Nanda",
@@ -161,11 +170,21 @@ export function generateMetadata(config: SEOConfig): Metadata {
       images: twitterConfig.image ? [twitterConfig.image] : undefined,
     },
 
-    // Additional meta tags
+    // Additional meta tags for better SEO
     other: {
       "theme-color": "#ffffff",
       "color-scheme": "light dark",
       "format-detection": "telephone=no",
+      "msapplication-TileColor": "#ffffff",
+      "msapplication-config": "/browserconfig.xml",
+      "apple-mobile-web-app-capable": "yes",
+      "apple-mobile-web-app-status-bar-style": "default",
+      "apple-mobile-web-app-title": SITE_CONFIG.shortName,
+      "application-name": SITE_CONFIG.shortName,
+      "mobile-web-app-capable": "yes",
+      HandheldFriendly: "True",
+      MobileOptimized: "320",
+      referrer: "no-referrer-when-downgrade",
     },
 
     // Alternates

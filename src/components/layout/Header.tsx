@@ -47,6 +47,8 @@ export function Header() {
               width={32}
               height={32}
               className="rounded-full flex-shrink-0"
+              priority
+              sizes="32px"
             />
             <div className="flex flex-col min-w-0">
               <div className="flex justify-between items-baseline gap-2">

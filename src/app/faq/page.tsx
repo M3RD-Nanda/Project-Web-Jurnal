@@ -103,6 +103,8 @@ Dan lain-lain – sebagai wujud eksplorasi keilmuan yang terus berkembang.`,
                   width={150}
                   height={150}
                   className="rounded-full object-cover border-4 border-primary shadow-md cursor-pointer transition-transform hover:scale-105"
+                  loading="lazy"
+                  sizes="150px"
                 />
               </DialogTrigger>
               <DialogContent className="sm:max-w-[600px] p-0 overflow-hidden">
@@ -117,9 +119,11 @@ Dan lain-lain – sebagai wujud eksplorasi keilmuan yang terus berkembang.`,
                 <Image
                   src="/images/muhammad-trinanda.jpg"
                   alt="Foto Muhammad Trinanda (Large)"
-                  width={600} // Set a larger width for the dialog image
-                  height={600} // Set a larger height for the dialog image
-                  className="w-full h-auto object-contain" // Ensure it fits and is responsive
+                  width={600}
+                  height={600}
+                  className="w-full h-auto object-contain"
+                  loading="lazy"
+                  sizes="(max-width: 600px) 100vw, 600px"
                 />
               </DialogContent>
             </Dialog>

@@ -47,8 +47,8 @@ export default function LoginPage() {
             theme="light"
             redirectTo={
               typeof window !== "undefined"
-                ? window.location.origin
-                : "http://localhost:3000"
+                ? `${window.location.origin}/`
+                : "http://localhost:3000/"
             }
             onlyThirdPartyProviders={false}
             magicLink={false}

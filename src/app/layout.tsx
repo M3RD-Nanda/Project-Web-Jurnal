@@ -12,15 +12,16 @@ import { Footer } from "@/components/layout/Footer";
 import { Sidebar } from "@/components/layout/Sidebar";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
+import { PerformanceMonitor } from "@/components/PerformanceMonitor";
+import { recordPageVisit } from "@/actions/analytics";
+import { headers } from "next/headers";
 import { createClient } from "@/integrations/supabase/server"; // Import server client
-import { PageTracker } from "@/components/PageTracker";
 import {
   generateMetadata as generateSEOMetadata,
   SITE_CONFIG,
   generateOrganizationStructuredData,
   generateWebsiteStructuredData,
 } from "@/lib/metadata";
-import { StructuredData } from "@/components/StructuredData"; // Import the component
 // Import warning suppression for development
 import "@/lib/suppress-warnings";
 
@@ -56,9 +57,10 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Record page visit for analytics (using default path since middleware is disabled)
-  // Individual pages will record their own visits via client-side analytics
-  // await recordPageVisit("/"); // Disabled to avoid duplicate recording
+  // Record page visit on every page load
+  const headersList = await headers();
+  const path = headersList.get("x-pathname") || "/";
+  await recordPageVisit(path);
 
   // Fetch initial session on the server
   const supabase = await createClient();
@@ -78,20 +80,27 @@ export default async function RootLayout({
     } as any;
   }
 
-  const organizationData = generateOrganizationStructuredData();
-  const websiteData = generateWebsiteStructuredData();
-
   return (
     <html lang="id" suppressHydrationWarning>
       <head>
-        {/* Structured Data scripts are moved to the body to prevent hydration errors */}
+        {/* Structured Data */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(generateOrganizationStructuredData()),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(generateWebsiteStructuredData()),
+          }}
+        />
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         suppressHydrationWarning
       >
-        <StructuredData data={organizationData} />
-        <StructuredData data={websiteData} />
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
@@ -101,7 +110,6 @@ export default async function RootLayout({
           <Web3Provider>
             {/* Pass initialSession to SessionProvider */}
             <SessionProvider initialSession={initialSession}>
-              <PageTracker />
               <div className="min-h-screen flex flex-col">
                 <Header />
                 <div className="flex flex-1 flex-col md:flex-row">
@@ -115,6 +123,7 @@ export default async function RootLayout({
         </ThemeProvider>
         <Toaster />
         <MadeWithDyad />
+        <PerformanceMonitor />
         <SpeedInsights />
         <Analytics />
       </body>
