@@ -32,7 +32,7 @@ export async function generateMetadata({
 
   if (!announcement) {
     return {
-      title: "Pengumuman Tidak Ditemukan | JIMEKA",
+      title: "Pengumuman Tidak Ditemukan | JEBAKA",
       description: "Pengumuman yang Anda cari tidak ditemukan.",
     };
   }

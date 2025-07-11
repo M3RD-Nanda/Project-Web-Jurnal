@@ -19,15 +19,15 @@
       <!-- Logo text -->
       <text x="0" y="10" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="32" font-weight="bold">J</text>
       
-      <!-- JIMEKA text -->
-      <text x="100" y="-10" text-anchor="start" fill="#1e40af" font-family="Arial, sans-serif" font-size="24" font-weight="bold">JIMEKA</text>
+      <!-- JEBAKA text -->
+      <text x="100" y="-10" text-anchor="start" fill="#1e40af" font-family="Arial, sans-serif" font-size="24" font-weight="bold">JEBAKA</text>
       <text x="100" y="15" text-anchor="start" fill="#64748b" font-family="Arial, sans-serif" font-size="16">Jurnal Ilmiah</text>
     </g>
     
     <!-- Main title -->
     <text x="0" y="20" text-anchor="middle" fill="#1e293b" font-family="Arial, sans-serif" font-size="48" font-weight="bold">
-      <tspan x="0" dy="0">Jurnal Ilmiah Mahasiswa</tspan>
-      <tspan x="0" dy="60">Ekonomi Akuntansi</tspan>
+      <tspan x="0" dy="0">Jurnal Ekonomi Bisnis dan</tspan>
+      <tspan x="0" dy="60">Akuntansi Mahasiswa</tspan>
     </text>
     
     <!-- Subtitle -->
@@ -43,5 +43,5 @@
   
   <!-- Footer -->
   <text x="40" y="590" fill="#94a3b8" font-family="Arial, sans-serif" font-size="14">Universitas Percobaan Nanda</text>
-  <text x="1160" y="590" text-anchor="end" fill="#94a3b8" font-family="Arial, sans-serif" font-size="14">jimeka.vercel.app</text>
+  <text x="1160" y="590" text-anchor="end" fill="#94a3b8" font-family="Arial, sans-serif" font-size="14">jebaka.vercel.app</text>
 </svg>

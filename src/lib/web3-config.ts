@@ -42,10 +42,38 @@ let _wagmiConfig: any = null;
 export function getWagmiConfig() {
   if (!_wagmiConfig) {
     try {
+      // Suppress Lit dev mode warnings globally
+      if (
+        typeof window !== "undefined" &&
+        process.env.NODE_ENV === "development"
+      ) {
+        // Set global flag to disable Lit dev mode
+        (window as any).litDisableBundleWarning = true;
+
+        // Suppress specific console warnings for Lit
+        const originalWarn = console.warn;
+        console.warn = (...args: any[]) => {
+          const message = args.join(" ");
+          if (
+            message.includes("Lit is in dev mode") ||
+            message.includes("lit.dev/msg/dev-mode") ||
+            message.includes("Not recommended for production")
+          ) {
+            return; // Suppress Lit dev mode warnings
+          }
+          originalWarn.apply(console, args);
+        };
+
+        // Restore console.warn after initialization
+        setTimeout(() => {
+          console.warn = originalWarn;
+        }, 2000);
+      }
+
       // Only create config if we have a valid project ID
       if (hasValidProjectId) {
         _wagmiConfig = getDefaultConfig({
-          appName: "Jurnal Website - Crypto Wallet",
+          appName: "JEBAKA - Crypto Wallet",
           projectId: projectId!,
           chains: supportedChains,
           ssr: true, // Enable server-side rendering
@@ -54,7 +82,7 @@ export function getWagmiConfig() {
         // Create a minimal config without WalletConnect for development
         console.warn("Creating minimal wallet config without WalletConnect");
         _wagmiConfig = getDefaultConfig({
-          appName: "Jurnal Website - Crypto Wallet",
+          appName: "JEBAKA - Crypto Wallet",
           projectId: "00000000-0000-0000-0000-000000000000", // Dummy UUID format
           chains: supportedChains,
           ssr: true,

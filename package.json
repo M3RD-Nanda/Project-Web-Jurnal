@@ -74,8 +74,10 @@
   },
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "node scripts/suppress-production-warnings.js && next build",
+    "build:clean": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "suppress-warnings": "node scripts/suppress-production-warnings.js"
   }
 }

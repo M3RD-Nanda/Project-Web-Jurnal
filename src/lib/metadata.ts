@@ -40,15 +40,15 @@ export interface SEOConfig {
 
 // Default site configuration
 export const SITE_CONFIG = {
-  name: "Jurnal Ilmiah Mahasiswa Ekonomi Akuntansi (JIMEKA)",
-  shortName: "JIMEKA",
+  name: "Jurnal Ekonomi Bisnis dan Akuntansi Mahasiswa (JEBAKA)",
+  shortName: "JEBAKA",
   description:
-    "Jurnal Ilmiah Mahasiswa Ekonomi Akuntansi (JIMEKA) adalah jurnal peer-review dan open-access yang diterbitkan oleh Universitas Percobaan Nanda.",
+    "Jurnal Ekonomi Bisnis dan Akuntansi Mahasiswa (JEBAKA) adalah jurnal peer-review dan open-access yang diterbitkan oleh Universitas Percobaan Nanda.",
   url:
     process.env.NEXT_PUBLIC_SITE_URL ||
     "https://project-web-jurnal.vercel.app/",
   ogImage: "/images/og-default.png",
-  logo: "/jimeka-logo.png",
+  logo: "/jebaka-logo.png",
   favicon: "/favicon.ico",
   keywords: [
     "jurnal ilmiah",
@@ -60,7 +60,7 @@ export const SITE_CONFIG = {
     "universitas",
     "penelitian",
     "akademik",
-    "JIMEKA",
+    "JEBAKA",
   ],
   authors: ["Universitas Percobaan Nanda"],
   creator: "@jimeka_journal",
@@ -332,7 +332,7 @@ export function generateArticleStructuredData(article: {
     isPartOf: {
       "@type": "Periodical",
       name: SITE_CONFIG.name,
-      issn: "2XXX-XXXX", // Add your ISSN here
+      issn: "1234-5678", // E-ISSN for JEBAKA
     },
   };
 }

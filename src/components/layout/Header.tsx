@@ -43,16 +43,16 @@ export function Header() {
           <Link href="/" className="flex items-center gap-2 min-w-0">
             <Image
               src="/jimeka-logo.png"
-              alt="Jurnal Ilmiah Mahasiswa Ekonomi Akuntansi (JIMEKA) Logo Universitas Percobaan Nanda"
+              alt="Jurnal Ekonomi Bisnis dan Akuntansi Mahasiswa (JEBAKA) Logo Universitas Percobaan Nanda"
               width={32}
               height={32}
               className="rounded-full flex-shrink-0"
             />
             <div className="flex flex-col min-w-0">
               <div className="flex justify-between items-baseline gap-2">
-                <span className="text-sm font-bold text-white">JIMEKA</span>
+                <span className="text-sm font-bold text-white">JEBAKA</span>
                 <span className="text-[10px] md:text-[11px] leading-tight text-primary-foreground/80 whitespace-nowrap">
-                  E-ISSN: 2581-1002
+                  E-ISSN: 1234-5678
                 </span>
               </div>
               <span className="text-[10px] md:text-[11px] leading-tight text-primary-foreground/90">

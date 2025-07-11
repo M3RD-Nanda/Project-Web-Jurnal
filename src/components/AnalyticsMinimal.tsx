@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -35,8 +36,7 @@ import {
 } from "@/lib/analytics";
 
 export function AnalyticsMinimal() {
-  const [mounted, setMounted] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
   const [visitorData, setVisitorData] = useState<DailyVisitData[]>([]);
   const [visitorStats, setVisitorStats] = useState<VisitorStats | null>(null);
@@ -45,7 +45,8 @@ export function AnalyticsMinimal() {
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
 
   useEffect(() => {
-    setMounted(true);
+    // Trigger data fetch on component mount
+    fetchData();
   }, []);
 
   const fetchData = async (isRefresh = false) => {
@@ -56,29 +57,53 @@ export function AnalyticsMinimal() {
         setLoading(true);
       }
 
-      // Fetch visitor data
-      const [dailyData, stats, pagesData] = await Promise.all([
-        getDailyVisits(7),
-        getVisitorStats(),
-        getTopPages(7),
-      ]);
+      console.log("[AnalyticsMinimal] Starting data fetch...");
 
-      setVisitorData(dailyData);
-      setVisitorStats(stats);
-      setTopPages(pagesData.slice(0, 5));
+      // Fetch visitor data with detailed logging
+      console.log("[AnalyticsMinimal] Fetching daily visits...");
+      const dailyData = await getDailyVisits(7);
+      console.log("[AnalyticsMinimal] Daily data received:", dailyData);
+
+      console.log("[AnalyticsMinimal] Fetching visitor stats...");
+      const stats = await getVisitorStats();
+      console.log("[AnalyticsMinimal] Stats received:", stats);
+
+      console.log("[AnalyticsMinimal] Fetching top pages...");
+      const pagesData = await getTopPages(7);
+      console.log("[AnalyticsMinimal] Pages data received:", pagesData);
+
+      // Ensure we have data, even if empty
+      setVisitorData(dailyData || []);
+      setVisitorStats(
+        stats || {
+          totalToday: 0,
+          totalWeek: 0,
+          percentageChange: 0,
+          trend: "stable",
+        }
+      );
+      setTopPages((pagesData || []).slice(0, 5));
       setLastUpdated(new Date());
+
+      console.log("[AnalyticsMinimal] Data fetch completed successfully");
     } catch (error) {
-      console.error("Error fetching analytics data:", error);
+      console.error("[AnalyticsMinimal] Error fetching analytics data:", error);
+      // Set fallback data on error
+      setVisitorData([]);
+      setVisitorStats({
+        totalToday: 0,
+        totalWeek: 0,
+        percentageChange: 0,
+        trend: "stable",
+      });
+      setTopPages([]);
     } finally {
       setLoading(false);
       setRefreshing(false);
     }
   };
 
-  useEffect(() => {
-    if (!mounted) return;
-    fetchData();
-  }, [mounted]);
+  // This useEffect was already defined above, removing duplicate
 
   const handleRefresh = () => {
     fetchData(true);
@@ -117,16 +142,6 @@ export function AnalyticsMinimal() {
       .replace(/-/g, " ")
       .replace(/\b\w/g, (l) => l.toUpperCase());
   };
-
-  if (!mounted) {
-    return (
-      <Card className="bg-sidebar-accent text-sidebar-accent-foreground border-sidebar-border shadow-none">
-        <CardContent className="p-3">
-          <Skeleton className="h-16 w-full" />
-        </CardContent>
-      </Card>
-    );
-  }
 
   const maxVisitors = Math.max(...visitorData.map((d) => d.visitors), 1);
   const totalVisitors = visitorData.reduce((sum, d) => sum + d.visitors, 0);
@@ -183,27 +198,38 @@ export function AnalyticsMinimal() {
                   </div>
 
                   {/* Mini bar chart */}
-                  <div className="flex items-end gap-0.5 h-8 bg-sidebar-border/20 rounded p-1">
-                    {visitorData.slice(-7).map((day, index) => {
-                      const height =
-                        maxVisitors > 0
-                          ? (day.visitors / maxVisitors) * 100
-                          : 0;
-                      return (
-                        <div
-                          key={index}
-                          className="flex-1 bg-sidebar-primary rounded-sm min-h-[3px] transition-all duration-300 opacity-80 hover:opacity-100"
-                          style={{ height: `${Math.max(height, 15)}%` }}
-                          title={`${day.date}: ${day.visitors} visitors`}
-                        />
-                      );
-                    })}
+                  <div className="flex items-end gap-0.5 h-8 bg-gray-100 dark:bg-gray-800 rounded p-1 border">
+                    {visitorData.length > 0
+                      ? visitorData.slice(-7).map((day, index) => {
+                          const height =
+                            maxVisitors > 0
+                              ? (day.visitors / maxVisitors) * 100
+                              : 0;
+
+                          return (
+                            <div
+                              key={index}
+                              className="flex-1 bg-blue-500 dark:bg-blue-400 rounded-sm min-h-[3px] transition-all duration-300 opacity-80 hover:opacity-100"
+                              style={{ height: `${Math.max(height, 15)}%` }}
+                              title={`${day.date}: ${day.visitors} visitors`}
+                            />
+                          );
+                        })
+                      : // Show placeholder bars when no data
+                        Array.from({ length: 7 }, (_, index) => (
+                          <div
+                            key={index}
+                            className="flex-1 bg-gray-300 dark:bg-gray-600 rounded-sm min-h-[3px] opacity-50"
+                            style={{ height: "15%" }}
+                            title="No data"
+                          />
+                        ))}
                   </div>
                 </div>
 
                 {/* Quick stats */}
                 <div className="flex justify-between text-xs text-muted-foreground">
-                  <span>7 hari: {totalVisitors}</span>
+                  <span>7 hari: {totalVisitors || 0}</span>
                   <span>Top: {topPages[0]?.visits || 0}</span>
                 </div>
               </div>
@@ -238,6 +264,10 @@ export function AnalyticsMinimal() {
               </Button>
             </div>
           </div>
+          <DialogDescription>
+            Lihat statistik pengunjung website JEBAKA secara detail dengan data
+            real-time dan analisis halaman populer.
+          </DialogDescription>
         </DialogHeader>
 
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6">

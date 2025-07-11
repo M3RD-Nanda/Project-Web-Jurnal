@@ -1,10 +1,11 @@
 # Open Graph dan SEO Implementation
 
-Dokumentasi ini menjelaskan implementasi fitur Open Graph, Twitter Cards, dan SEO yang telah ditambahkan ke website JIMEKA.
+Dokumentasi ini menjelaskan implementasi fitur Open Graph, Twitter Cards, dan SEO yang telah ditambahkan ke website JEBAKA.
 
 ## 🚀 Fitur yang Ditambahkan
 
 ### 1. **Open Graph Meta Tags**
+
 - ✅ og:title - Judul halaman yang dioptimalkan
 - ✅ og:description - Deskripsi halaman yang menarik
 - ✅ og:image - Gambar dinamis untuk setiap halaman
@@ -14,6 +15,7 @@ Dokumentasi ini menjelaskan implementasi fitur Open Graph, Twitter Cards, dan SE
 - ✅ og:locale - Bahasa konten (id_ID)
 
 ### 2. **Twitter Cards**
+
 - ✅ twitter:card - Summary large image
 - ✅ twitter:site - Handle Twitter website
 - ✅ twitter:creator - Handle Twitter creator
@@ -22,18 +24,21 @@ Dokumentasi ini menjelaskan implementasi fitur Open Graph, Twitter Cards, dan SE
 - ✅ twitter:image - Gambar untuk Twitter
 
 ### 3. **Dynamic Open Graph Images**
+
 - ✅ API endpoint `/api/og` untuk generate gambar dinamis
 - ✅ Gambar berbeda untuk setiap halaman
 - ✅ Ukuran optimal 1200x630px
-- ✅ Desain konsisten dengan branding JIMEKA
+- ✅ Desain konsisten dengan branding JEBAKA
 
 ### 4. **Structured Data (JSON-LD)**
+
 - ✅ Organization schema untuk website
 - ✅ WebSite schema dengan search action
 - ✅ ScholarlyArticle schema untuk artikel
 - ✅ Breadcrumb navigation
 
 ### 5. **SEO Optimization**
+
 - ✅ Meta title dan description yang dioptimalkan
 - ✅ Keywords yang relevan
 - ✅ Canonical URLs
@@ -41,6 +46,7 @@ Dokumentasi ini menjelaskan implementasi fitur Open Graph, Twitter Cards, dan SE
 - ✅ Language tags (hreflang)
 
 ### 6. **Sitemap dan Robots**
+
 - ✅ Sitemap.xml dinamis
 - ✅ Robots.txt dengan aturan yang tepat
 - ✅ Blocking AI crawlers yang tidak diinginkan
@@ -73,7 +79,10 @@ src/
 ### 1. **Menambah Metadata ke Halaman Baru**
 
 ```typescript
-import { generateMetadata as generateSEOMetadata, SITE_CONFIG } from "@/lib/metadata";
+import {
+  generateMetadata as generateSEOMetadata,
+  SITE_CONFIG,
+} from "@/lib/metadata";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = generateSEOMetadata({
@@ -83,7 +92,9 @@ export const metadata: Metadata = generateSEOMetadata({
   canonical: `${SITE_CONFIG.url}/path-halaman`,
   openGraph: {
     type: "website", // atau "article"
-    image: `${SITE_CONFIG.url}/api/og?title=${encodeURIComponent("Judul")}&subtitle=${encodeURIComponent("Subtitle")}&type=website`,
+    image: `${SITE_CONFIG.url}/api/og?title=${encodeURIComponent(
+      "Judul"
+    )}&subtitle=${encodeURIComponent("Subtitle")}&type=website`,
   },
 });
 ```
@@ -91,11 +102,13 @@ export const metadata: Metadata = generateSEOMetadata({
 ### 2. **Menggunakan Dynamic OG Images**
 
 URL format untuk generate OG image:
+
 ```
 /api/og?title=JUDUL&subtitle=SUBTITLE&type=TYPE
 ```
 
 Parameter:
+
 - `title`: Judul utama (required)
 - `subtitle`: Subtitle/deskripsi (optional)
 - `type`: website/article (optional, default: website)
@@ -112,7 +125,7 @@ const structuredData = generateArticleStructuredData({
   abstract: "Abstrak artikel",
   authors: ["Penulis 1", "Penulis 2"],
   publishedDate: "2024-01-01",
-  url: "https://jimeka.vercel.app/articles/123",
+  url: "https://jebaka.vercel.app/articles/123",
 });
 
 return (
@@ -126,21 +139,23 @@ return (
 ## 🔧 Konfigurasi
 
 ### Environment Variables
+
 Pastikan variabel berikut ada di `.env.local`:
 
 ```env
-NEXT_PUBLIC_SITE_URL="https://jimeka.vercel.app"
+NEXT_PUBLIC_SITE_URL="https://jebaka.vercel.app"
 ```
 
 ### Site Configuration
+
 Edit konfigurasi di `src/lib/metadata.ts`:
 
 ```typescript
 export const SITE_CONFIG = {
-  name: "Jurnal Ilmiah Mahasiswa Ekonomi Akuntansi (JIMEKA)",
-  shortName: "JIMEKA",
+  name: "Jurnal Ekonomi Bisnis dan Akuntansi Mahasiswa (JEBAKA)",
+  shortName: "JEBAKA",
   description: "Deskripsi website...",
-  url: process.env.NEXT_PUBLIC_SITE_URL || "https://jimeka.vercel.app",
+  url: process.env.NEXT_PUBLIC_SITE_URL || "https://jebaka.vercel.app",
   // ... konfigurasi lainnya
 };
 ```
@@ -148,6 +163,7 @@ export const SITE_CONFIG = {
 ## 📊 Testing dan Validation
 
 ### Tools untuk Testing:
+
 1. **Facebook Sharing Debugger**: https://developers.facebook.com/tools/debug/
 2. **Twitter Card Validator**: https://cards-dev.twitter.com/validator
 3. **LinkedIn Post Inspector**: https://www.linkedin.com/post-inspector/
@@ -155,6 +171,7 @@ export const SITE_CONFIG = {
 5. **Schema.org Validator**: https://validator.schema.org/
 
 ### Cara Test:
+
 1. Deploy website ke production
 2. Test URL di tools di atas
 3. Periksa preview di social media
@@ -163,24 +180,28 @@ export const SITE_CONFIG = {
 ## 🎯 Best Practices
 
 ### 1. **Open Graph Images**
+
 - Ukuran: 1200x630px (rasio 1.91:1)
 - Format: PNG atau JPG
 - Ukuran file: < 1MB
 - Teks harus terbaca di ukuran kecil
 
 ### 2. **Meta Descriptions**
+
 - Panjang: 150-160 karakter
 - Menarik dan informatif
 - Mengandung keyword utama
 - Call-to-action yang jelas
 
 ### 3. **Titles**
+
 - Panjang: 50-60 karakter
 - Keyword di awal
 - Brand name di akhir
 - Unik untuk setiap halaman
 
 ### 4. **Structured Data**
+
 - Gunakan schema yang relevan
 - Test dengan Google Rich Results
 - Update sesuai perubahan konten
@@ -191,12 +212,14 @@ export const SITE_CONFIG = {
 Setelah implementasi:
 
 1. **Build dan test lokal**:
+
    ```bash
    npm run build
    npm start
    ```
 
 2. **Deploy ke Vercel**:
+
    ```bash
    vercel --prod
    ```
@@ -209,6 +232,7 @@ Setelah implementasi:
 ## 📈 Monitoring
 
 ### Metrics to Track:
+
 - Click-through rate dari social media
 - Organic search traffic
 - Rich snippets appearance
@@ -216,6 +240,7 @@ Setelah implementasi:
 - Page load speed impact
 
 ### Tools:
+
 - Google Search Console
 - Google Analytics
 - Social media analytics
@@ -224,6 +249,7 @@ Setelah implementasi:
 ## 🔄 Maintenance
 
 ### Regular Tasks:
+
 - Update OG images untuk konten baru
 - Monitor broken links di sitemap
 - Update structured data sesuai schema terbaru

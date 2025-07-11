@@ -6,9 +6,9 @@ import {
 import type { Metadata } from "next";
 
 export const metadata: Metadata = generateSEOMetadata({
-  title: "Tentang JIMEKA",
+  title: "Tentang JEBAKA",
   description:
-    "Jurnal Ilmiah Mahasiswa Ekonomi Akuntansi (JIMEKA) adalah jurnal peer-review dan open-access yang diterbitkan oleh Fakultas Ekonomi dan Bisnis, Universitas Percobaan Nanda.",
+    "Jurnal Ekonomi Bisnis dan Akuntansi Mahasiswa (JEBAKA) adalah jurnal peer-review dan open-access yang diterbitkan oleh Fakultas Ekonomi dan Bisnis, Universitas Percobaan Nanda.",
   keywords: [
     "tentang",
     "visi",
@@ -22,7 +22,7 @@ export const metadata: Metadata = generateSEOMetadata({
   openGraph: {
     type: "website",
     image: `${SITE_CONFIG.url}/api/og?title=${encodeURIComponent(
-      "Tentang JIMEKA"
+      "Tentang JEBAKA"
     )}&subtitle=${encodeURIComponent(
       "Jurnal Peer-Review dan Open Access"
     )}&type=website`,
@@ -35,14 +35,14 @@ export default function AboutPage() {
       <Card className="w-full">
         <CardHeader>
           <CardTitle className="text-3xl font-bold text-center">
-            Tentang Jurnal Ilmiah Mahasiswa Ekonomi Akuntansi (JIMEKA)
+            Tentang Jurnal Ekonomi Bisnis dan Akuntansi Mahasiswa (JEBAKA)
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6 text-lg">
           <p>
-            Jurnal Ilmiah Mahasiswa Ekonomi Akuntansi (JIMEKA) adalah jurnal
+            Jurnal Ekonomi Bisnis dan Akuntansi Mahasiswa (JEBAKA) adalah jurnal
             peer-review dan open-access yang diterbitkan oleh Fakultas Ekonomi
-            dan Bisnis, Universitas Percobaan Nanda. JIMEKA didedikasikan untuk
+            dan Bisnis, Universitas Percobaan Nanda. JEBAKA didedikasikan untuk
             mempublikasikan hasil penelitian orisinal dan berkualitas tinggi
             dari mahasiswa, akademisi, dan peneliti di bidang Ekonomi dan
             Akuntansi.
@@ -50,7 +50,7 @@ export default function AboutPage() {
           <p>
             Kami berkomitmen untuk menjadi platform terkemuka dalam penyebaran
             pengetahuan ilmiah, memfasilitasi diskusi, dan mendorong inovasi
-            dalam disiplin ilmu Ekonomi dan Akuntansi. JIMEKA menerima berbagai
+            dalam disiplin ilmu Ekonomi dan Akuntansi. JEBAKA menerima berbagai
             jenis artikel, termasuk penelitian empiris, studi kasus, tinjauan
             literatur, dan artikel konseptual yang relevan dengan fokus dan
             ruang lingkup jurnal.

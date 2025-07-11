@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/form";
 import { toast } from "sonner";
 import { AnalyticsMinimal } from "@/components/AnalyticsMinimal";
+import { AnalyticsDebug } from "@/components/AnalyticsDebug";
 
 import { useSupabase } from "@/components/SessionProvider";
 import { RatingDialog } from "@/components/RatingDialog";
@@ -259,7 +260,7 @@ export function SidebarContent({ onLinkClick }: SidebarContentProps) {
         ))}
       </nav>
 
-      {/* Minimalist Analytics Component */}
+      {/* Analytics Component */}
       <AnalyticsMinimal />
     </div>
   );

@@ -4,10 +4,13 @@ export default function IncorporatedPage() {
   return (
     <StaticContentPage title="INCORPORATED WITH">
       <p>
-        Jurnal Ilmiah Mahasiswa Ekonomi Akuntansi (JIMEKA) bangga berkolaborasi dengan berbagai institusi dan organisasi terkemuka untuk memajukan penelitian di bidang Ekonomi dan Akuntansi.
+        Jurnal Ekonomi Bisnis dan Akuntansi Mahasiswa (JEBAKA) bangga
+        berkolaborasi dengan berbagai institusi dan organisasi terkemuka untuk
+        memajukan penelitian di bidang Ekonomi dan Akuntansi.
       </p>
       <p>
-        Kami percaya bahwa kemitraan strategis adalah kunci untuk mencapai keunggulan akademik dan menyebarkan pengetahuan yang berdampak luas.
+        Kami percaya bahwa kemitraan strategis adalah kunci untuk mencapai
+        keunggulan akademik dan menyebarkan pengetahuan yang berdampak luas.
       </p>
       <h3 className="text-2xl font-semibold mt-8">Mitra Kami:</h3>
       <ul className="list-disc list-inside space-y-2">
@@ -17,7 +20,9 @@ export default function IncorporatedPage() {
         <li>Dan berbagai universitas serta lembaga penelitian lainnya.</li>
       </ul>
       <p>
-        Kolaborasi ini memungkinkan kami untuk memperluas jangkauan, meningkatkan kualitas publikasi, dan memfasilitasi pertukaran ide di antara para peneliti.
+        Kolaborasi ini memungkinkan kami untuk memperluas jangkauan,
+        meningkatkan kualitas publikasi, dan memfasilitasi pertukaran ide di
+        antara para peneliti.
       </p>
     </StaticContentPage>
   );

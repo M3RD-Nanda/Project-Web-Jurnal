@@ -43,59 +43,9 @@ export async function getDailyVisits(
       `[Analytics] Fetching visits from ${startDateStr} to ${endDateStr}`
     );
 
-    // Use aggregated query for better performance
-    const query = supabase.rpc("get_daily_visit_counts", {
-      start_date: startDateStr,
-      end_date: endDateStr,
-    });
-
-    const queryResult = await query;
-    const { data, error } = queryResult;
-
-    // Log query results for debugging
-    logSupabaseQuery(
-      "get_daily_visit_counts",
-      { startDate: startDateStr, endDate: endDateStr },
-      queryResult
-    );
-
-    if (error) {
-      logError(error, "getDailyVisits");
-      console.error("Error fetching daily visits:", error);
-      // Fallback to simple query if RPC fails
-      return await getDailyVisitsSimple(days);
-    }
-
-    // Process aggregated data from stored procedure
-    const aggregatedData = data || [];
-    const dailyCounts: { [key: string]: number } = {};
-
-    aggregatedData.forEach((item: any) => {
-      const dateKey = format(new Date(item.visit_date), "yyyy-MM-dd");
-      dailyCounts[dateKey] = parseInt(item.visit_count) || 0;
-    });
-
-    // Generate data for all days in the range, even if no visits
-    const dailyData: DailyVisitData[] = [];
-    for (let i = 0; i < days; i++) {
-      const date = subDays(endDate, days - 1 - i);
-      const dateKey = format(date, "yyyy-MM-dd");
-      const fullDate = format(date, "dd MMM yyyy", { locale: id });
-
-      // Use Indonesian locale for day names
-      const dayName = format(date, "EEE", { locale: id });
-
-      dailyData.push({
-        date: dayName, // Use day name for chart X-axis
-        visitors: dailyCounts[dateKey] || 0,
-        fullDate: fullDate, // Full date for tooltip
-      });
-    }
-
-    console.log(
-      `[Analytics] Successfully processed ${dailyData.length} days of data`
-    );
-    return dailyData;
+    // Use simple query instead of RPC for better reliability
+    console.log("[Analytics] Using direct query instead of RPC");
+    return await getDailyVisitsSimple(days);
   } catch (error) {
     logError(error, "getDailyVisits");
     console.error("Error in getDailyVisits:", error);
@@ -119,8 +69,16 @@ async function getDailyVisitsSimple(
   const endDate = new Date();
   const startDate = subDays(endDate, days - 1);
 
-  const startDateStr = format(startDate, "yyyy-MM-dd");
-  const endDateStr = format(endDate, "yyyy-MM-dd");
+  // Use proper timezone-aware date formatting
+  const startDateStr = format(
+    startOfDay(startDate),
+    "yyyy-MM-dd'T'HH:mm:ss.SSSxxx"
+  );
+  const endDateStr = format(endOfDay(endDate), "yyyy-MM-dd'T'HH:mm:ss.SSSxxx");
+
+  console.log(
+    `[getDailyVisitsSimple] Querying from ${startDateStr} to ${endDateStr}`
+  );
 
   const { data, error } = await supabase
     .from("page_visits")
@@ -134,6 +92,8 @@ async function getDailyVisitsSimple(
   }
 
   const visits = data || [];
+  console.log(`[getDailyVisitsSimple] Found ${visits.length} visits`);
+
   const dailyCounts: { [key: string]: number } = {};
 
   visits.forEach((visit) => {
@@ -145,6 +105,8 @@ async function getDailyVisitsSimple(
       console.warn("Invalid date format in visit data:", visit.visited_at);
     }
   });
+
+  console.log(`[getDailyVisitsSimple] Daily counts:`, dailyCounts);
 
   const dailyData: DailyVisitData[] = [];
   for (let i = 0; i < days; i++) {
@@ -160,12 +122,17 @@ async function getDailyVisitsSimple(
     });
   }
 
+  console.log(
+    `[getDailyVisitsSimple] Returning ${dailyData.length} days of data:`,
+    dailyData
+  );
   return dailyData;
 }
 
 // Get visitor statistics for dashboard
 export async function getVisitorStats(): Promise<VisitorStats> {
   try {
+    console.log("[getVisitorStats] Starting visitor stats calculation");
     const today = new Date();
     const yesterday = subDays(today, 1);
     const weekAgo = subDays(today, 7);

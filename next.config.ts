@@ -19,6 +19,11 @@ const nextConfig: NextConfig = {
       "@radix-ui/react-icons",
     ],
   },
+  env: {
+    // Suppress Lit dev mode warnings in production
+    LIT_DISABLE_DEV_MODE:
+      process.env.NODE_ENV === "production" ? "true" : "false",
+  },
   webpack: (config, { isServer }) => {
     if (process.env.NODE_ENV === "development") {
       config.module.rules.push({
