@@ -4,20 +4,41 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSupabase } from "@/components/SessionProvider";
 import { StaticContentPage } from "@/components/StaticContentPage";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import React from "react"; // Import React for Fragment
+import { WalletProfileIntegration } from "@/components/wallet/WalletProfileIntegration";
 import { updateProfileAdminAction } from "@/actions/users"; // Import Server Action for profile update
 
 // Zod schema for profile form validation
@@ -28,7 +49,9 @@ const profileFormSchema = z.object({
   middle_name: z.string().optional(),
   last_name: z.string().min(1, "Nama belakang wajib diisi."),
   initials: z.string().optional(),
-  gender: z.enum(["Laki-laki", "Perempuan", "Lainnya", "Tidak Disebutkan"]).optional(),
+  gender: z
+    .enum(["Laki-laki", "Perempuan", "Lainnya", "Tidak Disebutkan"])
+    .optional(),
   affiliation: z.string().optional(),
   signature: z.string().optional(),
   email: z.string().email("Email tidak valid.").min(1, "Email wajib diisi."),
@@ -41,7 +64,11 @@ const profileFormSchema = z.object({
   country: z.string().optional(),
   is_reader: z.boolean(),
   is_author: z.boolean(),
-  profile_image_url: z.string().url("URL gambar profil tidak valid.").or(z.literal("")).optional(),
+  profile_image_url: z
+    .string()
+    .url("URL gambar profil tidak valid.")
+    .or(z.literal(""))
+    .optional(),
   role: z.string().optional(),
 });
 
@@ -97,7 +124,9 @@ export default function ProfilePage() {
           middle_name: profile.middle_name ?? "",
           last_name: profile.last_name ?? "",
           initials: profile.initials ?? "",
-          gender: (profile.gender as ProfileFormValues['gender']) ?? "Tidak Disebutkan",
+          gender:
+            (profile.gender as ProfileFormValues["gender"]) ??
+            "Tidak Disebutkan",
           affiliation: profile.affiliation ?? "",
           signature: profile.signature ?? "",
           email: session.user.email ?? "",
@@ -175,7 +204,7 @@ export default function ProfilePage() {
       is_reader: values.is_reader,
       is_author: values.is_author,
       profile_image_url: values.profile_image_url || null,
-      role: profile?.role || 'user', // Ensure role is not changed by user
+      role: profile?.role || "user", // Ensure role is not changed by user
     };
 
     const authMetadata = {
@@ -183,7 +212,11 @@ export default function ProfilePage() {
       last_name: values.last_name,
     };
 
-    const { error } = await updateProfileAdminAction(session.user.id, profileData, authMetadata);
+    const { error } = await updateProfileAdminAction(
+      session.user.id,
+      profileData,
+      authMetadata
+    );
 
     if (error) {
       toast.error(`Gagal memperbarui profil: ${error.message}`);
@@ -203,7 +236,9 @@ export default function ProfilePage() {
     <StaticContentPage title="Edit Profil">
       <Card className="w-full">
         <CardHeader>
-          <CardTitle className="text-3xl font-bold text-center">Edit Profil</CardTitle>
+          <CardTitle className="text-3xl font-bold text-center">
+            Edit Profil
+          </CardTitle>
           <CardDescription className="text-center text-muted-foreground mt-2">
             Perbarui informasi pribadi Anda.
           </CardDescription>
@@ -217,7 +252,10 @@ export default function ProfilePage() {
           )}
           {!loading && (
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-6"
+              >
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <FormField
                     control={form.control}
@@ -238,7 +276,10 @@ export default function ProfilePage() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Salutation</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
                           <FormControl>
                             <SelectTrigger>
                               <SelectValue placeholder="Pilih Salutation" />
@@ -320,7 +361,10 @@ export default function ProfilePage() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Gender</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
                           <FormControl>
                             <SelectTrigger>
                               <SelectValue placeholder="Pilih Gender" />
@@ -330,7 +374,9 @@ export default function ProfilePage() {
                             <SelectItem value="Laki-laki">Laki-laki</SelectItem>
                             <SelectItem value="Perempuan">Perempuan</SelectItem>
                             <SelectItem value="Lainnya">Lainnya</SelectItem>
-                            <SelectItem value="Tidak Disebutkan">Tidak Disebutkan</SelectItem>
+                            <SelectItem value="Tidak Disebutkan">
+                              Tidak Disebutkan
+                            </SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />
@@ -346,7 +392,10 @@ export default function ProfilePage() {
                     <FormItem>
                       <FormLabel>Affiliation</FormLabel>
                       <FormControl>
-                        <Textarea placeholder="Your institution, e.g. 'Simon Fraser University'" {...field} />
+                        <Textarea
+                          placeholder="Your institution, e.g. 'Simon Fraser University'"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -376,7 +425,9 @@ export default function ProfilePage() {
                       <FormControl>
                         <Input type="email" disabled {...field} />
                       </FormControl>
-                      <FormDescription>Email tidak dapat diubah dari sini.</FormDescription>
+                      <FormDescription>
+                        Email tidak dapat diubah dari sini.
+                      </FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -393,10 +444,17 @@ export default function ProfilePage() {
                       </FormControl>
                       <FormDescription>
                         ORCID iDs can only be assigned by the{" "}
-                        <a href="https://orcid.org/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                        <a
+                          href="https://orcid.org/"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary hover:underline"
+                        >
                           ORCID Registry
                         </a>
-                        . You must conform to their standards for expressing ORCID iDs, and include the full URI (e.g. http://orcid.org/0000-0002-1825-0097).
+                        . You must conform to their standards for expressing
+                        ORCID iDs, and include the full URI (e.g.
+                        http://orcid.org/0000-0002-1825-0097).
                       </FormDescription>
                       <FormMessage />
                     </FormItem>
@@ -468,7 +526,7 @@ export default function ProfilePage() {
                       <FormLabel>Country</FormLabel>
                       <FormControl>
                         <Input {...field} />
-                        </FormControl>
+                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -535,7 +593,9 @@ export default function ProfilePage() {
                   <FormControl>
                     <Input value={profile?.role || "Loading..."} disabled />
                   </FormControl>
-                  <FormDescription>Peran pengguna Anda dalam sistem.</FormDescription>
+                  <FormDescription>
+                    Peran pengguna Anda dalam sistem.
+                  </FormDescription>
                 </FormItem>
 
                 {/* Profile Image Section - Placeholder for now */}
@@ -543,7 +603,9 @@ export default function ProfilePage() {
                   <FormLabel>Profile Image</FormLabel>
                   <div className="flex items-center space-x-2">
                     <Input type="file" disabled />
-                    <Button type="button" disabled>Upload</Button>
+                    <Button type="button" disabled>
+                      Upload
+                    </Button>
                   </div>
                   <FormDescription>
                     Fitur upload gambar profil akan segera hadir.
@@ -552,10 +614,16 @@ export default function ProfilePage() {
 
                 <div className="flex justify-end gap-2">
                   <Button type="submit" disabled={loading}>
-                    {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                    {loading && (
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    )}
                     Save
                   </Button>
-                  <Button type="button" variant="outline" onClick={() => form.reset()}>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => form.reset()}
+                  >
                     Cancel
                   </Button>
                 </div>
@@ -564,6 +632,9 @@ export default function ProfilePage() {
           )}
         </CardContent>
       </Card>
+
+      {/* Wallet Integration Section */}
+      <WalletProfileIntegration className="mt-6" />
     </StaticContentPage>
   );
 }

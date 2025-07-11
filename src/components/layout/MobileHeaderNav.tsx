@@ -5,11 +5,18 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { ModeToggle } from "@/components/ui/mode-toggle";
 import { Session } from "@supabase/supabase-js";
 import { useSupabase } from "@/components/SessionProvider";
+import { WalletButton } from "@/components/wallet/WalletButton";
 
 interface MobileHeaderNavProps {
   navItems: { name: string; href: string }[];
@@ -17,7 +24,11 @@ interface MobileHeaderNavProps {
   handleLogout: () => void;
 }
 
-export function MobileHeaderNav({ navItems, session, handleLogout }: MobileHeaderNavProps) {
+export function MobileHeaderNav({
+  navItems,
+  session,
+  handleLogout,
+}: MobileHeaderNavProps) {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
   const { profile } = useSupabase();
@@ -25,14 +36,23 @@ export function MobileHeaderNav({ navItems, session, handleLogout }: MobileHeade
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
-        <Button variant="ghost" size="icon" className="md:hidden text-primary-foreground">
+        <Button
+          variant="ghost"
+          size="icon"
+          className="md:hidden text-primary-foreground"
+        >
           <Menu className="h-6 w-6" />
           <span className="sr-only">Toggle header navigation menu</span>
         </Button>
       </SheetTrigger>
-      <SheetContent side="right" className="w-64 p-0 bg-sidebar text-sidebar-foreground border-l border-sidebar-border flex flex-col">
+      <SheetContent
+        side="right"
+        className="w-64 p-0 bg-sidebar text-sidebar-foreground border-l border-sidebar-border flex flex-col"
+      >
         <SheetHeader className="p-4 border-b border-sidebar-border flex flex-row items-center gap-x-2">
-          <SheetTitle className="text-lg font-semibold text-sidebar-primary">Navigasi</SheetTitle>
+          <SheetTitle className="text-lg font-semibold text-sidebar-primary">
+            Navigasi
+          </SheetTitle>
           <ModeToggle />
         </SheetHeader>
         <nav className="flex flex-col p-4 space-y-1 flex-1 overflow-y-auto">
@@ -53,6 +73,22 @@ export function MobileHeaderNav({ navItems, session, handleLogout }: MobileHeade
               <Link href={item.href}>{item.name}</Link>
             </Button>
           ))}
+          {/* Add Crypto Wallet link for mobile header nav */}
+          <Button
+            variant="ghost"
+            asChild
+            className={cn(
+              "w-full justify-start text-left transition-colors duration-200 text-xs",
+              "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+              pathname === "/wallet"
+                ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
+                : ""
+            )}
+            onClick={() => setIsOpen(false)}
+          >
+            <Link href="/wallet">CRYPTO WALLET</Link>
+          </Button>
+
           {/* Add Rating Web link here for mobile header nav */}
           <Button
             variant="ghost"
@@ -84,7 +120,7 @@ export function MobileHeaderNav({ navItems, session, handleLogout }: MobileHeade
               >
                 <Link href="/profile">PROFILE</Link>
               </Button>
-              {profile?.role === 'admin' && (
+              {profile?.role === "admin" && (
                 <>
                   <Button
                     variant="ghost"
@@ -94,14 +130,16 @@ export function MobileHeaderNav({ navItems, session, handleLogout }: MobileHeade
                       "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
                       pathname === "/admin"
                         ? "bg-sidebar-primary text-sidebar-primary-foreground hover:bg-sidebar-primary/90"
-                          : ""
+                        : ""
                     )}
                     onClick={() => setIsOpen(false)}
                   >
                     <Link href="/admin">ADMIN</Link>
                   </Button>
                   <div className="border-t border-sidebar-border pt-3 mt-3 space-y-1">
-                    <p className="text-xs font-semibold text-muted-foreground px-3">ADMIN MENU</p>
+                    <p className="text-xs font-semibold text-muted-foreground px-3">
+                      ADMIN MENU
+                    </p>
                     <Button
                       variant="ghost"
                       asChild
@@ -204,6 +242,20 @@ export function MobileHeaderNav({ navItems, session, handleLogout }: MobileHeade
               </Button>
             </>
           )}
+
+          {/* Wallet Connection */}
+          <div className="border-t border-sidebar-border pt-3 mt-3">
+            <p className="text-xs font-semibold text-muted-foreground px-3 mb-2">
+              CRYPTO WALLET
+            </p>
+            <div className="px-3">
+              <WalletButton
+                variant="default"
+                size="sm"
+                className="w-full font-semibold bg-primary text-primary-foreground hover:bg-primary/90 border-primary transition-all duration-200 shadow-sm"
+              />
+            </div>
+          </div>
         </nav>
       </SheetContent>
     </Sheet>

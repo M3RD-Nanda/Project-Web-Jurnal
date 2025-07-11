@@ -1,5 +1,11 @@
 import { StaticContentPage } from "@/components/StaticContentPage";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { getAllIssues } from "@/lib/issues"; // Import getAllIssues
@@ -12,20 +18,33 @@ export default async function ArchivesPage() {
   return (
     <StaticContentPage title="ARSIP JURNAL">
       <p>
-        Telusuri edisi-edisi sebelumnya dari Jurnal Ilmiah Mahasiswa Ekonomi Akuntansi (JIMEKA).
+        Telusuri edisi-edisi sebelumnya dari Jurnal Ekonomi Bisnis dan Akuntansi
+        Mahasiswa (JEBAKA).
       </p>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
         {archivedIssues.length > 0 ? (
           archivedIssues.map((issue) => (
-            <Card key={issue.id} className="hover:shadow-lg transition-shadow duration-300">
+            <Card
+              key={issue.id}
+              className="hover:shadow-lg transition-shadow duration-300"
+            >
               <CardHeader>
-                <CardTitle className="text-xl">Volume {issue.volume}, Nomor {issue.number}</CardTitle>
+                <CardTitle className="text-xl">
+                  Volume {issue.volume}, Nomor {issue.number}
+                </CardTitle>
                 <CardDescription className="text-sm text-muted-foreground">
-                  Tahun {issue.year} | {format(new Date(issue.publicationDate), "dd MMMM yyyy", { locale: id })}
+                  Tahun {issue.year} |{" "}
+                  {format(new Date(issue.publicationDate), "dd MMMM yyyy", {
+                    locale: id,
+                  })}
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                {issue.description && <p className="text-sm line-clamp-3 mb-2">{issue.description}</p>}
+                {issue.description && (
+                  <p className="text-sm line-clamp-3 mb-2">
+                    {issue.description}
+                  </p>
+                )}
                 <Button variant="link" asChild className="p-0 h-auto">
                   <Link href={`/archives/${issue.id}`}>Lihat Edisi &rarr;</Link>
                 </Button>

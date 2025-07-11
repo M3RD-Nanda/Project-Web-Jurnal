@@ -5,14 +5,22 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
 import Link from "next/link";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Article } from "@/lib/articles";
 
 interface SearchClientContentProps {
   initialArticles: Article[];
 }
 
-export function SearchClientContent({ initialArticles }: SearchClientContentProps) {
+export function SearchClientContent({
+  initialArticles,
+}: SearchClientContentProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<Article[]>([]);
   const [hasSearched, setHasSearched] = useState(false);
@@ -39,8 +47,13 @@ export function SearchClientContent({ initialArticles }: SearchClientContentProp
           (article) =>
             article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
             article.authors.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            article.abstract.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            (article.keywords && article.keywords.some(keyword => keyword.toLowerCase().includes(searchQuery.toLowerCase())))
+            article.abstract
+              .toLowerCase()
+              .includes(searchQuery.toLowerCase()) ||
+            (article.keywords &&
+              article.keywords.some((keyword) =>
+                keyword.toLowerCase().includes(searchQuery.toLowerCase())
+              ))
         );
         setSearchResults(filtered);
       }
@@ -51,9 +64,13 @@ export function SearchClientContent({ initialArticles }: SearchClientContentProp
   return (
     <>
       <p>
-        Gunakan bilah pencarian di bawah ini untuk menemukan artikel, penulis, atau topik tertentu di JIMEKA.
+        Gunakan bilah pencarian di bawah ini untuk menemukan artikel, penulis,
+        atau topik tertentu di JEBAKA.
       </p>
-      <form onSubmit={handleSearch} className="flex w-full max-w-md items-center space-x-2 mx-auto mt-6">
+      <form
+        onSubmit={handleSearch}
+        className="flex w-full max-w-md items-center space-x-2 mx-auto mt-6"
+      >
         <Input
           type="text"
           placeholder="Cari artikel..."
@@ -68,25 +85,43 @@ export function SearchClientContent({ initialArticles }: SearchClientContentProp
 
       <div className="mt-8">
         {loading && hasSearched ? ( // Hanya tampilkan loading jika pencarian sedang aktif
-          <p className="text-center text-muted-foreground">Mencari artikel...</p>
-        ) : hasSearched && searchResults.length === 0 && searchQuery.trim() !== "" ? (
+          <p className="text-center text-muted-foreground">
+            Mencari artikel...
+          </p>
+        ) : hasSearched &&
+          searchResults.length === 0 &&
+          searchQuery.trim() !== "" ? (
           <div className="text-center text-muted-foreground p-4 border rounded-md bg-muted/20">
-            <p>Tidak ada hasil ditemukan untuk "{searchQuery}". Coba kata kunci lain.</p>
+            <p>
+              Tidak ada hasil ditemukan untuk "{searchQuery}". Coba kata kunci
+              lain.
+            </p>
           </div>
         ) : (
           searchResults.length > 0 && (
             <div className="space-y-4">
-              <h3 className="text-xl font-semibold text-center">Hasil Pencarian ({searchResults.length})</h3>
+              <h3 className="text-xl font-semibold text-center">
+                Hasil Pencarian ({searchResults.length})
+              </h3>
               {searchResults.map((article) => (
-                <Card key={article.id} className="hover:shadow-lg transition-shadow duration-300">
+                <Card
+                  key={article.id}
+                  className="hover:shadow-lg transition-shadow duration-300"
+                >
                   <CardHeader>
-                    <CardTitle className="text-lg font-semibold">{article.title}</CardTitle>
-                    <CardDescription className="text-sm text-muted-foreground">Oleh: {article.authors}</CardDescription>
+                    <CardTitle className="text-lg font-semibold">
+                      {article.title}
+                    </CardTitle>
+                    <CardDescription className="text-sm text-muted-foreground">
+                      Oleh: {article.authors}
+                    </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <p className="text-sm line-clamp-3">{article.abstract}</p>
                     <Button variant="link" asChild className="p-0 h-auto mt-2">
-                      <Link href={`/articles/${article.id}`}>Baca Selengkapnya &rarr;</Link>
+                      <Link href={`/articles/${article.id}`}>
+                        Baca Selengkapnya &rarr;
+                      </Link>
                     </Button>
                   </CardContent>
                 </Card>
