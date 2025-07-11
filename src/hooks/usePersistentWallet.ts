@@ -9,6 +9,7 @@ import {
 } from "./useWagmiSafe";
 import { useSupabase } from "@/components/SessionProvider";
 import { toast } from "sonner";
+import { type Connector } from "wagmi";
 
 interface WalletConnection {
   wallet_address: string;
@@ -75,7 +76,7 @@ export function usePersistentWallet() {
   const attemptAutoReconnect = async (walletData: WalletConnection) => {
     try {
       // Find the connector that was previously used
-      const savedConnector = connectors.find((c) =>
+      const savedConnector = connectors.find((c: Connector) =>
         c.name
           .toLowerCase()
           .includes(walletData.wallet_type?.toLowerCase() || "")

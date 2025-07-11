@@ -28,7 +28,7 @@ export function useAccountSafe() {
     isReconnecting: false,
     status: "disconnected" as const,
     connector: undefined,
-  });
+  } as any);
 
   useEffect(() => {
     setMounted(true);
@@ -56,7 +56,7 @@ export function useBalanceSafe(config?: { address?: `0x${string}` }) {
     isError: false,
     isLoading: false,
     error: null,
-  });
+  } as any);
 
   useEffect(() => {
     setMounted(true);
@@ -112,7 +112,7 @@ export function useConnectSafe() {
     reset: () => {},
     status: "idle" as const,
     variables: undefined,
-  });
+  } as any);
 
   useEffect(() => {
     setMounted(true);
@@ -144,7 +144,7 @@ export function useDisconnectSafe() {
     reset: () => {},
     status: "idle" as const,
     variables: undefined,
-  });
+  } as any);
 
   useEffect(() => {
     setMounted(true);
@@ -177,7 +177,7 @@ export function useSendTransactionSafe() {
     reset: () => {},
     status: "idle" as const,
     variables: undefined,
-  });
+  } as any);
 
   useEffect(() => {
     setMounted(true);

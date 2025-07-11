@@ -321,8 +321,11 @@ export function AnalyticsMinimal() {
                         visitorStats?.trend === "up" ? "default" : "secondary"
                       }
                     >
-                      {visitorStats?.percentageChange > 0 ? "+" : ""}
-                      {visitorStats?.percentageChange}%
+                      {visitorStats?.percentageChange !== undefined
+                        ? `${
+                            visitorStats.percentageChange > 0 ? "+" : ""
+                          }${visitorStats.percentageChange}%`
+                        : "0%"}
                     </Badge>
                   )}
                 </div>

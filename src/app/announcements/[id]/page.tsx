@@ -39,7 +39,7 @@ export async function generateMetadata({
 
   return generateAnnouncementMetadata({
     title: announcement.title,
-    content: announcement.description,
+    content: announcement.description ?? undefined,
     publishedDate: announcement.publicationDate,
     slug: id,
   });
