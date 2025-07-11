@@ -315,14 +315,14 @@ export function AnalyticsMinimal() {
                       ? "Menurun"
                       : "Stabil"}
                   </span>
-                  {visitorStats && visitorStats.percentageChange !== 0 && (
+                  {visitorStats?.percentageChange !== 0 && (
                     <Badge
                       variant={
-                        visitorStats.trend === "up" ? "default" : "secondary"
+                        visitorStats?.trend === "up" ? "default" : "secondary"
                       }
                     >
-                      {visitorStats.percentageChange > 0 ? "+" : ""}
-                      {visitorStats.percentageChange}%
+                      {visitorStats?.percentageChange > 0 ? "+" : ""}
+                      {visitorStats?.percentageChange}%
                     </Badge>
                   )}
                 </div>

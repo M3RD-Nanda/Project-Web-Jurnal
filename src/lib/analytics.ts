@@ -346,13 +346,13 @@ export async function getTopPages(days: number = 7): Promise<TopPage[]> {
     const startStr = format(startDate, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx");
     const endStr = format(endDate, "yyyy-MM-dd'T'HH:mm:ss.SSSxxx");
 
+    logSupabaseQuery("getTopPages", { startStr, endStr, days });
+
     const { data, error } = await supabase
       .from("page_visits")
       .select("path")
       .gte("visited_at", startStr)
       .lte("visited_at", endStr);
-
-    logSupabaseQuery("getTopPages", { startStr, endStr, days }, { data, error });
 
     if (error) {
       console.error("Error fetching top pages:", error);

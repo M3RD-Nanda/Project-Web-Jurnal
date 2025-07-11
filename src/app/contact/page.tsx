@@ -7,7 +7,9 @@ export default function ContactPage() {
   return (
     <StaticContentPage title="KONTAK KAMI">
       <p>
-        Jika Anda memiliki pertanyaan, masukan, atau membutuhkan bantuan, jangan ragu untuk menghubungi tim Jurnal Ilmiah Mahasiswa Ekonomi Akuntansi (JIMEKA). Kami siap membantu Anda.
+        Jika Anda memiliki pertanyaan, masukan, atau membutuhkan bantuan, jangan
+        ragu untuk menghubungi tim Jurnal Ekonomi Bisnis dan Akuntansi Mahasiswa
+        (JEBAKA). Kami siap membantu Anda.
       </p>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
@@ -18,7 +20,9 @@ export default function ContactPage() {
           </CardHeader>
           <CardContent>
             <p className="text-lg font-semibold">m.3rd.nanda@gmail.com</p>
-            <p className="text-sm text-muted-foreground">Untuk pertanyaan umum, pengiriman artikel, atau dukungan teknis.</p>
+            <p className="text-sm text-muted-foreground">
+              Untuk pertanyaan umum, pengiriman artikel, atau dukungan teknis.
+            </p>
           </CardContent>
         </Card>
 
@@ -29,7 +33,9 @@ export default function ContactPage() {
           </CardHeader>
           <CardContent>
             <p className="text-lg font-semibold">+62 000-0000-0000</p>
-            <p className="text-sm text-muted-foreground">Jam Kerja: Senin - Jumat, 09:00 - 16:00 WIB</p>
+            <p className="text-sm text-muted-foreground">
+              Jam Kerja: Senin - Jumat, 09:00 - 16:00 WIB
+            </p>
           </CardContent>
         </Card>
 
@@ -54,7 +60,8 @@ export default function ContactPage() {
 
       <h3 className="text-2xl font-semibold mt-8">Kirim Pesan kepada Kami</h3>
       <p>
-        Gunakan formulir di bawah ini untuk mengirimkan pertanyaan atau masukan Anda secara langsung.
+        Gunakan formulir di bawah ini untuk mengirimkan pertanyaan atau masukan
+        Anda secara langsung.
       </p>
       <ContactForm />
     </StaticContentPage>

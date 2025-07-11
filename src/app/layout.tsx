@@ -39,7 +39,7 @@ export const metadata: Metadata = generateSEOMetadata({
   canonical: SITE_CONFIG.url,
   openGraph: {
     type: "website",
-    images: `${SITE_CONFIG.url}/api/og?title=${encodeURIComponent(
+    image: `${SITE_CONFIG.url}/api/og?title=${encodeURIComponent(
       SITE_CONFIG.name
     )}&subtitle=${encodeURIComponent(
       "Peer-review dan Open Access"
