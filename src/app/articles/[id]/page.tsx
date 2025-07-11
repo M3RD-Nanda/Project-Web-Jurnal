@@ -14,6 +14,7 @@ import {
   SITE_CONFIG,
 } from "@/lib/metadata";
 import type { Metadata } from "next";
+import { StructuredData } from "@/components/StructuredData";
 
 type ArticlePageProps = {
   params: Promise<{ id: string }>; // In Next.js 15, params is a Promise
@@ -65,12 +66,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify(articleStructuredData),
-        }}
-      />
+      <StructuredData data={articleStructuredData} />
       <StaticContentPage title={article.title}>
         <Card className="w-full">
           <CardHeader>

@@ -20,6 +20,7 @@ import {
   generateOrganizationStructuredData,
   generateWebsiteStructuredData,
 } from "@/lib/metadata";
+import { StructuredData } from "@/components/StructuredData"; // Import the component
 // Import warning suppression for development
 import "@/lib/suppress-warnings";
 
@@ -77,27 +78,20 @@ export default async function RootLayout({
     } as any;
   }
 
+  const organizationData = generateOrganizationStructuredData();
+  const websiteData = generateWebsiteStructuredData();
+
   return (
     <html lang="id" suppressHydrationWarning>
       <head>
-        {/* Structured Data */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(generateOrganizationStructuredData()),
-          }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(generateWebsiteStructuredData()),
-          }}
-        />
+        {/* Structured Data scripts are moved to the body to prevent hydration errors */}
       </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         suppressHydrationWarning
       >
+        <StructuredData data={organizationData} />
+        <StructuredData data={websiteData} />
         <ThemeProvider
           attribute="class"
           defaultTheme="light"
