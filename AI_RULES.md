@@ -70,4 +70,12 @@ To ensure consistency and leverage the chosen stack effectively, please follow t
     *   Write all new code in TypeScript.
     *   Strive for strong typing and leverage TypeScript's features to improve code quality and maintainability. Avoid using `any` where possible.
 
+When making any changes to the database schema, structure, or functionality, ensure all modifications are backwards compatible. This means:
+
+Existing applications and queries must continue to work without modification
+New columns should have default values or be nullable
+Don’t remove or rename existing tables, columns, or constraints
+Don’t change data types in ways that break existing code
+The goal is to avoid breaking any systems that rely on the current database structure while still allowing new features to be added.
+
 By following these guidelines, we can build a more robust, maintainable, and consistent application.
