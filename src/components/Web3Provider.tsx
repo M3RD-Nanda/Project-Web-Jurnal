@@ -12,7 +12,7 @@ import { useTheme } from "next-themes";
 import { getWagmiConfig } from "@/lib/web3-config";
 import { SolanaProvider } from "@/components/SolanaProvider";
 
-// Import RainbowKit styles - this will be optimized by Next.js
+// Import RainbowKit styles - handled properly to prevent preload warnings
 import "@rainbow-me/rainbowkit/styles.css";
 
 interface Web3ProviderProps {

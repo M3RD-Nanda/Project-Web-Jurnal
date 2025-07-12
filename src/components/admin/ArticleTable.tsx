@@ -22,10 +22,16 @@ interface ArticleTableProps {
   onDelete: (id: string) => void;
 }
 
-export function ArticleTable({ articles, onEdit, onDelete }: ArticleTableProps) {
+export function ArticleTable({
+  articles,
+  onEdit,
+  onDelete,
+}: ArticleTableProps) {
   if (articles.length === 0) {
     return (
-      <p className="text-center text-muted-foreground p-4">Belum ada artikel yang tersedia.</p>
+      <p className="text-center text-muted-foreground p-4">
+        Belum ada artikel yang tersedia.
+      </p>
     );
   }
 
@@ -45,18 +51,92 @@ export function ArticleTable({ articles, onEdit, onDelete }: ArticleTableProps) 
         <TableBody>
           {articles.map((article) => (
             <TableRow key={article.id}>
-              <TableCell className="font-medium">{article.title}</TableCell>
-              <TableCell className="line-clamp-2 max-w-[150px]">{article.authors}</TableCell>
-              <TableCell className="line-clamp-2 max-w-[200px]">{article.abstract}</TableCell>
-              <TableCell>{format(new Date(article.publicationDate), "dd MMMM yyyy", { locale: id })}</TableCell>
-              <TableCell>{article.issueId || "-"}</TableCell>
+              {/* Kolom 1: Judul */}
+              <TableCell className="font-medium">
+                <div className="max-w-[200px] truncate" title={article.title}>
+                  {article.title}
+                </div>
+              </TableCell>
+
+              {/* Kolom 2: Penulis */}
+              <TableCell>
+                <div className="max-w-[150px] truncate" title={article.authors}>
+                  {article.authors}
+                </div>
+              </TableCell>
+
+              {/* Kolom 3: Abstrak */}
+              <TableCell>
+                <div
+                  className="max-w-[200px] line-clamp-2"
+                  title={article.abstract}
+                >
+                  {article.abstract || "Abstrak tidak tersedia"}
+                </div>
+              </TableCell>
+
+              {/* Kolom 4: Tanggal Publikasi */}
+              <TableCell>
+                {(() => {
+                  try {
+                    if (!article.publicationDate) {
+                      return "Tanggal tidak tersedia";
+                    }
+
+                    const date = new Date(article.publicationDate);
+
+                    if (isNaN(date.getTime())) {
+                      return "Format tanggal tidak valid";
+                    }
+
+                    return format(date, "dd MMMM yyyy", { locale: id });
+                  } catch (error) {
+                    console.error("Error formatting date:", error);
+                    return "Error format tanggal";
+                  }
+                })()}
+              </TableCell>
+
+              {/* Kolom 5: Edisi ID */}
+              <TableCell>
+                <span className="text-sm text-muted-foreground">
+                  {(() => {
+                    // Jika ada data edisi lengkap, tampilkan format user-friendly
+                    if (
+                      article.issueVolume &&
+                      article.issueNumber &&
+                      article.issueYear
+                    ) {
+                      return `Vol. ${article.issueVolume}, No. ${article.issueNumber} (${article.issueYear})`;
+                    }
+                    // Jika hanya ada issueId, tampilkan ID mentah
+                    if (article.issueId) {
+                      return `ID: ${article.issueId.substring(0, 8)}...`;
+                    }
+                    // Jika tidak ada edisi
+                    return "-";
+                  })()}
+                </span>
+              </TableCell>
+
+              {/* Kolom 6: Aksi */}
               <TableCell className="text-right">
                 <div className="flex justify-end gap-2">
-                  <Button variant="ghost" size="icon" onClick={() => onEdit(article)}>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => onEdit(article)}
+                    title="Edit artikel"
+                  >
                     <Edit className="h-4 w-4" />
                     <span className="sr-only">Edit</span>
                   </Button>
-                  <Button variant="ghost" size="icon" onClick={() => onDelete(article.id)}>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => onDelete(article.id)}
+                    title="Hapus artikel"
+                  >
                     <Trash2 className="h-4 w-4" />
                     <span className="sr-only">Hapus</span>
                   </Button>

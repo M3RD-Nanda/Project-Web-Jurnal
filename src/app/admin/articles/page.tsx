@@ -4,14 +4,26 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSupabase } from "@/components/SessionProvider";
 import { StaticContentPage } from "@/components/StaticContentPage";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { toast } from "sonner";
 import { Loader2, PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Article } from "@/lib/articles";
 import { ArticleTable } from "@/components/admin/ArticleTable";
 import { ArticleForm } from "@/components/admin/ArticleForm";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { deleteArticleAction } from "@/actions/articles"; // Import Server Action for delete
 
 export default function AdminArticlesPage() {
@@ -28,17 +40,21 @@ export default function AdminArticlesPage() {
       setLoading(false);
       return;
     }
-    const res = await fetch('/api/admin/articles', {
+    const res = await fetch("/api/admin/articles", {
       headers: {
-        'Authorization': `Bearer ${session.access_token}`,
+        Authorization: `Bearer ${session.access_token}`,
       },
     });
     const result = await res.json();
 
     if (res.ok) {
+      console.log("Raw API response:", result.data);
+      console.log("First article sample:", result.data[0]);
       setArticles(result.data);
     } else {
-      toast.error(`Gagal memuat artikel: ${result.error?.message || 'Terjadi kesalahan.'}`);
+      toast.error(
+        `Gagal memuat artikel: ${result.error?.message || "Terjadi kesalahan."}`
+      );
       setArticles([]);
     }
     setLoading(false);
@@ -50,7 +66,7 @@ export default function AdminArticlesPage() {
       router.push("/login");
       return;
     }
-    if (profile && profile.role !== 'admin') {
+    if (profile && profile.role !== "admin") {
       toast.error("Anda tidak memiliki izin untuk mengakses halaman ini.");
       router.push("/");
       return;
@@ -95,7 +111,7 @@ export default function AdminArticlesPage() {
     );
   }
 
-  if (profile.role !== 'admin') {
+  if (profile.role !== "admin") {
     return null; // Redirect handled by useEffect
   }
 
@@ -106,15 +122,24 @@ export default function AdminArticlesPage() {
           <CardTitle className="text-2xl font-bold">Daftar Artikel</CardTitle>
           <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
             <DialogTrigger asChild>
-              <Button onClick={() => { setEditingArticle(null); setIsFormOpen(true); }}>
+              <Button
+                onClick={() => {
+                  setEditingArticle(null);
+                  setIsFormOpen(true);
+                }}
+              >
                 <PlusCircle className="mr-2 h-4 w-4" /> Tambah Artikel
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[800px] max-h-[90vh] overflow-y-auto">
               <DialogHeader>
-                <DialogTitle>{editingArticle ? "Edit Artikel" : "Tambah Artikel Baru"}</DialogTitle>
+                <DialogTitle>
+                  {editingArticle ? "Edit Artikel" : "Tambah Artikel Baru"}
+                </DialogTitle>
                 <CardDescription>
-                  {editingArticle ? "Perbarui detail artikel." : "Isi detail untuk artikel baru."}
+                  {editingArticle
+                    ? "Perbarui detail artikel."
+                    : "Isi detail untuk artikel baru."}
                 </CardDescription>
               </DialogHeader>
               <ArticleForm

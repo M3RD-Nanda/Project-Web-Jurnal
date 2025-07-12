@@ -21,18 +21,34 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 import { Article } from "@/lib/articles";
 import { createArticleAction, updateArticleAction } from "@/actions/articles"; // Import Server Actions
 import { getIssuesForArticleForm } from "@/actions/issues-data"; // Import the new Server Action
 
 const articleFormSchema = z.object({
-  title: z.string().min(1, "Judul wajib diisi.").max(500, "Judul terlalu panjang."),
+  title: z
+    .string()
+    .min(1, "Judul wajib diisi.")
+    .max(500, "Judul terlalu panjang."),
   authors: z.string().min(1, "Penulis wajib diisi."),
-  abstract: z.string().min(1, "Abstrak wajib diisi.").max(2000, "Abstrak terlalu panjang."),
+  abstract: z
+    .string()
+    .min(1, "Abstrak wajib diisi.")
+    .max(2000, "Abstrak terlalu panjang."),
   fullContent: z.string().min(1, "Konten lengkap wajib diisi."), // Reverted to string
   publicationDate: z.date({
     required_error: "Tanggal publikasi wajib diisi.",
@@ -49,7 +65,11 @@ interface ArticleFormProps {
   onCancel: () => void;
 }
 
-export function ArticleForm({ initialData, onSuccess, onCancel }: ArticleFormProps) {
+export function ArticleForm({
+  initialData,
+  onSuccess,
+  onCancel,
+}: ArticleFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [issues, setIssues] = useState<any[]>([]); // Use any[] for now, or import Issue interface
   const [issuesLoading, setIssuesLoading] = useState(true);
@@ -63,7 +83,7 @@ export function ArticleForm({ initialData, onSuccess, onCancel }: ArticleFormPro
           abstract: initialData.abstract,
           fullContent: initialData.fullContent,
           publicationDate: new Date(initialData.publicationDate),
-          keywords: initialData.keywords?.join(', ') || undefined,
+          keywords: initialData.keywords?.join(", ") || "",
           issueId: initialData.issueId || "null-issue", // Map null to "null-issue" for the select
         }
       : {
@@ -72,7 +92,7 @@ export function ArticleForm({ initialData, onSuccess, onCancel }: ArticleFormPro
           abstract: "",
           fullContent: "",
           publicationDate: new Date(),
-          keywords: undefined,
+          keywords: "",
           issueId: "null-issue", // Default to "Tidak Ada Edisi"
         },
     mode: "onChange",
@@ -93,18 +113,23 @@ export function ArticleForm({ initialData, onSuccess, onCancel }: ArticleFormPro
     setIsSubmitting(true);
     let resultError: string | null = null;
 
-    const keywordsArray = values.keywords
-      ? values.keywords.split(',').map(k => k.trim()).filter(k => k.length > 0)
-      : [];
+    const keywordsArray =
+      values.keywords && values.keywords.trim()
+        ? values.keywords
+            .split(",")
+            .map((k) => k.trim())
+            .filter((k) => k.length > 0)
+        : [];
 
     const articleData = {
       title: values.title,
       authors: values.authors,
       abstract: values.abstract,
       fullContent: values.fullContent, // This is now a plain string
-      publicationDate: format(values.publicationDate, 'yyyy-MM-dd'),
+      publicationDate: format(values.publicationDate, "yyyy-MM-dd"),
       keywords: keywordsArray,
-      issueId: (values.issueId === "null-issue" ? null : values.issueId) ?? null, // Convert "null-issue" to null, and any undefined to null
+      issueId:
+        (values.issueId === "null-issue" ? null : values.issueId) ?? null, // Convert "null-issue" to null, and any undefined to null
     };
 
     if (initialData) {
@@ -118,7 +143,9 @@ export function ArticleForm({ initialData, onSuccess, onCancel }: ArticleFormPro
     if (resultError) {
       toast.error(`Gagal menyimpan artikel: ${resultError}`);
     } else {
-      toast.success(`Artikel berhasil ${initialData ? "diperbarui" : "ditambahkan"}!`);
+      toast.success(
+        `Artikel berhasil ${initialData ? "diperbarui" : "ditambahkan"}!`
+      );
       onSuccess();
     }
     setIsSubmitting(false);
@@ -147,7 +174,10 @@ export function ArticleForm({ initialData, onSuccess, onCancel }: ArticleFormPro
             <FormItem>
               <FormLabel>Penulis</FormLabel>
               <FormControl>
-                <Input placeholder="Nama Penulis (pisahkan dengan koma jika lebih dari satu)" {...field} />
+                <Input
+                  placeholder="Nama Penulis (pisahkan dengan koma jika lebih dari satu)"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -160,7 +190,11 @@ export function ArticleForm({ initialData, onSuccess, onCancel }: ArticleFormPro
             <FormItem>
               <FormLabel>Abstrak</FormLabel>
               <FormControl>
-                <Textarea placeholder="Abstrak artikel..." className="resize-none min-h-[100px]" {...field} />
+                <Textarea
+                  placeholder="Abstrak artikel..."
+                  className="resize-none min-h-[100px]"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -173,7 +207,11 @@ export function ArticleForm({ initialData, onSuccess, onCancel }: ArticleFormPro
             <FormItem>
               <FormLabel>Konten Lengkap</FormLabel>
               <FormControl>
-                <Textarea placeholder="Tulis konten lengkap artikel di sini..." className="resize-y min-h-[200px]" {...field} />
+                <Textarea
+                  placeholder="Tulis konten lengkap artikel di sini..."
+                  className="resize-y min-h-[200px]"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -236,14 +274,23 @@ export function ArticleForm({ initialData, onSuccess, onCancel }: ArticleFormPro
           render={({ field }) => (
             <FormItem>
               <FormLabel>Edisi Terkait (Opsional)</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value || "null-issue"} disabled={issuesLoading}>
+              <Select
+                onValueChange={field.onChange}
+                value={field.value || "null-issue"}
+                disabled={issuesLoading}
+              >
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder={issuesLoading ? "Memuat edisi..." : "Pilih Edisi"} />
+                    <SelectValue
+                      placeholder={
+                        issuesLoading ? "Memuat edisi..." : "Pilih Edisi"
+                      }
+                    />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="null-issue">Tidak Ada Edisi</SelectItem> {/* Changed value from "" to "null-issue" */}
+                  <SelectItem value="null-issue">Tidak Ada Edisi</SelectItem>{" "}
+                  {/* Changed value from "" to "null-issue" */}
                   {issues.map((issue) => (
                     <SelectItem key={issue.id} value={issue.id}>
                       Vol. {issue.volume}, No. {issue.number} ({issue.year})
@@ -256,7 +303,12 @@ export function ArticleForm({ initialData, onSuccess, onCancel }: ArticleFormPro
           )}
         />
         <div className="flex justify-end gap-2 pt-4">
-          <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onCancel}
+            disabled={isSubmitting}
+          >
             Batal
           </Button>
           <Button type="submit" disabled={isSubmitting}>

@@ -11,6 +11,8 @@ const nextConfig: NextConfig = {
     // your project has type errors.
     ignoreBuildErrors: true,
   },
+  // Disable source maps in production to avoid 404 errors
+  productionBrowserSourceMaps: false,
   experimental: {
     // Enable optimizePackageImports for better tree shaking
     optimizePackageImports: [
@@ -23,6 +25,8 @@ const nextConfig: NextConfig = {
       "@radix-ui/react-toast",
       "sonner",
     ],
+    // Note: Removed optimizeCss and cssChunking as they cause build issues
+    // CSS optimization is handled through webpack configuration instead
   },
   // Move turbo config to turbopack (new stable location)
   turbopack: {
@@ -86,13 +90,21 @@ const nextConfig: NextConfig = {
       );
     }
 
-    // Simplified chunk optimization to avoid CSS conflicts
+    // Enhanced chunk optimization with CSS handling
     config.optimization = {
       ...config.optimization,
       splitChunks: {
         ...config.optimization.splitChunks,
         cacheGroups: {
           ...config.optimization.splitChunks?.cacheGroups,
+          // CSS styles - high priority to prevent preload issues
+          styles: {
+            test: /\.(css|scss|sass)$/,
+            name: "styles",
+            chunks: "all",
+            priority: 40,
+            enforce: true,
+          },
           // React and core libraries
           react: {
             test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
@@ -107,12 +119,13 @@ const nextConfig: NextConfig = {
             chunks: "all",
             priority: 25,
           },
-          // Web3 libraries
+          // Web3 libraries - separate chunk to prevent CSS preloading
           web3: {
-            test: /[\\/]node_modules[\\/](@rainbow-me|wagmi|viem|@walletconnect)[\\/]/,
+            test: /[\\/]node_modules[\\/](@rainbow-me|wagmi|viem|@walletconnect|@solana)[\\/]/,
             name: "web3",
-            chunks: "all",
+            chunks: "async", // Changed to async to prevent preloading
             priority: 20,
+            enforce: true,
           },
           // Charts and visualization
           charts: {

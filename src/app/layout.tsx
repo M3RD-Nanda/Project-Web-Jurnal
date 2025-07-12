@@ -23,8 +23,10 @@ import {
   generateOrganizationStructuredData,
   generateWebsiteStructuredData,
 } from "@/lib/metadata";
-// Import warning suppression for development
+// Import warning suppression and CSS optimization for development
 import "@/lib/suppress-warnings";
+import "@/lib/css-optimization";
+import "@/lib/preload-prevention";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -63,33 +65,9 @@ export default async function RootLayout({
   const path = headersList.get("x-pathname") || "/";
   await recordPageVisit(path);
 
-  // Fetch initial session on the server with proper security verification
-  // First verify the user is authenticated, then get session if needed
-  const supabase = await createClient();
-  let initialSession = null;
-
-  try {
-    // Verify user authentication first for security
-    const {
-      data: { user },
-      error: userError,
-    } = await supabase.auth.getUser();
-
-    // Only get session if user is properly authenticated
-    if (!userError && user) {
-      const {
-        data: { session },
-        error: sessionError,
-      } = await supabase.auth.getSession();
-
-      if (!sessionError) {
-        initialSession = session;
-      }
-    }
-  } catch (error) {
-    console.error("Error fetching initial session:", error);
-    // Continue with null session - client will handle authentication
-  }
+  // For security, we don't fetch session on server-side to avoid warnings
+  // The client-side SessionProvider will handle authentication properly
+  const initialSession = null;
 
   // Add polyfill for indexedDB on server-side
   if (typeof globalThis.indexedDB === "undefined") {
@@ -106,6 +84,50 @@ export default async function RootLayout({
   return (
     <html lang="id" suppressHydrationWarning>
       <head>
+        {/* Preload Prevention Script - Run Early */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function() {
+                if (typeof window === "undefined") return;
+
+                // Early preload prevention
+                const originalCreateElement = document.createElement;
+                document.createElement = function(tagName, options) {
+                  const element = originalCreateElement.call(this, tagName, options);
+
+                  if (tagName.toLowerCase() === 'link') {
+                    const originalSetAttribute = element.setAttribute;
+                    element.setAttribute = function(name, value) {
+                      if (name === 'rel' && value === 'preload') {
+                        const href = this.getAttribute('href') || '';
+                        if (href.includes('.css') && (
+                          href.includes('web3') ||
+                          href.includes('wallet') ||
+                          href.includes('solana') ||
+                          href.includes('rainbow') ||
+                          href.includes('rainbowkit') ||
+                          href.includes('wagmi') ||
+                          href.includes('@rainbow-me') ||
+                          href.includes('chunks/') ||
+                          href.includes('app/layout')
+                        )) {
+                          originalSetAttribute.call(this, 'rel', 'stylesheet');
+                          originalSetAttribute.call(this, 'media', 'print');
+                          this.onload = () => { this.media = 'all'; };
+                          return;
+                        }
+                      }
+                      originalSetAttribute.call(this, name, value);
+                    };
+                  }
+                  return element;
+                };
+              })();
+            `,
+          }}
+        />
+
         {/* Structured Data */}
         <script
           type="application/ld+json"

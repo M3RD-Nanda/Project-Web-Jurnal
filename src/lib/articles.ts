@@ -1,5 +1,5 @@
 import { supabaseAdmin } from "@/integrations/supabase/server"; // Menggunakan supabaseAdmin
-import { v4 as uuidv4 } from 'uuid'; // Import uuid
+import { v4 as uuidv4 } from "uuid"; // Import uuid
 
 export interface Article {
   id: string;
@@ -10,13 +10,19 @@ export interface Article {
   publicationDate: string;
   keywords: string[];
   issueId: string | null;
+  // Data edisi untuk tampilan
+  issueVolume?: number;
+  issueNumber?: number;
+  issueYear?: number;
 }
 
 export async function getArticleById(id: string): Promise<Article | undefined> {
   const { data, error } = await supabaseAdmin // Menggunakan supabaseAdmin untuk GET
-    .from('articles')
-    .select('*')
-    .eq('id', id)
+    .from("articles")
+    .select(
+      "id, title, authors, abstract, full_content, publication_date, keywords, issue_id"
+    )
+    .eq("id", id)
     .single();
 
   if (error) {
@@ -26,14 +32,14 @@ export async function getArticleById(id: string): Promise<Article | undefined> {
 
   if (data) {
     return {
-      id: data.id,
-      title: data.title,
-      authors: data.authors,
-      abstract: data.abstract,
-      fullContent: data.full_content,
-      publicationDate: data.publication_date,
-      keywords: data.keywords || [],
-      issueId: data.issue_id,
+      id: String(data.id || ""),
+      title: String(data.title || ""),
+      authors: String(data.authors || ""),
+      abstract: String(data.abstract || ""),
+      fullContent: String(data.full_content || ""),
+      publicationDate: String(data.publication_date || ""),
+      keywords: Array.isArray(data.keywords) ? data.keywords : [],
+      issueId: data.issue_id ? String(data.issue_id) : null,
     };
   }
   return undefined;
@@ -41,9 +47,25 @@ export async function getArticleById(id: string): Promise<Article | undefined> {
 
 export async function getAllArticles(): Promise<Article[]> {
   const { data, error } = await supabaseAdmin // Menggunakan supabaseAdmin untuk GET
-    .from('articles')
-    .select('*')
-    .order('publication_date', { ascending: false });
+    .from("articles")
+    .select(
+      `
+      id,
+      title,
+      authors,
+      abstract,
+      full_content,
+      publication_date,
+      keywords,
+      issue_id,
+      issues (
+        volume,
+        number,
+        year
+      )
+    `
+    )
+    .order("publication_date", { ascending: false });
 
   if (error) {
     console.error("Error fetching all articles:", error);
@@ -51,26 +73,39 @@ export async function getAllArticles(): Promise<Article[]> {
   }
 
   if (data) {
-    return data.map(item => ({
-      id: item.id,
-      title: item.title,
-      authors: item.authors,
-      abstract: item.abstract,
-      fullContent: item.full_content,
-      publicationDate: item.publication_date,
-      keywords: item.keywords || [],
-      issueId: item.issue_id,
-    }));
+    return data.map((item) => {
+      // Ensure proper mapping with explicit field validation
+      const mappedItem = {
+        id: String(item.id || ""),
+        title: String(item.title || ""),
+        authors: String(item.authors || ""),
+        abstract: String(item.abstract || ""),
+        fullContent: String(item.full_content || ""),
+        publicationDate: String(item.publication_date || ""),
+        keywords: Array.isArray(item.keywords) ? item.keywords : [],
+        issueId: item.issue_id ? String(item.issue_id) : null,
+        // Tambahkan data edisi jika tersedia
+        issueVolume: item.issues?.volume || undefined,
+        issueNumber: item.issues?.number || undefined,
+        issueYear: item.issues?.year || undefined,
+      };
+
+      return mappedItem;
+    });
   }
   return [];
 }
 
-export async function getArticlesByIssueId(issueId: string): Promise<Article[]> {
+export async function getArticlesByIssueId(
+  issueId: string
+): Promise<Article[]> {
   const { data, error } = await supabaseAdmin // Menggunakan supabaseAdmin untuk GET
-    .from('articles')
-    .select('*')
-    .eq('issue_id', issueId)
-    .order('publication_date', { ascending: false });
+    .from("articles")
+    .select(
+      "id, title, authors, abstract, full_content, publication_date, keywords, issue_id"
+    )
+    .eq("issue_id", issueId)
+    .order("publication_date", { ascending: false });
 
   if (error) {
     console.error(`Error fetching articles for issue ${issueId}:`, error);
@@ -78,15 +113,15 @@ export async function getArticlesByIssueId(issueId: string): Promise<Article[]> 
   }
 
   if (data) {
-    return data.map(item => ({
-      id: item.id,
-      title: item.title,
-      authors: item.authors,
-      abstract: item.abstract,
-      fullContent: item.full_content,
-      publicationDate: item.publication_date,
-      keywords: item.keywords || [],
-      issueId: item.issue_id,
+    return data.map((item) => ({
+      id: String(item.id || ""),
+      title: String(item.title || ""),
+      authors: String(item.authors || ""),
+      abstract: String(item.abstract || ""),
+      fullContent: String(item.full_content || ""),
+      publicationDate: String(item.publication_date || ""),
+      keywords: Array.isArray(item.keywords) ? item.keywords : [],
+      issueId: item.issue_id ? String(item.issue_id) : null,
     }));
   }
   return [];

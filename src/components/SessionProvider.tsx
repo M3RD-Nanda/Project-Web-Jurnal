@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Session, SupabaseClient } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { validateEnvironment, validateSupabaseConfig } from "@/lib/env-check";
 import React from "react";
 
 interface UserProfile {
@@ -57,24 +58,18 @@ export function SessionProvider({
   const router = useRouter();
 
   // Function to fetch profile based on authenticated user
-  const fetchProfile = async (currentSession: Session | null) => {
-    if (currentSession) {
-      // Use getUser() to verify the user is authentic
-      const {
-        data: { user },
-        error: userError,
-      } = await supabase.auth.getUser();
+  // This function should only be called with a verified user object from getUser()
+  const fetchProfile = async (authenticatedUser: any) => {
+    if (!authenticatedUser) {
+      setProfile(null);
+      return;
+    }
 
-      if (userError || !user) {
-        console.error("Error verifying user:", userError);
-        setProfile(null);
-        return;
-      }
-
+    try {
       const { data: profileData, error } = await supabase
         .from("profiles")
         .select("*")
-        .eq("id", user.id)
+        .eq("id", authenticatedUser.id)
         .single();
 
       if (error && error.code !== "PGRST116") {
@@ -84,65 +79,145 @@ export function SessionProvider({
       } else if (profileData) {
         setProfile(profileData as UserProfile);
       } else {
-        setProfile(null); // No profile found
+        console.log("No profile found for user, setting to null");
+        setProfile(null);
       }
-    } else {
+    } catch (error: any) {
+      console.error("Error fetching profile:", error);
       setProfile(null);
     }
   };
 
   // Fetch profile initially based on initialSession
   useEffect(() => {
-    fetchProfile(initialSession);
+    const initializeProfile = async () => {
+      if (initialSession) {
+        try {
+          const {
+            data: { user },
+            error,
+          } = await supabase.auth.getUser();
+          if (!error && user) {
+            await fetchProfile(user);
+          }
+        } catch (error) {
+          console.error("Error getting user for initial profile:", error);
+        }
+      }
+    };
+    initializeProfile();
   }, [initialSession]);
 
   // Initialize session on mount
   useEffect(() => {
+    // Validate environment configuration first
+    console.log("SessionProvider: Validating environment...");
+    const envValidation = validateEnvironment();
+    const supabaseValidation = validateSupabaseConfig();
+
+    if (!envValidation.isValid || !supabaseValidation) {
+      console.error(
+        "❌ Environment configuration is invalid. Authentication may not work properly."
+      );
+      toast.error(
+        "Konfigurasi environment tidak valid. Silakan hubungi administrator."
+      );
+      setIsLoading(false);
+      return;
+    }
+
     const initializeSession = async () => {
       try {
-        // Verify current user authentication securely
+        // First check if we have a session before calling getUser
         const {
-          data: { user },
-          error: userError,
-        } = await supabase.auth.getUser();
+          data: { session: currentSession },
+          error: sessionError,
+        } = await supabase.auth.getSession();
 
-        if (userError) {
-          console.error("Error getting user:", userError);
+        if (sessionError) {
+          console.error("Error getting session:", sessionError);
           setSession(null);
           setProfile(null);
           setIsLoading(false);
           return;
         }
 
-        // If user is authenticated, get the current session
-        if (user) {
-          const {
-            data: { session: currentSession },
-            error: sessionError,
-          } = await supabase.auth.getSession();
+        // Only call getUser if we have a session to avoid AuthSessionMissingError
+        if (currentSession) {
+          try {
+            const {
+              data: { user },
+              error: userError,
+            } = await supabase.auth.getUser();
 
-          if (sessionError) {
-            console.error("Error getting session:", sessionError);
-            setSession(null);
-            setProfile(null);
-          } else {
-            // Use current session if no initial session was provided
-            const sessionToUse = currentSession || initialSession;
-            setSession(sessionToUse);
+            if (userError) {
+              // Handle AuthSessionMissingError specifically
+              if (userError.message?.includes("Auth session missing")) {
+                console.log("No active session found, setting session to null");
+                setSession(null);
+                setProfile(null);
+                setIsLoading(false);
+                return;
+              }
+              console.error("Error getting user:", userError);
+              setSession(null);
+              setProfile(null);
+              setIsLoading(false);
+              return;
+            }
 
-            if (sessionToUse) {
-              await fetchProfile(sessionToUse);
+            if (user) {
+              // Use current session if user is authenticated
+              const sessionToUse = currentSession || initialSession;
+              setSession(sessionToUse);
+
+              // Fetch profile using the authenticated user object
+              await fetchProfile(user);
+            } else {
+              setSession(null);
+              setProfile(null);
+            }
+          } catch (authError: any) {
+            // Handle AuthSessionMissingError specifically
+            if (authError.message?.includes("Auth session missing")) {
+              console.log(
+                "Auth session missing during user verification, clearing session"
+              );
+              setSession(null);
+              setProfile(null);
+            } else {
+              console.error("Error during user authentication:", authError);
+              setSession(null);
+              setProfile(null);
             }
           }
         } else {
-          // No authenticated user, use initial session if provided
+          // No session available, use initial session if provided
           setSession(initialSession);
           if (initialSession) {
-            await fetchProfile(initialSession);
+            // Get authenticated user for profile fetch
+            try {
+              const {
+                data: { user },
+                error,
+              } = await supabase.auth.getUser();
+              if (!error && user) {
+                await fetchProfile(user);
+              }
+            } catch (error) {
+              console.error("Error getting user for profile:", error);
+            }
           }
         }
-      } catch (error) {
-        console.error("Error initializing session:", error);
+      } catch (error: any) {
+        // Handle AuthSessionMissingError specifically
+        if (error.message?.includes("Auth session missing")) {
+          console.log(
+            "Auth session missing during initialization, clearing session"
+          );
+        } else {
+          console.error("Error initializing session:", error);
+        }
         setSession(null);
         setProfile(null);
       } finally {
@@ -155,29 +230,71 @@ export function SessionProvider({
     // Set up periodic session refresh to handle token expiration
     const refreshInterval = setInterval(async () => {
       try {
-        // First verify user is still authenticated
+        // First check if we have a session before calling getUser
         const {
-          data: { user },
-          error: userError,
-        } = await supabase.auth.getUser();
+          data: { session: currentSession },
+          error: sessionError,
+        } = await supabase.auth.getSession();
 
-        if (!userError && user) {
-          // User is authenticated, get fresh session
-          const {
-            data: { session: refreshedSession },
-            error: sessionError,
-          } = await supabase.auth.getSession();
+        if (sessionError) {
+          console.error("Error getting session during refresh:", sessionError);
+          return;
+        }
 
-          if (!sessionError && refreshedSession) {
-            setSession(refreshedSession);
+        // Only call getUser if we have a session to avoid AuthSessionMissingError
+        if (currentSession) {
+          try {
+            const {
+              data: { user },
+              error: userError,
+            } = await supabase.auth.getUser();
+
+            if (!userError && user) {
+              // User is authenticated, use the current session
+              setSession(currentSession);
+            } else {
+              // Handle AuthSessionMissingError or other auth errors
+              if (userError?.message?.includes("Auth session missing")) {
+                console.log(
+                  "Auth session missing during refresh, clearing session"
+                );
+              } else if (userError) {
+                console.error("Error getting user during refresh:", userError);
+              }
+              setSession(null);
+              setProfile(null);
+            }
+          } catch (authError: any) {
+            // Handle AuthSessionMissingError specifically
+            if (authError.message?.includes("Auth session missing")) {
+              console.log(
+                "Auth session missing during refresh verification, clearing session"
+              );
+            } else {
+              console.error(
+                "Error during user verification in refresh:",
+                authError
+              );
+            }
+            setSession(null);
+            setProfile(null);
           }
         } else {
-          // User is no longer authenticated
+          // No session available
           setSession(null);
           setProfile(null);
         }
-      } catch (error) {
-        console.error("Error refreshing session:", error);
+      } catch (error: any) {
+        // Handle AuthSessionMissingError specifically
+        if (error.message?.includes("Auth session missing")) {
+          console.log(
+            "Auth session missing during session refresh, clearing session"
+          );
+          setSession(null);
+          setProfile(null);
+        } else {
+          console.error("Error refreshing session:", error);
+        }
       }
     }, 5 * 60 * 1000); // Refresh every 5 minutes
 
@@ -187,38 +304,105 @@ export function SessionProvider({
   useEffect(() => {
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, currentSession) => {
+    } = supabase.auth.onAuthStateChange(async (event, _sessionFromEvent) => {
       console.log("Auth state change:", event);
 
-      setSession(currentSession);
+      // For security, never use session directly from the event
+      // Always verify user first, then get fresh session
+      if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
+        try {
+          // First check if we have a session before calling getUser
+          const {
+            data: { session: currentSession },
+            error: sessionError,
+          } = await supabase.auth.getSession();
 
-      // For security, verify user authenticity when session exists
-      if (currentSession) {
-        const {
-          data: { user },
-          error: userError,
-        } = await supabase.auth.getUser();
+          if (sessionError) {
+            console.error(
+              "Error getting session during auth state change:",
+              sessionError
+            );
+            setSession(null);
+            setProfile(null);
+            return;
+          }
 
-        if (userError || !user) {
-          console.error(
-            "Error verifying user during auth state change:",
-            userError
-          );
+          // Only call getUser if we have a session to avoid AuthSessionMissingError
+          if (currentSession) {
+            try {
+              const {
+                data: { user },
+                error: userError,
+              } = await supabase.auth.getUser();
+
+              if (userError) {
+                // Handle AuthSessionMissingError specifically
+                if (userError.message?.includes("Auth session missing")) {
+                  console.log(
+                    "Auth session missing during auth state change, clearing session"
+                  );
+                } else {
+                  console.error(
+                    "Error verifying user during auth state change:",
+                    userError
+                  );
+                }
+                setSession(null);
+                setProfile(null);
+                return;
+              }
+
+              if (user) {
+                console.log("Verified user:", user.email);
+                setSession(currentSession);
+
+                // Fetch profile using the authenticated user object
+                await fetchProfile(user);
+
+                if (event === "SIGNED_IN") {
+                  toast.success("Anda berhasil masuk!");
+                  router.push("/");
+                } else if (event === "TOKEN_REFRESHED") {
+                  console.log("Token refreshed successfully");
+                }
+              } else {
+                setSession(null);
+                setProfile(null);
+              }
+            } catch (authError: any) {
+              // Handle AuthSessionMissingError specifically
+              if (authError.message?.includes("Auth session missing")) {
+                console.log(
+                  "Auth session missing during user verification in auth state change, clearing session"
+                );
+              } else {
+                console.error(
+                  "Error during user verification in auth state change:",
+                  authError
+                );
+              }
+              setSession(null);
+              setProfile(null);
+            }
+          } else {
+            // No session available
+            setSession(null);
+            setProfile(null);
+          }
+        } catch (error: any) {
+          // Handle AuthSessionMissingError specifically
+          if (error.message?.includes("Auth session missing")) {
+            console.log(
+              "Auth session missing during auth state change, clearing session"
+            );
+          } else {
+            console.error("Error in auth state change handler:", error);
+          }
           setSession(null);
           setProfile(null);
-          return;
-        }
-
-        console.log("Verified user:", user.email);
-        await fetchProfile(currentSession);
-
-        if (event === "SIGNED_IN") {
-          toast.success("Anda berhasil masuk!");
-          router.push("/");
-        } else if (event === "TOKEN_REFRESHED") {
-          console.log("Token refreshed successfully");
         }
       } else if (event === "SIGNED_OUT") {
+        setSession(null);
         setProfile(null);
         toast.info("Anda telah keluar.");
         router.push("/login");

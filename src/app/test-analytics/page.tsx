@@ -15,6 +15,9 @@ import { AnalyticsTest } from "@/components/AnalyticsTest";
 import { AnalyticsDebug } from "@/components/AnalyticsDebug";
 import { RechartsTest } from "@/components/RechartsTest";
 import { AnalyticsComprehensiveTest } from "@/components/AnalyticsComprehensiveTest";
+import { AnalyticsDataFixer } from "@/components/AnalyticsDataFixer";
+import { SimpleAnalyticsFixer } from "@/components/SimpleAnalyticsFixer";
+import { FinalAnalyticsFixer } from "@/components/FinalAnalyticsFixer";
 
 export default function TestAnalyticsPage() {
   const [dailyData, setDailyData] = useState<DailyVisitData[]>([]);
@@ -91,6 +94,15 @@ export default function TestAnalyticsPage() {
           </CardContent>
         </Card>
       )}
+
+      {/* Data Fixer */}
+      <AnalyticsDataFixer />
+
+      {/* Simple Data Fixer */}
+      <SimpleAnalyticsFixer />
+
+      {/* Final Data Fixer */}
+      <FinalAnalyticsFixer />
 
       {/* Comprehensive Test */}
       <AnalyticsComprehensiveTest />

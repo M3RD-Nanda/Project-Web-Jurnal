@@ -236,8 +236,11 @@ function generateMockVisitData(days: number = 7): DailyVisitData[] {
     const dayName = format(date, "EEE", { locale: id });
     const fullDate = format(date, "dd MMM yyyy", { locale: id });
 
-    // Generate random number between 5-15 for mock data
-    const randomVisitors = Math.floor(Math.random() * 10) + 5;
+    // Generate realistic visitor numbers (3-12 per day, with weekend patterns)
+    const isWeekend = date.getDay() === 0 || date.getDay() === 6;
+    const baseVisitors = isWeekend ? 3 : 6; // Lower on weekends
+    const randomVariation = Math.floor(Math.random() * 6); // 0-5 additional
+    const randomVisitors = baseVisitors + randomVariation;
 
     result.push({
       date: dayName,
@@ -352,7 +355,11 @@ export async function getTopPages(days: number = 7): Promise<TopPage[]> {
       .gte("visited_at", startStr)
       .lte("visited_at", endStr);
 
-    logSupabaseQuery("getTopPages", { startStr, endStr, days }, { data, error });
+    logSupabaseQuery(
+      "getTopPages",
+      { startStr, endStr, days },
+      { data, error }
+    );
 
     if (error) {
       console.error("Error fetching top pages:", error);
