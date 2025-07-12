@@ -22,12 +22,14 @@ export function useWalletSafe() {
     return wallet;
   }
 
-  // Safe fallback
+  // Safe fallback with all necessary properties
   return {
     connected: false,
     connecting: false,
     publicKey: null,
     wallet: null,
+    wallets: [],
+    select: () => {},
     connect: async () => {},
     disconnect: async () => {},
     sendTransaction: async () => "mock-signature",

@@ -6,6 +6,7 @@ import {
   useBalance,
   useChainId,
   useConnect,
+  useConnectors,
   useDisconnect,
   useSendTransaction,
 } from "wagmi";
@@ -216,4 +217,27 @@ export function useWeb3Ready() {
   }, []);
 
   return mounted && providerReady;
+}
+
+export function useConnectorsSafe() {
+  const [mounted, setMounted] = useState(false);
+  const { isWeb3Available, isLoading } = useWeb3Context();
+
+  const [safeData] = useState([] as any[]);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Try to call Wagmi hook, but handle errors gracefully
+  let wagmiData = safeData;
+  try {
+    wagmiData = useConnectors();
+  } catch (error) {
+    // WagmiProvider not available, use safe data
+    wagmiData = safeData;
+  }
+
+  // Only return wagmi data if Web3 is available and mounted
+  return mounted && isWeb3Available && !isLoading ? wagmiData : safeData;
 }

@@ -8,6 +8,13 @@ import {
   sepolia,
   polygonAmoy,
 } from "wagmi/chains";
+import { createConfig, http } from "wagmi";
+import {
+  metaMask,
+  walletConnect,
+  coinbaseWallet,
+  injected,
+} from "wagmi/connectors";
 
 // Define the chains we want to support
 export const supportedChains = [
@@ -38,6 +45,100 @@ if (!hasValidProjectId) {
 
 // Configure wagmi with RainbowKit - only create on client side
 let _wagmiConfig: any = null;
+
+// Function to create custom connectors with proper wallet detection
+function createCustomConnectors() {
+  const connectors = [];
+
+  console.log("Creating custom connectors...");
+
+  // Always add MetaMask connector (will be filtered by detection later)
+  connectors.push(
+    metaMask({
+      dappMetadata: {
+        name: "JEBAKA - Crypto Wallet",
+      },
+    })
+  );
+  console.log("Added MetaMask connector");
+
+  // Always add Coinbase Wallet connector (will be filtered by detection later)
+  connectors.push(
+    coinbaseWallet({
+      appName: "JEBAKA - Crypto Wallet",
+      appLogoUrl: undefined,
+    })
+  );
+  console.log("Added Coinbase Wallet connector");
+
+  // Add WalletConnect only if we have a valid project ID
+  if (hasValidProjectId) {
+    try {
+      connectors.push(
+        walletConnect({
+          projectId: projectId!,
+          metadata: {
+            name: "JEBAKA - Crypto Wallet",
+            description: "Connect your wallet to JEBAKA",
+            url:
+              typeof window !== "undefined"
+                ? window.location.origin
+                : "https://localhost:3000",
+            icons: [],
+          },
+          showQrModal: true,
+          qrModalOptions: {
+            themeMode: "light",
+            themeVariables: {
+              "--wcm-z-index": "1000",
+            },
+          },
+        })
+      );
+      console.log("Added WalletConnect connector");
+    } catch (error) {
+      console.warn("Failed to initialize WalletConnect:", error);
+    }
+  }
+
+  // Always add Brave Wallet connector (will be filtered by detection later)
+  connectors.push(
+    injected({
+      target: {
+        id: "brave",
+        name: "Brave Wallet",
+        provider:
+          typeof window !== "undefined" ? (window as any).ethereum : undefined,
+      },
+    })
+  );
+  console.log("Added Brave Wallet connector");
+
+  // Add generic injected connector for other wallets (Trust, etc.)
+  if (typeof window !== "undefined" && (window as any).ethereum) {
+    const ethereum = (window as any).ethereum;
+    // Only add if it's not MetaMask, Coinbase, or Brave (to avoid duplicates)
+    if (
+      !ethereum.isMetaMask &&
+      !ethereum.isCoinbaseWallet &&
+      !ethereum.isBraveWallet
+    ) {
+      connectors.push(
+        injected({
+          target: {
+            id: "injected",
+            name: "Injected Wallet",
+            provider: ethereum,
+          },
+        })
+      );
+      console.log("Added generic injected wallet connector");
+    }
+  }
+
+  console.log(`Total connectors created: ${connectors.length}`);
+  return connectors;
+}
 
 export function getWagmiConfig() {
   if (!_wagmiConfig) {
@@ -70,20 +171,35 @@ export function getWagmiConfig() {
         }, 2000);
       }
 
-      // Only create config if we have a valid project ID
-      if (hasValidProjectId) {
-        _wagmiConfig = getDefaultConfig({
-          appName: "JEBAKA - Crypto Wallet",
-          projectId: projectId!,
+      // Create custom config with only relevant wallets
+      const customConnectors = createCustomConnectors();
+
+      if (customConnectors.length > 0) {
+        // Create config with custom connectors
+        _wagmiConfig = createConfig({
           chains: supportedChains,
-          ssr: true, // Enable server-side rendering
+          connectors: customConnectors,
+          transports: {
+            [mainnet.id]: http(),
+            [polygon.id]: http(),
+            [optimism.id]: http(),
+            [arbitrum.id]: http(),
+            [base.id]: http(),
+            [sepolia.id]: http(),
+            [polygonAmoy.id]: http(),
+          },
+          ssr: true,
+          // Add error handling for connection issues
+          multiInjectedProviderDiscovery: true,
         });
       } else {
-        // Create a minimal config without WalletConnect for development
-        console.warn("Creating minimal wallet config without WalletConnect");
+        // Fallback to default config if no wallets detected
+        console.warn("No wallets detected, using default config");
         _wagmiConfig = getDefaultConfig({
           appName: "JEBAKA - Crypto Wallet",
-          projectId: "00000000-0000-0000-0000-000000000000", // Dummy UUID format
+          projectId: hasValidProjectId
+            ? projectId!
+            : "00000000-0000-0000-0000-000000000000",
           chains: supportedChains,
           ssr: true,
         });

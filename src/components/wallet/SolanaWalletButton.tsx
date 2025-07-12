@@ -203,10 +203,30 @@ export function SolanaWalletButton({
               className="justify-start gap-3 h-12"
               onClick={async () => {
                 try {
+                  // Ensure we have the select function available
+                  if (!select) {
+                    console.error("Wallet select function not available");
+                    return;
+                  }
+
+                  // First select the wallet
                   select(wallet.adapter.name);
+
+                  // Wait a brief moment for wallet selection to complete
+                  await new Promise((resolve) => setTimeout(resolve, 150));
+
+                  // Ensure we have the connect function available
+                  if (!connect) {
+                    console.error("Wallet connect function not available");
+                    return;
+                  }
+
+                  // Then connect to the selected wallet
                   await connect();
                   setIsWalletModalOpen(false);
                 } catch (error: any) {
+                  console.error("Wallet connection error:", error);
+
                   // Handle different types of wallet errors
                   if (error.name === "WalletConnectionError") {
                     // User rejected the connection - this is normal behavior
@@ -218,6 +238,21 @@ export function SolanaWalletButton({
                       "Wallet not installed, redirecting to install page"
                     );
                     // Modal will stay open for user to see other options
+                  } else if (error.name === "WalletNotSelectedError") {
+                    // Wallet not properly selected - retry with longer delay
+                    console.log(
+                      "Wallet not selected, retrying with longer delay..."
+                    );
+                    try {
+                      // Try selecting again with a longer delay
+                      select(wallet.adapter.name);
+                      await new Promise((resolve) => setTimeout(resolve, 500));
+                      await connect();
+                      setIsWalletModalOpen(false);
+                    } catch (retryError: any) {
+                      console.error("Retry failed:", retryError);
+                      // If retry fails, keep modal open for user to try manually
+                    }
                   } else {
                     // Other errors - log for debugging
                     console.error("Failed to connect wallet:", error);
