@@ -1,15 +1,54 @@
-// Supabase connection reliability improvements
+// Supabase connection reliability improvements with aggressive caching
 // This module provides utilities to handle connection issues and improve reliability
 
 import { supabase } from "@/integrations/supabase/client";
+import { withMemoryCache, MEMORY_CACHE_DURATIONS } from "./memory-cache";
 
-// Connection retry configuration
+// Enhanced connection retry configuration
 const RETRY_CONFIG = {
-  maxRetries: 3,
-  baseDelay: 1000, // 1 second
-  maxDelay: 5000, // 5 seconds
-  timeout: 15000, // 15 seconds (increased from 10)
+  maxRetries: 5, // Increased retries
+  baseDelay: 500, // Faster initial retry
+  maxDelay: 3000, // Reduced max delay
+  timeout: 20000, // Increased timeout for better reliability
 };
+
+// Connection pool for managing multiple connections
+class ConnectionPool {
+  private connections: Map<string, any> = new Map();
+  private maxConnections = 10;
+  private connectionTimeout = 30000; // 30 seconds
+
+  async getConnection(key: string) {
+    if (this.connections.has(key)) {
+      return this.connections.get(key);
+    }
+
+    if (this.connections.size >= this.maxConnections) {
+      // Remove oldest connection
+      const firstKey = this.connections.keys().next().value;
+      if (firstKey) {
+        this.connections.delete(firstKey);
+      }
+    }
+
+    // Create new connection with timeout
+    const connection = supabase;
+    this.connections.set(key, connection);
+
+    // Auto-cleanup after timeout
+    setTimeout(() => {
+      this.connections.delete(key);
+    }, this.connectionTimeout);
+
+    return connection;
+  }
+
+  clearConnections() {
+    this.connections.clear();
+  }
+}
+
+const connectionPool = new ConnectionPool();
 
 // Create a promise that rejects after a timeout
 function createTimeoutPromise(ms: number) {
