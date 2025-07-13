@@ -13,7 +13,7 @@ import {
   getCachedSession,
   setCachedSession,
   preloadProfileData,
-  type UserProfile as CachedUserProfile,
+  type CachedUserProfile,
 } from "@/lib/profile-cache";
 import React from "react";
 
@@ -81,7 +81,32 @@ export function SessionProvider({
     if (useCache && session?.access_token) {
       const cachedProfile = getCachedProfile(session.access_token);
       if (cachedProfile) {
-        setProfile(cachedProfile as UserProfile);
+        // Convert cached profile to full UserProfile format
+        const fullProfile: UserProfile = {
+          id: cachedProfile.id,
+          first_name: null,
+          last_name: null,
+          username: null,
+          role: cachedProfile.role,
+          salutation: null,
+          middle_name: null,
+          initials: null,
+          gender: null,
+          affiliation: null,
+          signature: null,
+          orcid_id: null,
+          url: null,
+          phone: null,
+          fax: null,
+          mailing_address: null,
+          bio_statement: null,
+          country: null,
+          is_reader: false,
+          is_author: false,
+          profile_image_url: null,
+          wallet_address: null,
+        };
+        setProfile(fullProfile);
         console.log("✅ Profile loaded from cache, skipping API call");
         return;
       }
@@ -115,10 +140,18 @@ export function SessionProvider({
 
         // Cache the profile data for future use
         if (session?.access_token) {
-          setCachedProfile(
-            userProfile as CachedUserProfile,
-            session.access_token
-          );
+          const cachedProfile: CachedUserProfile = {
+            id: userProfile.id,
+            email: session.user?.email || "",
+            full_name:
+              userProfile.first_name && userProfile.last_name
+                ? `${userProfile.first_name} ${userProfile.last_name}`
+                : userProfile.first_name || userProfile.last_name,
+            role: userProfile.role,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          };
+          setCachedProfile(cachedProfile, session.access_token);
         }
       } else {
         setProfile(null);
