@@ -50,8 +50,6 @@ let _wagmiConfig: any = null;
 function createCustomConnectors() {
   const connectors = [];
 
-  console.log("Creating custom connectors...");
-
   // Always add MetaMask connector (will be filtered by detection later)
   connectors.push(
     metaMask({
@@ -60,7 +58,6 @@ function createCustomConnectors() {
       },
     })
   );
-  console.log("Added MetaMask connector");
 
   // Always add Coinbase Wallet connector (will be filtered by detection later)
   connectors.push(
@@ -69,7 +66,6 @@ function createCustomConnectors() {
       appLogoUrl: undefined,
     })
   );
-  console.log("Added Coinbase Wallet connector");
 
   // Add WalletConnect only if we have a valid project ID
   if (hasValidProjectId) {
@@ -95,7 +91,6 @@ function createCustomConnectors() {
           },
         })
       );
-      console.log("Added WalletConnect connector");
     } catch (error) {
       console.warn("Failed to initialize WalletConnect:", error);
     }
@@ -112,7 +107,6 @@ function createCustomConnectors() {
       },
     })
   );
-  console.log("Added Brave Wallet connector");
 
   // Add generic injected connector for other wallets (Trust, etc.)
   if (typeof window !== "undefined" && (window as any).ethereum) {
@@ -132,18 +126,42 @@ function createCustomConnectors() {
           },
         })
       );
-      console.log("Added generic injected wallet connector");
     }
   }
 
-  console.log(`Total connectors created: ${connectors.length}`);
   return connectors;
 }
 
 export function getWagmiConfig() {
   if (!_wagmiConfig) {
     try {
-      // Note: Lit warning suppression moved to other files to avoid syntax conflicts
+      // Suppress Lit dev mode warnings globally
+      if (
+        typeof window !== "undefined" &&
+        process.env.NODE_ENV === "development"
+      ) {
+        // Set global flag to disable Lit dev mode
+        (window as any).litDisableBundleWarning = true;
+
+        // Suppress specific console warnings for Lit
+        const originalWarn = console.warn;
+        console.warn = (...args: any[]) => {
+          const message = args.join(" ");
+          if (
+            message.includes("Lit is in dev mode") ||
+            message.includes("lit.dev/msg/dev-mode") ||
+            message.includes("Not recommended for production")
+          ) {
+            return; // Suppress Lit dev mode warnings
+          }
+          originalWarn.apply(console, args);
+        };
+
+        // Restore console.warn after initialization
+        setTimeout(() => {
+          console.warn = originalWarn;
+        }, 2000);
+      }
 
       // Create custom config with only relevant wallets
       const customConnectors = createCustomConnectors();
@@ -168,7 +186,6 @@ export function getWagmiConfig() {
         });
       } else {
         // Fallback to default config if no wallets detected
-        console.warn("No wallets detected, using default config");
         _wagmiConfig = getDefaultConfig({
           appName: "JEBAKA - Crypto Wallet",
           projectId: hasValidProjectId
@@ -179,7 +196,7 @@ export function getWagmiConfig() {
         });
       }
     } catch (error) {
-      console.error("Failed to create Wagmi config:", error);
+      // Silently handle config creation errors
       // Return null if config creation fails
       return null;
     }

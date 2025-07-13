@@ -14,6 +14,7 @@ import { Sidebar } from "@/components/layout/Sidebar";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
 import { PerformanceMonitor } from "@/components/PerformanceMonitor";
+import { ErrorSuppression } from "@/components/ErrorSuppression";
 import { recordPageVisit } from "@/actions/analytics";
 import { headers } from "next/headers";
 import { createClient } from "@/integrations/supabase/server"; // Import server client
@@ -24,9 +25,10 @@ import {
   generateWebsiteStructuredData,
 } from "@/lib/metadata";
 // Import warning suppression and CSS optimization for development
-// import "@/lib/suppress-warnings";
+import "@/lib/suppress-warnings";
 import "@/lib/css-optimization";
 import "@/lib/preload-prevention";
+import "@/lib/error-suppression";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -171,6 +173,7 @@ export default async function RootLayout({
         <Toaster />
         <MadeWithDyad />
         <PerformanceMonitor />
+        <ErrorSuppression />
         <SpeedInsights />
         <Analytics />
       </body>

@@ -40,7 +40,6 @@ function SafeConnectButton({
         const { ConnectButton: CB } = await import("@rainbow-me/rainbowkit");
         setConnectButton(() => CB);
       } catch (err) {
-        console.error("Failed to load ConnectButton:", err);
         setError(true);
       }
     };
@@ -273,7 +272,7 @@ export function WalletStatus() {
         const { ConnectButton: CB } = await import("@rainbow-me/rainbowkit");
         setConnectButton(() => CB);
       } catch (err) {
-        console.error("Failed to load ConnectButton for WalletStatus:", err);
+        // Silently handle ConnectButton loading errors
       }
     };
 

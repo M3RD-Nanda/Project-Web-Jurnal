@@ -229,6 +229,10 @@ export function UnifiedWalletButton({
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Choose Wallet Type</DialogTitle>
+            <DialogDescription>
+              Select the type of cryptocurrency wallet you want to connect to
+              JEBAKA.
+            </DialogDescription>
           </DialogHeader>
           <div className="grid gap-3 py-4">
             <Button
@@ -273,6 +277,9 @@ export function UnifiedWalletButton({
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Connected Wallet</DialogTitle>
+            <DialogDescription>
+              View your connected wallet information and manage your connection.
+            </DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             {/* EVM Wallet Info */}

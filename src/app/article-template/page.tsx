@@ -18,7 +18,7 @@ export default function ArticleTemplatePage() {
       </p>
       <div className="mt-4">
         <Button asChild>
-          <Link href="/template-jurnal-jebaka.docx" download>
+          <Link href="/api/template" download="template-jurnal-jebaka.docx">
             Unduh Template Artikel JEBAKA (.docx)
           </Link>
         </Button>
