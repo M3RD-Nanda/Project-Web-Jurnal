@@ -166,7 +166,6 @@ export function Web3Provider({ children }: Web3ProviderProps) {
   }
 
   // Last resort: just provide context only
-  console.warn("No Wagmi config available, some features may not work");
   return (
     <Web3Context.Provider value={contextValue}>{children}</Web3Context.Provider>
   );

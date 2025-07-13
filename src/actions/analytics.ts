@@ -22,9 +22,7 @@ export async function recordPageVisit(path: string) {
       // Continue with recording if check fails
     } else if (recentVisits && recentVisits.length > 0) {
       // Skip recording if there's a recent visit for this path
-      console.log(
-        `[Analytics] Skipping duplicate visit for ${path} within 1 minute`
-      );
+      // Skipping duplicate visit within 1 minute
       return;
     }
 
@@ -37,7 +35,6 @@ export async function recordPageVisit(path: string) {
       console.error("Error recording page visit:", error.message);
       // Do not throw error to avoid breaking page load, just log
     } else {
-      console.log(`[Analytics] Recorded visit for ${path}`);
     }
   } catch (e) {
     console.error("Unexpected error in recordPageVisit:", e);

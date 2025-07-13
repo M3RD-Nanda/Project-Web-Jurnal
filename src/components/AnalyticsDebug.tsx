@@ -25,25 +25,17 @@ export function AnalyticsDebug() {
     setError(null);
     
     try {
-      console.log("[AnalyticsDebug] Starting data fetch...");
       
       // Fetch data sequentially for better debugging
-      console.log("[AnalyticsDebug] Fetching daily visits...");
       const daily = await getDailyVisits(7);
-      console.log("[AnalyticsDebug] Daily data:", daily);
       setDailyData(daily);
       
-      console.log("[AnalyticsDebug] Fetching visitor stats...");
       const stats = await getVisitorStats();
-      console.log("[AnalyticsDebug] Stats data:", stats);
       setVisitorStats(stats);
       
-      console.log("[AnalyticsDebug] Fetching top pages...");
       const pages = await getTopPages(7);
-      console.log("[AnalyticsDebug] Pages data:", pages);
       setTopPages(pages);
       
-      console.log("[AnalyticsDebug] All data fetched successfully");
       
     } catch (err) {
       console.error("[AnalyticsDebug] Error:", err);

@@ -29,7 +29,6 @@ export async function GET(request: Request) {
   }
 
   const users = await getAllUsersWithProfiles();
-  console.log('API Admin Users GET: Successfully fetched users');
   return NextResponse.json({ data: users });
 }
 

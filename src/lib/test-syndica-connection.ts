@@ -14,20 +14,15 @@ export async function testSyndicaConnection(): Promise<boolean> {
 
     // Test basic connectivity
     const version = await connection.getVersion();
-    console.log("✅ Syndica API connected successfully!");
-    console.log("Solana version:", version);
 
     // Test getHealth (if available)
     try {
       const health = await (connection as any).getHealth();
-      console.log("✅ Health check passed:", health);
     } catch (error) {
-      console.log("⚠️ Health check not available on this RPC endpoint");
     }
 
     // Test slot info
     const slot = await connection.getSlot();
-    console.log("✅ Current slot:", slot);
 
     return true;
   } catch (error) {
@@ -50,7 +45,6 @@ export async function testBalanceFetch(
     const publicKey = new PublicKey(publicKeyString);
 
     const balance = await connection.getBalance(publicKey);
-    console.log(`✅ Balance fetched successfully: ${balance} lamports`);
 
     return balance;
   } catch (error) {

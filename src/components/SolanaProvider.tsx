@@ -85,13 +85,10 @@ export function SolanaProvider({ children }: SolanaProviderProps) {
   const onError = (error: any) => {
     if (error.name === "WalletConnectionError") {
       // User rejected autoConnect - this is normal behavior
-      console.log("AutoConnect cancelled by user");
     } else if (error.name === "WalletNotReadyError") {
       // Wallet not installed during autoConnect
-      console.log("Wallet not ready for autoConnect");
     } else {
       // Other errors during autoConnect
-      console.log("Wallet autoConnect error:", error.message);
     }
   };
 

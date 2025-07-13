@@ -15,14 +15,12 @@ export function AnalyticsTest() {
     setError(null);
     
     try {
-      console.log("Testing RPC call...");
       
       const result = await supabase.rpc("get_daily_visit_counts", {
         start_date: "2025-07-03T00:00:00.000Z",
         end_date: "2025-07-10T23:59:59.999Z"
       });
       
-      console.log("RPC Result:", result);
       setRpcResult(result);
       
     } catch (err) {

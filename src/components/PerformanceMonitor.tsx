@@ -84,9 +84,7 @@ export function PerformanceMonitor() {
           setTimeout(() => {
             sendMetrics(metrics);
           }, 5000);
-        } catch (error) {
-          console.warn("Performance monitoring failed:", error);
-        }
+        } catch (error) {}
       }
     };
 
@@ -97,7 +95,6 @@ export function PerformanceMonitor() {
 
       // Log to console in development
       if (process.env.NODE_ENV === "development") {
-        console.log("Performance Metrics:", metrics);
       }
 
       // Send to your analytics service
@@ -169,7 +166,6 @@ export function usePerformanceMetrics() {
     window.addEventListener("load", () => {
       setTimeout(() => {
         const metrics = getMetrics();
-        console.log("Page Performance:", metrics);
       }, 1000);
     });
   }, []);
@@ -194,9 +190,7 @@ export function checkPerformanceBudget() {
     const isWithinBudget = value <= budget;
 
     if (!isWithinBudget) {
-      console.warn(
-        `Performance budget exceeded for ${metric}: ${value}ms (budget: ${budget}ms)`
-      );
+      // Performance budget exceeded
     }
 
     return isWithinBudget;

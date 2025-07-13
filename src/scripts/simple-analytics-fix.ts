@@ -6,10 +6,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 export async function simpleAnalyticsFix() {
   try {
-    console.log("🔧 Starting simple analytics data reset...");
-
     // Step 1: Delete ALL existing data
-    console.log("🗑️ Deleting all existing analytics data...");
 
     const { error: deleteError } = await supabase
       .from("page_visits")
@@ -21,10 +18,7 @@ export async function simpleAnalyticsFix() {
       throw new Error(`Failed to delete existing data: ${deleteError.message}`);
     }
 
-    console.log("✅ All existing data deleted successfully");
-
     // Step 2: Add realistic data for the past 6 days (not today)
-    console.log("📝 Adding realistic visitor data...");
 
     const pages = ["/", "/about", "/current", "/archives"];
     const userAgents = [
@@ -56,8 +50,6 @@ export async function simpleAnalyticsFix() {
       }
     }
 
-    console.log(`📊 Generated ${realisticData.length} realistic visit records`);
-
     // Step 3: Insert realistic data
     if (realisticData.length > 0) {
       const { error: insertError } = await supabase
@@ -71,9 +63,7 @@ export async function simpleAnalyticsFix() {
         );
       }
 
-      console.log(
-        `✅ Successfully inserted ${realisticData.length} realistic records`
-      );
+      // Successfully inserted realistic records
     }
 
     // Step 4: Verify the result
@@ -85,9 +75,7 @@ export async function simpleAnalyticsFix() {
     if (verifyError) {
       console.error("❌ Failed to verify data:", verifyError);
     } else {
-      console.log(
-        `📈 Verification: Found ${verifyData?.length || 0} total records`
-      );
+      // Verification completed
 
       // Count by day
       const dailyCounts: { [key: string]: number } = {};
@@ -95,8 +83,6 @@ export async function simpleAnalyticsFix() {
         const dateKey = new Date(visit.visited_at).toISOString().split("T")[0];
         dailyCounts[dateKey] = (dailyCounts[dateKey] || 0) + 1;
       });
-
-      console.log("📊 Daily visit counts:", dailyCounts);
     }
 
     return {
@@ -132,8 +118,6 @@ export async function simpleAnalyticsFix() {
 
 // Function to run from browser console or component
 export async function runSimpleAnalyticsFix() {
-  console.log("🚀 Running simple analytics fix...");
   const result = await simpleAnalyticsFix();
-  console.log("📋 Fix result:", result);
   return result;
 }

@@ -134,7 +134,6 @@ export function suppressDevWarnings() {
     }
   } catch (error) {
     // If console override fails, just use environment flags
-    console.warn("Warning suppression failed, using environment flags only");
   }
 
   // Set global flags to disable various dev warnings

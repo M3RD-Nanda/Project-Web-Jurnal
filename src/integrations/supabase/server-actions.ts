@@ -21,20 +21,13 @@ export async function createSupabaseServerClient() {
           cookieStore.set({ name, value, ...options });
         } catch (error) {
           // This error is expected if called from a Server Component, not a Route Handler/Server Action
-          console.warn(
-            `Could not set cookie "${name}" from server client:`,
-            error
-          );
         }
       },
       remove(name: string, options: CookieOptions) {
         try {
           cookieStore.delete({ name, ...options });
         } catch (error) {
-          console.warn(
-            `Could not remove cookie "${name}" from server client:`,
-            error
-          );
+          // Could not remove cookie from server client
         }
       },
     },

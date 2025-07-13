@@ -186,6 +186,7 @@ export function getWagmiConfig() {
         });
       } else {
         // Fallback to default config if no wallets detected
+
         _wagmiConfig = getDefaultConfig({
           appName: "JEBAKA - Crypto Wallet",
           projectId: hasValidProjectId
@@ -196,7 +197,7 @@ export function getWagmiConfig() {
         });
       }
     } catch (error) {
-      // Silently handle config creation errors
+      console.error("Failed to create Wagmi config:", error);
       // Return null if config creation fails
       return null;
     }

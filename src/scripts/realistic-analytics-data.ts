@@ -24,11 +24,7 @@ if (!supabaseKey) {
   );
 }
 
-console.log(
-  `🔑 Using ${
-    supabaseServiceKey ? "service role" : "anonymous"
-  } key for database operations`
-);
+// Using appropriate key for database operations
 
 const supabase = createClient(supabaseUrl, supabaseKey);
 
@@ -124,8 +120,6 @@ function generateRealisticVisitorData(): VisitRecord[] {
 }
 
 async function clearOldData() {
-  console.log("🗑️  Clearing old analytics data...");
-
   try {
     // Get count of existing records
     const { count: totalRecords, error: countError } = await supabase
@@ -138,14 +132,10 @@ async function clearOldData() {
     }
 
     if (!totalRecords || totalRecords === 0) {
-      console.log("ℹ️  No existing data to clear");
       return;
     }
 
-    console.log(`📊 Found ${totalRecords} existing records, clearing all...`);
-
     // Strategy 1: Try to delete all records in batches
-    console.log("🔄 Attempting batch deletion...");
 
     let deletedCount = 0;
     let attempts = 0;
@@ -153,7 +143,6 @@ async function clearOldData() {
 
     while (deletedCount < totalRecords && attempts < maxAttempts) {
       attempts++;
-      console.log(`🔄 Deletion attempt ${attempts}/${maxAttempts}...`);
 
       // Get a batch of records to delete
       const { data: batchData, error: batchError } = await supabase
@@ -167,7 +156,6 @@ async function clearOldData() {
       }
 
       if (!batchData || batchData.length === 0) {
-        console.log("✅ No more records to delete");
         break;
       }
 
@@ -184,7 +172,6 @@ async function clearOldData() {
         console.error(`❌ Error deleting batch ${attempts}:`, deleteError);
 
         // Try alternative deletion method
-        console.log("🔄 Trying alternative deletion method...");
         const { error: altDeleteError } = await supabase
           .from("page_visits")
           .delete()
@@ -198,9 +185,7 @@ async function clearOldData() {
       }
 
       deletedCount += batchData.length;
-      console.log(
-        `✅ Deleted batch ${attempts}: ${batchData.length} records (total: ${deletedCount})`
-      );
+      // Deleted batch successfully
 
       // Small delay between batches
       await new Promise((resolve) => setTimeout(resolve, 100));
@@ -214,15 +199,11 @@ async function clearOldData() {
     if (verifyError) {
       console.error("❌ Error verifying deletion:", verifyError);
     } else {
-      console.log(
-        `📊 Deletion complete. Remaining records: ${remainingCount || 0}`
-      );
+      // Deletion complete
       if (remainingCount && remainingCount > 0) {
-        console.log(
-          "⚠️  Some data may still remain, but continuing with new data insertion..."
-        );
+        // Some data may still remain, but continuing with new data insertion
       } else {
-        console.log("✅ All data cleared successfully");
+        // All data cleared successfully
       }
     }
   } catch (error) {
@@ -232,12 +213,7 @@ async function clearOldData() {
 }
 
 async function insertRealisticData() {
-  console.log("📊 Generating realistic analytics data...");
-
   const visits = generateRealisticVisitorData();
-
-  console.log(`📈 Generated ${visits.length} realistic visit records`);
-  console.log("📋 Page distribution:");
 
   // Show distribution
   const pathCounts: { [key: string]: number } = {};
@@ -249,10 +225,7 @@ async function insertRealisticData() {
     .sort(([, a], [, b]) => b - a)
     .forEach(([path, count]) => {
       const pageName = pageData.find((p) => p.path === path)?.name || path;
-      console.log(`   ${pageName} (${path}): ${count} visits`);
     });
-
-  console.log("\n💾 Inserting data into database...");
 
   // Insert in batches to avoid timeout
   const batchSize = 50;
@@ -269,27 +242,16 @@ async function insertRealisticData() {
       throw error;
     }
 
-    console.log(
-      `✅ Inserted batch ${Math.floor(i / batchSize) + 1}/${Math.ceil(
-        visits.length / batchSize
-      )}`
-    );
+    // Inserted batch successfully
   }
-
-  console.log("🎉 All realistic data inserted successfully!");
 }
 
 async function main() {
   try {
-    console.log("🚀 Starting realistic analytics data generation...");
-
     await clearOldData();
     await insertRealisticData();
 
-    console.log("\n✨ Analytics data generation completed!");
-    console.log(
-      "🔄 Refresh your analytics dashboard to see the new realistic data."
-    );
+    // Refresh your analytics dashboard to see the new realistic data
   } catch (error) {
     console.error("💥 Error:", error);
     process.exit(1);

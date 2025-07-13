@@ -33,7 +33,6 @@ export class WalletErrorBoundary extends Component<Props, State> {
       error.message?.includes("walletconnect") ||
       error.message?.includes("WalletConnect")
     ) {
-      console.warn("WalletConnect error detected, this is usually recoverable");
     }
   }
 

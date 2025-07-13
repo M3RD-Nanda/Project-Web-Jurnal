@@ -39,12 +39,7 @@ export async function getDailyVisits(
       "yyyy-MM-dd'T'HH:mm:ss.SSSxxx"
     );
 
-    console.log(
-      `[Analytics] Fetching visits from ${startDateStr} to ${endDateStr}`
-    );
-
     // Use simple query instead of RPC for better reliability
-    console.log("[Analytics] Using direct query instead of RPC");
     return await getDailyVisitsSimple(days);
   } catch (error) {
     logError(error, "getDailyVisits");
@@ -56,7 +51,6 @@ export async function getDailyVisits(
     } catch (fallbackError) {
       console.error("Fallback query also failed:", fallbackError);
       // Return mock data in case of error to prevent UI from breaking
-      console.log("[Analytics] Returning mock data due to error");
       return generateMockVisitData(days);
     }
   }
@@ -76,10 +70,6 @@ async function getDailyVisitsSimple(
   );
   const endDateStr = format(endOfDay(endDate), "yyyy-MM-dd'T'HH:mm:ss.SSSxxx");
 
-  console.log(
-    `[getDailyVisitsSimple] Querying from ${startDateStr} to ${endDateStr}`
-  );
-
   const { data, error } = await supabase
     .from("page_visits")
     .select("visited_at")
@@ -92,7 +82,6 @@ async function getDailyVisitsSimple(
   }
 
   const visits = data || [];
-  console.log(`[getDailyVisitsSimple] Found ${visits.length} visits`);
 
   const dailyCounts: { [key: string]: number } = {};
 
@@ -101,12 +90,8 @@ async function getDailyVisitsSimple(
       const visitDate = new Date(visit.visited_at);
       const dateKey = format(visitDate, "yyyy-MM-dd");
       dailyCounts[dateKey] = (dailyCounts[dateKey] || 0) + 1;
-    } catch (err) {
-      console.warn("Invalid date format in visit data:", visit.visited_at);
-    }
+    } catch (err) {}
   });
-
-  console.log(`[getDailyVisitsSimple] Daily counts:`, dailyCounts);
 
   const dailyData: DailyVisitData[] = [];
   for (let i = 0; i < days; i++) {
@@ -122,17 +107,13 @@ async function getDailyVisitsSimple(
     });
   }
 
-  console.log(
-    `[getDailyVisitsSimple] Returning ${dailyData.length} days of data:`,
-    dailyData
-  );
+  // Returning daily data
   return dailyData;
 }
 
 // Get visitor statistics for dashboard
 export async function getVisitorStats(): Promise<VisitorStats> {
   try {
-    console.log("[getVisitorStats] Starting visitor stats calculation");
     const today = new Date();
     const yesterday = subDays(today, 1);
     const weekAgo = subDays(today, 7);

@@ -145,7 +145,6 @@ export function useSendSol() {
 
     try {
       // Placeholder implementation - will be replaced with real Solana transaction
-      console.log(`Mock sending ${amount} SOL to ${toAddress}`);
 
       // Simulate transaction delay
       await new Promise((resolve) => setTimeout(resolve, 2000));

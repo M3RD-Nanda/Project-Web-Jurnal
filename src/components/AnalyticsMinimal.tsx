@@ -57,20 +57,13 @@ export function AnalyticsMinimal() {
         setLoading(true);
       }
 
-      console.log("[AnalyticsMinimal] Starting data fetch...");
 
       // Fetch visitor data with detailed logging
-      console.log("[AnalyticsMinimal] Fetching daily visits...");
       const dailyData = await getDailyVisits(7);
-      console.log("[AnalyticsMinimal] Daily data received:", dailyData);
 
-      console.log("[AnalyticsMinimal] Fetching visitor stats...");
       const stats = await getVisitorStats();
-      console.log("[AnalyticsMinimal] Stats received:", stats);
 
-      console.log("[AnalyticsMinimal] Fetching top pages...");
       const pagesData = await getTopPages(7);
-      console.log("[AnalyticsMinimal] Pages data received:", pagesData);
 
       // Ensure we have data, even if empty
       setVisitorData(dailyData || []);
@@ -85,7 +78,6 @@ export function AnalyticsMinimal() {
       setTopPages((pagesData || []).slice(0, 5));
       setLastUpdated(new Date());
 
-      console.log("[AnalyticsMinimal] Data fetch completed successfully");
     } catch (error) {
       console.error("[AnalyticsMinimal] Error fetching analytics data:", error);
       // Set fallback data on error

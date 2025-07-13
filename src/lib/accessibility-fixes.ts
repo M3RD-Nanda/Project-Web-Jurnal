@@ -56,7 +56,6 @@ export function fixLabelAccessibility(container: Element | Document = document) 
         label.setAttribute('for', targetInput.id);
       } else {
         // If no input found, remove the for attribute to avoid accessibility warnings
-        console.warn(`Label with for="${forAttr}" has no corresponding form element. Removing for attribute.`);
         label.removeAttribute('for');
       }
     }

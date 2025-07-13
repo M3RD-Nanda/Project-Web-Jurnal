@@ -140,7 +140,6 @@ function VisitorChartContent() {
       try {
         setLoading(true);
         setError(null);
-        console.log("[VisitorChart] Fetching visitor data...");
 
         // Fetch both daily data and stats in parallel
         const [dailyData, visitorStats] = await Promise.all([
@@ -148,10 +147,6 @@ function VisitorChartContent() {
           getVisitorStats(),
         ]);
 
-        console.log("[VisitorChart] Data received:", {
-          dailyData,
-          visitorStats,
-        });
         setData(dailyData);
         setStats(visitorStats);
       } catch (err) {

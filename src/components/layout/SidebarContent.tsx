@@ -70,12 +70,10 @@ export function SidebarContent({ onLinkClick }: SidebarContentProps) {
   });
 
   function onSubmit(values: z.infer<typeof sidebarLoginFormSchema>) {
-    console.log(values);
     toast.info("Login ditangani di halaman Login utama.");
   }
 
   const handleLogout = async () => {
-    console.log("Attempting to log out from Sidebar...");
     await logout();
   };
 

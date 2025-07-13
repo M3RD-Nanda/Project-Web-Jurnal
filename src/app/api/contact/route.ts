@@ -16,12 +16,6 @@ export async function POST(request: Request) {
     //   text: message,
     // });
 
-    console.log("--- Pesan Kontak Baru Diterima ---");
-    console.log(`Nama: ${name}`);
-    console.log(`Email: ${email}`);
-    console.log(`Subjek: ${subject}`);
-    console.log(`Pesan: ${message}`);
-    console.log("----------------------------------");
 
     return NextResponse.json(
       { message: "Pesan berhasil diterima!" },

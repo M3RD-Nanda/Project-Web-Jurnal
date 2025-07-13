@@ -43,8 +43,6 @@ export default function AdminArticlesPage() {
     const result = await res.json();
 
     if (res.ok) {
-      console.log("Raw API response:", result.data);
-      console.log("First article sample:", result.data[0]);
       setArticles(result.data);
     } else {
       toast.error(

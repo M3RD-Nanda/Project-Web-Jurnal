@@ -83,7 +83,6 @@ export function SessionProvider({
       ])) as any;
 
       if (error && error.code !== "PGRST116") {
-        console.warn("Profile fetch error:", error);
         setProfile(null);
         return;
       }
@@ -97,7 +96,6 @@ export function SessionProvider({
       if (error.message?.includes("timeout")) {
         // Silently handle timeout errors in development
         if (process.env.NODE_ENV !== "development") {
-          console.warn("Profile fetch timed out");
         }
       } else {
         console.error("Error fetching profile:", error);
@@ -132,7 +130,6 @@ export function SessionProvider({
           if (error.message?.includes("timeout")) {
             // Silently handle timeout errors in development
             if (process.env.NODE_ENV !== "development") {
-              console.warn("Initial user fetch timed out");
             }
           } else {
             console.error("Error getting user for initial profile:", error);
@@ -177,7 +174,6 @@ export function SessionProvider({
         ])) as any;
 
         if (sessionError) {
-          console.warn("Session error:", sessionError);
           setSession(null);
           setProfile(null);
           setIsLoading(false);
@@ -205,10 +201,6 @@ export function SessionProvider({
               await fetchProfile(userData.user);
             }
           } catch (userFetchError) {
-            console.warn(
-              "User fetch failed, continuing with session only:",
-              userFetchError
-            );
             // Continue with session even if user fetch fails
           }
         } else {
@@ -218,9 +210,7 @@ export function SessionProvider({
       } catch (error: any) {
         // Handle timeout and other errors gracefully
         if (error.message?.includes("timeout")) {
-          console.warn(
-            "Session initialization timed out, continuing without session"
-          );
+          // Session initialization timed out, continuing without session
         } else {
           console.error("Error initializing session:", error);
         }
@@ -257,7 +247,6 @@ export function SessionProvider({
               (await Promise.race([sessionPromise, timeoutPromise])) as any;
 
             if (sessionError) {
-              console.warn("Auth state session error:", sessionError);
               return;
             }
             currentSession = sessionData?.session;
@@ -290,7 +279,6 @@ export function SessionProvider({
                 process.env.NODE_ENV === "development" &&
                 !userFetchError.message?.includes("timeout")
               ) {
-                console.warn("Auth state user fetch failed:", userFetchError);
               }
               // Continue with session even if user fetch fails
             }
@@ -299,7 +287,6 @@ export function SessionProvider({
           if (error.message?.includes("timeout")) {
             // Silently handle timeout errors - don't log in development
             if (process.env.NODE_ENV !== "development") {
-              console.warn("Auth state change timed out");
             }
           } else {
             console.error("Error handling auth state change:", error);

@@ -7,15 +7,12 @@ import { supabase } from "@/integrations/supabase/client";
 
 export async function finalAnalyticsFix() {
   try {
-    console.log("🔧 Starting final analytics data reset...");
 
     // Step 1: Use RPC to truncate table (more reliable than DELETE)
-    console.log("🗑️ Truncating page_visits table...");
     
     const { error: truncateError } = await supabase.rpc('truncate_page_visits');
     
     if (truncateError) {
-      console.log("⚠️ Truncate RPC not available, using DELETE method...");
       
       // Fallback: Delete all records using a condition that matches all
       const { error: deleteError } = await supabase
@@ -29,10 +26,8 @@ export async function finalAnalyticsFix() {
       }
     }
 
-    console.log("✅ All existing data cleared successfully");
 
     // Step 2: Add realistic data for the past 6 days (not today)
-    console.log("📝 Adding realistic visitor data...");
     
     const pages = ["/", "/about", "/current", "/archives"];
     const realisticData = [];
@@ -59,7 +54,6 @@ export async function finalAnalyticsFix() {
       }
     }
 
-    console.log(`📊 Generated ${realisticData.length} realistic visit records`);
 
     // Step 3: Insert realistic data in small batches
     if (realisticData.length > 0) {
@@ -76,7 +70,6 @@ export async function finalAnalyticsFix() {
           throw new Error(`Failed to insert batch: ${insertError.message}`);
         }
 
-        console.log(`✅ Inserted batch ${Math.floor(i / batchSize) + 1} (${batch.length} records)`);
       }
     }
 
@@ -89,7 +82,6 @@ export async function finalAnalyticsFix() {
     if (verifyError) {
       console.error("❌ Failed to verify data:", verifyError);
     } else {
-      console.log(`📈 Verification: Found ${verifyData?.length || 0} total records`);
       
       // Count by day
       const dailyCounts: { [key: string]: number } = {};
@@ -98,7 +90,6 @@ export async function finalAnalyticsFix() {
         dailyCounts[dateKey] = (dailyCounts[dateKey] || 0) + 1;
       });
       
-      console.log("📊 Daily visit counts:", dailyCounts);
     }
 
     return {
@@ -129,8 +120,6 @@ export async function finalAnalyticsFix() {
 
 // Function to run from browser console or component
 export async function runFinalAnalyticsFix() {
-  console.log("🚀 Running final analytics fix...");
   const result = await finalAnalyticsFix();
-  console.log("📋 Fix result:", result);
   return result;
 }

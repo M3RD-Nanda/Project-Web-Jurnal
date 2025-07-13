@@ -31,34 +31,25 @@ export default function TestAnalyticsPage() {
     setError(null);
 
     try {
-      console.log("Testing analytics functions...");
 
       // Test direct RPC call first
-      console.log("Testing direct RPC call...");
       const { supabase } = await import("@/integrations/supabase/client");
 
       const rpcResult = await supabase.rpc("get_daily_visit_counts", {
         start_date: "2025-07-03T00:00:00.000Z",
         end_date: "2025-07-10T23:59:59.999Z",
       });
-      console.log("Direct RPC result:", rpcResult);
 
       // Test getDailyVisits
-      console.log("Testing getDailyVisits...");
       const daily = await getDailyVisits(7);
-      console.log("Daily visits result:", daily);
       setDailyData(daily);
 
       // Test getVisitorStats
-      console.log("Testing getVisitorStats...");
       const stats = await getVisitorStats();
-      console.log("Visitor stats result:", stats);
       setVisitorStats(stats);
 
       // Test getTopPages
-      console.log("Testing getTopPages...");
       const pages = await getTopPages(7);
-      console.log("Top pages result:", pages);
       setTopPages(pages);
     } catch (err) {
       console.error("Analytics test error:", err);

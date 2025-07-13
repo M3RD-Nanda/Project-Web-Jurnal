@@ -13,8 +13,6 @@ export function useLogout() {
   }, []);
 
   const logout = async () => {
-    console.log("Attempting to log out...");
-
     try {
       // Disconnect wallet and clear from database if mounted and user is logged in
       if (mounted && session) {
@@ -34,14 +32,10 @@ export function useLogout() {
             if (error) {
               console.error("Error clearing saved wallet:", error);
             } else {
-              console.log("Wallet data cleared from database");
             }
           }
 
           // Note: Wallet will be disconnected automatically when Web3Provider unmounts
-          console.log(
-            "Wallet disconnect will be handled by Web3Provider cleanup"
-          );
         } catch (error) {
           console.error("Error disconnecting wallet:", error);
           // Continue with logout even if wallet disconnect fails
@@ -68,9 +62,7 @@ export function useLogout() {
         console.error("Logout error:", error);
         toast.error(`Gagal logout: ${error.message}`);
       } else {
-        console.log(
-          "Logout successful, SessionProvider should handle redirect."
-        );
+        // Logout successful, SessionProvider should handle redirect
         toast.success("Berhasil logout");
       }
     } catch (error) {

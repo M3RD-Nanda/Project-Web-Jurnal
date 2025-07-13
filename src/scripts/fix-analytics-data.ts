@@ -64,8 +64,6 @@ function generateRealisticVisitorData(): VisitRecord[] {
 
 export async function fixAnalyticsData() {
   try {
-    console.log("🔧 Starting analytics data cleanup...");
-
     // Step 1: Check current data
     const { data: currentData, error: fetchError } = await supabase
       .from("page_visits")
@@ -75,8 +73,6 @@ export async function fixAnalyticsData() {
     if (fetchError) {
       throw new Error(`Failed to fetch current data: ${fetchError.message}`);
     }
-
-    console.log(`📊 Found ${currentData?.length || 0} existing records`);
 
     // Step 2: Identify problematic data (more than 50 visits on the same day)
     const dailyCounts: { [key: string]: number } = {};
@@ -89,13 +85,9 @@ export async function fixAnalyticsData() {
       .filter(([_, count]) => count > 50)
       .map(([date, count]) => ({ date, count }));
 
-    console.log(
-      "🚨 Problematic dates with high visit counts:",
-      problematicDates
-    );
+    // Problematic dates with high visit counts identified
 
     // Step 3: Delete ALL existing data (simpler approach)
-    console.log("🗑️ Deleting all existing analytics data...");
 
     // Get all records first
     const { data: allRecords, error: fetchAllError } = await supabase
@@ -107,8 +99,6 @@ export async function fixAnalyticsData() {
     }
 
     if (allRecords && allRecords.length > 0) {
-      console.log(`📊 Found ${allRecords.length} records to delete`);
-
       // Delete records in batches
       const batchSize = 100;
       for (let i = 0; i < allRecords.length; i += batchSize) {
@@ -126,19 +116,13 @@ export async function fixAnalyticsData() {
             deleteError
           );
         } else {
-          console.log(
-            `✅ Deleted batch ${Math.floor(i / batchSize) + 1} (${
-              batch.length
-            } records)`
-          );
+          // Deleted batch successfully
         }
       }
     } else {
-      console.log("✅ No existing data found to delete");
     }
 
     // Step 4: Generate and insert realistic data
-    console.log("📝 Generating realistic visitor data...");
     const realisticData = generateRealisticVisitorData();
 
     // Insert data in batches to avoid overwhelming the database
@@ -161,11 +145,7 @@ export async function fixAnalyticsData() {
           insertError
         );
       } else {
-        console.log(
-          `✅ Inserted batch ${Math.floor(i / batchSize) + 1} (${
-            batch.length
-          } records)`
-        );
+        // Inserted batch successfully
       }
     }
 
@@ -189,12 +169,7 @@ export async function fixAnalyticsData() {
       newDailyCounts[dateKey] = (newDailyCounts[dateKey] || 0) + 1;
     });
 
-    console.log("📈 New daily visit counts:", newDailyCounts);
-    console.log(
-      `✅ Analytics data cleanup completed! Total records: ${
-        newData?.length || 0
-      }`
-    );
+    // Analytics data cleanup completed
 
     return {
       success: true,
@@ -218,8 +193,6 @@ export async function fixAnalyticsData() {
 
 // Function to run the fix from browser console or component
 export async function runAnalyticsDataFix() {
-  console.log("🚀 Running analytics data fix...");
   const result = await fixAnalyticsData();
-  console.log("📋 Fix result:", result);
   return result;
 }

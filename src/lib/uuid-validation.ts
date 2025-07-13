@@ -41,10 +41,8 @@ export function isSlugLikeId(id: string): boolean {
  */
 export function logInvalidUUIDAttempt(id: string, context: string): void {
   if (process.env.NODE_ENV === 'development') {
-    console.warn(`🚨 Invalid UUID attempt in ${context}: "${id}"`);
     
     if (isSlugLikeId(id)) {
-      console.warn(`💡 "${id}" looks like a slug. Consider implementing slug-to-UUID mapping if needed.`);
     }
   }
 }

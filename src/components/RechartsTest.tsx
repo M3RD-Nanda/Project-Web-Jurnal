@@ -11,9 +11,7 @@ export function RechartsTest() {
   useEffect(() => {
     const loadRecharts = async () => {
       try {
-        console.log("Loading Recharts...");
         const recharts = await import("recharts");
-        console.log("Recharts loaded:", recharts);
         setRechartsComponents(recharts);
       } catch (err) {
         console.error("Failed to load Recharts:", err);

@@ -51,13 +51,6 @@ export function useEIP6963Wallets() {
     ) => {
       const { info, provider } = event.detail;
 
-      console.log("EIP-6963 Provider detected:", {
-        name: info.name,
-        rdns: info.rdns,
-        icon: info.icon,
-        uuid: info.uuid,
-      });
-
       const walletProvider: WalletProvider = {
         uuid: info.uuid,
         name: info.name,
@@ -189,8 +182,6 @@ export function getWalletIcon(
 ): string {
   // FORCE: Always try centralized configuration first
   const walletConfig = getWalletConfig(walletName);
-
-  console.log("FORCED getWalletIcon for:", walletName, "->", walletConfig.icon);
 
   // Always prioritize our centralized config
   if (walletConfig.icon !== DEFAULT_WALLET_ICON) {

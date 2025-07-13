@@ -44,10 +44,8 @@ export async function getConnectionWithFallback(network: SolanaNetwork = 'mainne
       // Test the connection
       await connection.getVersion();
       
-      console.log(`Successfully connected to Solana ${network} via ${endpoint}`);
       return connection;
     } catch (error) {
-      console.warn(`Failed to connect to endpoint ${endpoints[i]}:`, error);
       
       // If this is the last endpoint, throw the error
       if (i === endpoints.length - 1) {
@@ -85,7 +83,6 @@ export async function retryWithBackoff<T>(
 
       // Calculate delay with exponential backoff
       const delay = baseDelay * Math.pow(2, attempt);
-      console.log(`Attempt ${attempt + 1} failed, retrying in ${delay}ms...`);
       
       await new Promise(resolve => setTimeout(resolve, delay));
     }

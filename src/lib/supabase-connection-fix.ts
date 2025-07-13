@@ -37,9 +37,7 @@ async function retryWithBackoff<T>(
 
       // Only log retry attempts in development
       if (process.env.NODE_ENV === "development") {
-        console.log(
-          `Retrying operation in ${delay}ms... (${retries} retries left)`
-        );
+        // Retrying operation with backoff
       }
       await new Promise((resolve) => setTimeout(resolve, delay));
       return retryWithBackoff(operation, retries - 1);
@@ -125,7 +123,6 @@ export async function checkSupabaseConnection(): Promise<boolean> {
     if (error instanceof Error && error.message.includes("timeout")) {
       return false;
     }
-    console.warn("Supabase connection check failed:", error);
     return false;
   }
 }
@@ -134,19 +131,16 @@ export async function checkSupabaseConnection(): Promise<boolean> {
 export async function initializeSupabaseConnection() {
   try {
     if (process.env.NODE_ENV === "development") {
-      console.log("🔍 Checking Supabase connection...");
     }
 
     const isHealthy = await checkSupabaseConnection();
     if (!isHealthy) {
       if (process.env.NODE_ENV === "development") {
-        console.warn("⚠️ Supabase connection appears to be unhealthy");
       }
       return false;
     }
 
     if (process.env.NODE_ENV === "development") {
-      console.log("✅ Supabase connection is healthy");
     }
     return true;
   } catch (error) {
@@ -170,12 +164,10 @@ export async function preloadCriticalData() {
     }
 
     if (process.env.NODE_ENV === "development") {
-      console.log("✅ Critical data preloaded successfully");
     }
     return true;
   } catch (error) {
     if (process.env.NODE_ENV === "development") {
-      console.warn("⚠️ Failed to preload critical data:", error);
     }
     return false;
   }
@@ -213,7 +205,6 @@ if (typeof window !== "undefined") {
       } catch (error) {
         // Silently handle initialization errors to prevent console noise
         if (process.env.NODE_ENV === "development") {
-          console.warn("Supabase auto-initialization failed:", error);
         }
       }
     }, 1000); // Increased delay from 100ms to 1000ms
