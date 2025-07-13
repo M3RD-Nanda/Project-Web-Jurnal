@@ -44,9 +44,7 @@ export const SITE_CONFIG = {
   shortName: "JEBAKA",
   description:
     "Jurnal Ekonomi Bisnis dan Akuntansi Mahasiswa (JEBAKA) adalah jurnal peer-review dan open-access yang diterbitkan oleh Universitas Percobaan Nanda. Platform terkemuka untuk publikasi penelitian inovatif di bidang Ekonomi dan Akuntansi.",
-  url:
-    process.env.NEXT_PUBLIC_SITE_URL ||
-    "https://project-web-jurnal.vercel.app/",
+  url: process.env.NEXT_PUBLIC_SITE_URL || "https://mtrinanda.my.id",
   ogImage: "/images/og-default.png",
   // Enhanced SEO fields
   keywords: [

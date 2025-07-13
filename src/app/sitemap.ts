@@ -8,18 +8,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Static pages with enhanced SEO priorities
   const staticPages = [
+    // Homepage - Highest priority
     {
       url: baseUrl,
       lastModified: new Date(),
       changeFrequency: "daily" as const,
       priority: 1.0,
     },
-    {
-      url: `${baseUrl}/about`,
-      lastModified: new Date(),
-      changeFrequency: "monthly" as const,
-      priority: 0.8,
-    },
+
+    // Core journal pages - High priority
     {
       url: `${baseUrl}/articles`,
       lastModified: new Date(),
@@ -27,77 +24,71 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.9,
     },
     {
-      url: `${baseUrl}/announcements`,
+      url: `${baseUrl}/current`,
       lastModified: new Date(),
-      changeFrequency: "daily" as const,
-      priority: 0.8,
+      changeFrequency: "weekly" as const,
+      priority: 0.9,
     },
     {
       url: `${baseUrl}/archives`,
       lastModified: new Date(),
       changeFrequency: "weekly" as const,
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/current`,
-      lastModified: new Date(),
-      changeFrequency: "weekly" as const,
       priority: 0.8,
     },
     {
-      url: `${baseUrl}/search`,
+      url: `${baseUrl}/announcements`,
       lastModified: new Date(),
-      changeFrequency: "monthly" as const,
-      priority: 0.6,
+      changeFrequency: "daily" as const,
+      priority: 0.8,
     },
+
+    // About and information pages
     {
-      url: `${baseUrl}/submission-guidelines`,
+      url: `${baseUrl}/about`,
       lastModified: new Date(),
       changeFrequency: "monthly" as const,
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/editorial-board`,
-      lastModified: new Date(),
-      changeFrequency: "monthly" as const,
-      priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/peer-review-process`,
-      lastModified: new Date(),
-      changeFrequency: "monthly" as const,
-      priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/publication-ethics`,
-      lastModified: new Date(),
-      changeFrequency: "monthly" as const,
-      priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/faq`,
-      lastModified: new Date(),
-      changeFrequency: "monthly" as const,
-      priority: 0.5,
-    },
-    {
-      url: `${baseUrl}/author-guidelines`,
-      lastModified: new Date(),
-      changeFrequency: "monthly" as const,
-      priority: 0.6,
-    },
-    {
-      url: `${baseUrl}/submission-guidelines`,
-      lastModified: new Date(),
-      changeFrequency: "monthly" as const,
-      priority: 0.6,
+      priority: 0.8,
     },
     {
       url: `${baseUrl}/editorial-team`,
       lastModified: new Date(),
       changeFrequency: "monthly" as const,
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/focus-scope`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+    },
+
+    // Guidelines and submission pages
+    {
+      url: `${baseUrl}/submission-guidelines`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/author-guidelines`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+    },
+    {
+      url: `${baseUrl}/ojs-guidelines`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
       priority: 0.6,
     },
+    {
+      url: `${baseUrl}/article-template`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    },
+
+    // Review and ethics pages
     {
       url: `${baseUrl}/peer-reviewers`,
       lastModified: new Date(),
@@ -105,23 +96,59 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.6,
     },
     {
-      url: `${baseUrl}/focus-scope`,
-      lastModified: new Date(),
-      changeFrequency: "monthly" as const,
-      priority: 0.6,
-    },
-    {
       url: `${baseUrl}/publication-ethics`,
       lastModified: new Date(),
       changeFrequency: "monthly" as const,
       priority: 0.6,
     },
+
+    // Indexing and metrics pages
     {
-      url: `${baseUrl}/publication-fee`,
+      url: `${baseUrl}/abstracting-indexing`,
       lastModified: new Date(),
       changeFrequency: "monthly" as const,
       priority: 0.6,
     },
+    {
+      url: `${baseUrl}/citedness-scopus`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.5,
+    },
+    {
+      url: `${baseUrl}/domain-authority`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.5,
+    },
+    {
+      url: `${baseUrl}/incorporated`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.5,
+    },
+
+    // Utility pages
+    {
+      url: `${baseUrl}/search`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    },
+    {
+      url: `${baseUrl}/statistics`,
+      lastModified: new Date(),
+      changeFrequency: "weekly" as const,
+      priority: 0.5,
+    },
+    {
+      url: `${baseUrl}/ratings`,
+      lastModified: new Date(),
+      changeFrequency: "weekly" as const,
+      priority: 0.4,
+    },
+
+    // Contact and support
     {
       url: `${baseUrl}/contact`,
       lastModified: new Date(),
@@ -129,17 +156,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.7,
     },
     {
-      url: `${baseUrl}/search`,
-      lastModified: new Date(),
-      changeFrequency: "monthly" as const,
-      priority: 0.5,
-    },
-    {
       url: `${baseUrl}/faq`,
       lastModified: new Date(),
       changeFrequency: "monthly" as const,
       priority: 0.5,
     },
+    {
+      url: `${baseUrl}/publication-fee`,
+      lastModified: new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+    },
+
+    // Legal pages - Lower priority
     {
       url: `${baseUrl}/privacy-policy`,
       lastModified: new Date(),
