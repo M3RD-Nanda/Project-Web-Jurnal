@@ -191,7 +191,8 @@ export function prefetchAPIs(): void {
 }
 
 /**
- * Intelligent link prefetching based on user behavior
+ * Enhanced intelligent prefetching based on user behavior
+ * Supports both links and buttons with Next.js routing
  */
 export function setupIntelligentPrefetch(): void {
   if (typeof window === "undefined") return;
@@ -199,14 +200,36 @@ export function setupIntelligentPrefetch(): void {
   let prefetchTimeout: NodeJS.Timeout;
   const prefetchedLinks = new Set<string>();
 
-  // Prefetch on hover with delay
+  // Enhanced hover listener for links and buttons
   document.addEventListener("mouseover", (event) => {
     const target = event.target as HTMLElement;
+
+    // Check for links (a tags)
     const link = target.closest("a[href]") as HTMLAnchorElement;
+    // Check for buttons with navigation
+    const button = target.closest("button, [role='button']") as HTMLElement;
 
-    if (!link || !link.href) return;
+    let href: string | null = null;
 
-    const href = link.href;
+    if (link && link.href) {
+      href = link.href;
+    } else if (button) {
+      // Check for data-href attribute
+      const dataHref = button.getAttribute("data-href");
+      if (dataHref) {
+        href = dataHref.startsWith("/")
+          ? window.location.origin + dataHref
+          : dataHref;
+      }
+
+      // Check for Next.js Link wrapper (button inside Link)
+      const parentLink = button.closest("a");
+      if (parentLink && parentLink.href) {
+        href = parentLink.href;
+      }
+    }
+
+    if (!href) return;
 
     // Skip external links and already prefetched links
     if (!href.startsWith(window.location.origin) || prefetchedLinks.has(href))
@@ -229,9 +252,9 @@ export function setupIntelligentPrefetch(): void {
         }
 
         prefetchedLinks.add(href);
-        console.log(`✅ Link prefetched on hover: ${url.pathname}`);
+        console.log(`✅ Element prefetched on hover: ${url.pathname}`);
       } catch (error) {
-        console.warn("⚠️ Failed to prefetch link:", error);
+        console.warn("⚠️ Failed to prefetch element:", error);
       }
     }, 100); // 100ms hover delay
   });
@@ -240,10 +263,40 @@ export function setupIntelligentPrefetch(): void {
   document.addEventListener("mouseout", (event) => {
     const target = event.target as HTMLElement;
     const link = target.closest("a[href]");
+    const button = target.closest("button, [role='button']");
 
-    if (link && prefetchTimeout) {
+    if ((link || button) && prefetchTimeout) {
       clearTimeout(prefetchTimeout);
     }
+  });
+
+  // Additional setup for dynamically added elements
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      mutation.addedNodes.forEach((node) => {
+        if (node.nodeType === Node.ELEMENT_NODE) {
+          const element = node as HTMLElement;
+
+          // Find all links and buttons in the newly added content
+          const links = element.querySelectorAll("a[href]");
+          const buttons = element.querySelectorAll("button, [role='button']");
+
+          // The hover listener will automatically handle these new elements
+          // This observer is just for logging and potential future enhancements
+          if (links.length > 0 || buttons.length > 0) {
+            console.log(
+              `🔄 New interactive elements detected: ${links.length} links, ${buttons.length} buttons`
+            );
+          }
+        }
+      });
+    });
+  });
+
+  // Start observing for dynamic content
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true,
   });
 }
 

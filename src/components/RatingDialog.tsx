@@ -28,7 +28,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { submitRating } from "@/app/actions/ratings"; // Perbaikan di sini: Mengubah path ke /app/actions
+// import { submitRating } from "@/app/actions/ratings"; // Temporarily disabled to fix build error
 
 const ratingFormSchema = z.object({
   name: z.string().max(100, "Nama terlalu panjang.").optional(),
@@ -107,8 +107,9 @@ export function RatingDialog({ children }: RatingDialogProps) {
         return;
       }
 
-      // Call the server action instead of direct insertRating
-      const { success, error } = await submitRating(
+      // Temporarily use direct client-side insert to fix build error
+      const { insertRating } = await import("@/lib/ratings");
+      const { data, error } = await insertRating(
         stars,
         values.name || null,
         values.comment || null,
@@ -119,10 +120,10 @@ export function RatingDialog({ children }: RatingDialogProps) {
         console.error("Rating submission failed:", error);
         toast.error(
           `Gagal mengirim rating: ${
-            error || "Terjadi kesalahan tidak dikenal."
+            error.message || "Terjadi kesalahan tidak dikenal."
           }`
         );
-      } else if (success) {
+      } else if (data) {
         toast.success("Terima kasih atas rating Anda!");
         setIsOpen(false);
         setStars(0);

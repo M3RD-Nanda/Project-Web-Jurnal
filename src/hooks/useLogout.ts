@@ -3,6 +3,7 @@
 import { useSupabase } from "@/components/SessionProvider";
 import { toast } from "sonner";
 import { useState, useEffect } from "react";
+import { clearAllCaches } from "@/lib/profile-cache";
 
 export function useLogout() {
   const { supabase, session } = useSupabase();
@@ -42,8 +43,11 @@ export function useLogout() {
         }
       }
 
-      // Clear any local storage items related to auth
+      // Clear all caches and local storage items related to auth
       if (typeof window !== "undefined") {
+        // Clear profile and session caches
+        clearAllCaches();
+
         // Clear Supabase auth tokens from localStorage
         const keys = Object.keys(localStorage);
         keys.forEach((key) => {

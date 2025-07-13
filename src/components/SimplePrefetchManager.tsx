@@ -2,10 +2,11 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { initializePrefetchStrategy } from "@/lib/prefetch-strategy";
 
 /**
- * Simple PrefetchManager Component
- * Manages basic prefetching and service worker registration without server imports
+ * Enhanced PrefetchManager Component
+ * Manages comprehensive prefetching including hover-based prefetch for all buttons/links
  */
 export function SimplePrefetchManager() {
   const router = useRouter();
@@ -20,17 +21,29 @@ export function SimplePrefetchManager() {
       try {
         // Check network conditions
         const connection = (navigator as any).connection;
-        if (connection && (connection.effectiveType === 'slow-2g' || connection.saveData)) {
+        if (
+          connection &&
+          (connection.effectiveType === "slow-2g" || connection.saveData)
+        ) {
           console.log("🚫 Prefetch disabled due to network conditions");
           return;
+        }
+
+        // Initialize comprehensive prefetch strategy with hover support
+        if (mounted && router) {
+          console.log("🚀 Initializing comprehensive prefetch strategy...");
+          initializePrefetchStrategy(router);
         }
 
         // Register service worker for offline caching
         if ("serviceWorker" in navigator) {
           try {
-            const registration = await navigator.serviceWorker.register("/sw.js", {
-              scope: "/",
-            });
+            const registration = await navigator.serviceWorker.register(
+              "/sw.js",
+              {
+                scope: "/",
+              }
+            );
 
             if (registration.installing) {
               console.log("🔧 Service worker installing...");
@@ -46,65 +59,48 @@ export function SimplePrefetchManager() {
                 registration.active.postMessage({ type: "CACHE_CLEANUP" });
               }
             }, 24 * 60 * 60 * 1000); // Daily cleanup
-
           } catch (error) {
             console.warn("⚠️ Service worker registration failed:", error);
           }
         }
 
-        // Simple prefetch for critical pages
-        if (mounted && router) {
-          const criticalPages = ['/articles', '/announcements', '/about'];
-          criticalPages.forEach((page, index) => {
-            setTimeout(() => {
-              try {
-                router.prefetch(page);
-                console.log(`✅ Page prefetched: ${page}`);
-              } catch (error) {
-                console.warn(`⚠️ Failed to prefetch page ${page}:`, error);
-              }
-            }, index * 200);
-          });
-        }
-
         // Preload critical fonts
-        const fonts = ['/fonts/geist-sans.woff2', '/fonts/geist-mono.woff2'];
+        const fonts = ["/fonts/geist-sans.woff2", "/fonts/geist-mono.woff2"];
         fonts.forEach((font) => {
-          const link = document.createElement('link');
-          link.rel = 'preload';
-          link.as = 'font';
-          link.type = 'font/woff2';
-          link.crossOrigin = 'anonymous';
+          const link = document.createElement("link");
+          link.rel = "preload";
+          link.as = "font";
+          link.type = "font/woff2";
+          link.crossOrigin = "anonymous";
           link.href = font;
           document.head.appendChild(link);
         });
 
         // DNS prefetch for external domains
         const domains = [
-          'https://xlvnaempudqlrdonfzun.supabase.co',
-          'https://fonts.googleapis.com',
-          'https://fonts.gstatic.com',
+          "https://xlvnaempudqlrdonfzun.supabase.co",
+          "https://fonts.googleapis.com",
+          "https://fonts.gstatic.com",
         ];
 
         domains.forEach((domain) => {
-          const link = document.createElement('link');
-          link.rel = 'dns-prefetch';
+          const link = document.createElement("link");
+          link.rel = "dns-prefetch";
           link.href = domain;
           document.head.appendChild(link);
         });
 
         // Preconnect for critical domains
-        const criticalDomains = ['https://xlvnaempudqlrdonfzun.supabase.co'];
+        const criticalDomains = ["https://xlvnaempudqlrdonfzun.supabase.co"];
         criticalDomains.forEach((domain) => {
-          const link = document.createElement('link');
-          link.rel = 'preconnect';
+          const link = document.createElement("link");
+          link.rel = "preconnect";
           link.href = domain;
-          link.crossOrigin = 'anonymous';
+          link.crossOrigin = "anonymous";
           document.head.appendChild(link);
         });
 
-        console.log("✅ Simple prefetch optimizations initialized");
-
+        console.log("✅ Enhanced prefetch optimizations initialized");
       } catch (error) {
         console.warn("⚠️ Error initializing optimizations:", error);
       }

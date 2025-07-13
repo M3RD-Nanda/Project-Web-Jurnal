@@ -6,6 +6,15 @@ import { Session, SupabaseClient } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { validateEnvironment, validateSupabaseConfig } from "@/lib/env-check";
+import {
+  getCachedProfile,
+  setCachedProfile,
+  clearAllCaches,
+  getCachedSession,
+  setCachedSession,
+  preloadProfileData,
+  type UserProfile as CachedUserProfile,
+} from "@/lib/profile-cache";
 import React from "react";
 
 interface UserProfile {
@@ -59,10 +68,23 @@ export function SessionProvider({
 
   // Function to fetch profile based on authenticated user
   // This function should only be called with a verified user object from getUser()
-  const fetchProfile = async (authenticatedUser: any) => {
+  const fetchProfile = async (
+    authenticatedUser: any,
+    useCache: boolean = true
+  ) => {
     if (!authenticatedUser) {
       setProfile(null);
       return;
+    }
+
+    // Try to get from cache first if enabled
+    if (useCache && session?.access_token) {
+      const cachedProfile = getCachedProfile(session.access_token);
+      if (cachedProfile) {
+        setProfile(cachedProfile as UserProfile);
+        console.log("✅ Profile loaded from cache, skipping API call");
+        return;
+      }
     }
 
     try {
@@ -88,7 +110,16 @@ export function SessionProvider({
       }
 
       if (profileData) {
-        setProfile(profileData as UserProfile);
+        const userProfile = profileData as UserProfile;
+        setProfile(userProfile);
+
+        // Cache the profile data for future use
+        if (session?.access_token) {
+          setCachedProfile(
+            userProfile as CachedUserProfile,
+            session.access_token
+          );
+        }
       } else {
         setProfile(null);
       }
@@ -108,6 +139,9 @@ export function SessionProvider({
   useEffect(() => {
     const initializeProfile = async () => {
       if (initialSession) {
+        // Cache the session for quick access
+        setCachedSession(initialSession);
+
         try {
           // Use native Supabase method with timeout
           const userPromise = supabase.auth.getUser();
@@ -124,7 +158,7 @@ export function SessionProvider({
           ])) as any;
 
           if (!error && userData?.user) {
-            await fetchProfile(userData.user);
+            await fetchProfile(userData.user, true); // Enable cache for initial load
           }
         } catch (error: any) {
           if (error.message?.includes("timeout")) {
@@ -298,6 +332,8 @@ export function SessionProvider({
           }
         }
       } else if (event === "SIGNED_OUT") {
+        // Clear all caches when user signs out
+        clearAllCaches();
         setSession(null);
         setProfile(null);
       }
