@@ -183,23 +183,35 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
-  // Dynamic article pages
-  const articles = await getAllArticles();
-  const articlePages = articles.map((article) => ({
-    url: `${baseUrl}/articles/${article.id}`,
-    lastModified: new Date(article.publicationDate),
-    changeFrequency: "monthly" as const,
-    priority: 0.8,
-  }));
+  // Dynamic article pages with error handling
+  let articlePages: MetadataRoute.Sitemap = [];
+  try {
+    const articles = await getAllArticles();
+    articlePages = articles.map((article) => ({
+      url: `${baseUrl}/articles/${article.id}`,
+      lastModified: new Date(article.publicationDate),
+      changeFrequency: "monthly" as const,
+      priority: 0.8,
+    }));
+  } catch (error) {
+    console.error("Error fetching articles for sitemap:", error);
+    // Continue without articles if there's an error
+  }
 
-  // Dynamic announcement pages
-  const announcements = await getAllAnnouncements();
-  const announcementPages = announcements.map((announcement) => ({
-    url: `${baseUrl}/announcements/${announcement.id}`,
-    lastModified: new Date(announcement.publicationDate),
-    changeFrequency: "monthly" as const,
-    priority: 0.7,
-  }));
+  // Dynamic announcement pages with error handling
+  let announcementPages: MetadataRoute.Sitemap = [];
+  try {
+    const announcements = await getAllAnnouncements();
+    announcementPages = announcements.map((announcement) => ({
+      url: `${baseUrl}/announcements/${announcement.id}`,
+      lastModified: new Date(announcement.publicationDate),
+      changeFrequency: "monthly" as const,
+      priority: 0.7,
+    }));
+  } catch (error) {
+    console.error("Error fetching announcements for sitemap:", error);
+    // Continue without announcements if there's an error
+  }
 
   return [...staticPages, ...articlePages, ...announcementPages];
 }
