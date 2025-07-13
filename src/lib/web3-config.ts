@@ -143,33 +143,7 @@ function createCustomConnectors() {
 export function getWagmiConfig() {
   if (!_wagmiConfig) {
     try {
-      // Suppress Lit dev mode warnings globally
-      if (
-        typeof window !== "undefined" &&
-        process.env.NODE_ENV === "development"
-      ) {
-        // Set global flag to disable Lit dev mode
-        (window as any).litDisableBundleWarning = true;
-
-        // Suppress specific console warnings for Lit
-        const originalWarn = console.warn;
-        console.warn = (...args: any[]) => {
-          const message = args.join(" ");
-          if (
-            message.includes("Lit is in dev mode") ||
-            message.includes("lit.dev/msg/dev-mode") ||
-            message.includes("Not recommended for production")
-          ) {
-            return; // Suppress Lit dev mode warnings
-          }
-          originalWarn.apply(console, args);
-        };
-
-        // Restore console.warn after initialization
-        setTimeout(() => {
-          console.warn = originalWarn;
-        }, 2000);
-      }
+      // Note: Lit warning suppression moved to other files to avoid syntax conflicts
 
       // Create custom config with only relevant wallets
       const customConnectors = createCustomConnectors();

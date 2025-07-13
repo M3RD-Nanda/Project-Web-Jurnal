@@ -1,14 +1,14 @@
 // Test script for Syndica API connection
 import { Connection } from "@solana/web3.js";
 
-const SYNDICA_ENDPOINT = "https://solana-mainnet.api.syndica.io/api-key/YpXDWwMbnm6aw9m62PW8DT66yqW4bJLwzzqwsJGEmK7wnkH3ZU5BwuL6Qh61yYJFX1G5etrHjAdkEFWCd1MEbxWvVKQ6sZpnwe";
+const SYNDICA_ENDPOINT =
+  "https://solana-mainnet.api.syndica.io/api-key/YpXDWwMbnm6aw9m62PW8DT66yqW4bJLwzzqwsJGEmK7wnkH3ZU5BwuL6Qh61yYJFX1G5etrHjAdkEFWCd1MEbxWvVKQ6sZpnwe";
 
 export async function testSyndicaConnection(): Promise<boolean> {
   try {
-    console.log("Testing Syndica API connection...");
-    
+
     const connection = new Connection(SYNDICA_ENDPOINT, {
-      commitment: 'confirmed',
+      commitment: "confirmed",
       confirmTransactionInitialTimeout: 30000,
     });
 
@@ -17,9 +17,13 @@ export async function testSyndicaConnection(): Promise<boolean> {
     console.log("✅ Syndica API connected successfully!");
     console.log("Solana version:", version);
 
-    // Test getHealth
-    const health = await connection.getHealth();
-    console.log("✅ Health check passed:", health);
+    // Test getHealth (if available)
+    try {
+      const health = await (connection as any).getHealth();
+      console.log("✅ Health check passed:", health);
+    } catch (error) {
+      console.log("⚠️ Health check not available on this RPC endpoint");
+    }
 
     // Test slot info
     const slot = await connection.getSlot();
@@ -33,10 +37,12 @@ export async function testSyndicaConnection(): Promise<boolean> {
 }
 
 // Test function for balance fetching
-export async function testBalanceFetch(publicKeyString: string): Promise<number | null> {
+export async function testBalanceFetch(
+  publicKeyString: string
+): Promise<number | null> {
   try {
     const connection = new Connection(SYNDICA_ENDPOINT, {
-      commitment: 'confirmed',
+      commitment: "confirmed",
     });
 
     // Convert string to PublicKey
@@ -45,7 +51,7 @@ export async function testBalanceFetch(publicKeyString: string): Promise<number 
 
     const balance = await connection.getBalance(publicKey);
     console.log(`✅ Balance fetched successfully: ${balance} lamports`);
-    
+
     return balance;
   } catch (error) {
     console.error("❌ Balance fetch failed:", error);

@@ -66,24 +66,42 @@ export function SessionProvider({
     }
 
     try {
-      const { data: profileData, error } = await supabase
+      // Use native Supabase query with timeout
+      const profilePromise = supabase
         .from("profiles")
         .select("*")
         .eq("id", authenticatedUser.id)
         .single();
 
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error("Profile fetch timeout")), 5000);
+      });
+
+      const { data: profileData, error } = (await Promise.race([
+        profilePromise,
+        timeoutPromise,
+      ])) as any;
+
       if (error && error.code !== "PGRST116") {
-        // PGRST116 means no rows found
-        console.error("Error fetching profile:", error);
+        console.warn("Profile fetch error:", error);
         setProfile(null);
-      } else if (profileData) {
+        return;
+      }
+
+      if (profileData) {
         setProfile(profileData as UserProfile);
       } else {
-        console.log("No profile found for user, setting to null");
         setProfile(null);
       }
     } catch (error: any) {
-      console.error("Error fetching profile:", error);
+      if (error.message?.includes("timeout")) {
+        // Silently handle timeout errors in development
+        if (process.env.NODE_ENV !== "development") {
+          console.warn("Profile fetch timed out");
+        }
+      } else {
+        console.error("Error fetching profile:", error);
+      }
       setProfile(null);
     }
   };
@@ -93,127 +111,115 @@ export function SessionProvider({
     const initializeProfile = async () => {
       if (initialSession) {
         try {
-          const {
-            data: { user },
-            error,
-          } = await supabase.auth.getUser();
-          if (!error && user) {
-            await fetchProfile(user);
+          // Use native Supabase method with timeout
+          const userPromise = supabase.auth.getUser();
+          const timeoutPromise = new Promise((_, reject) => {
+            setTimeout(
+              () => reject(new Error("Initial user fetch timeout")),
+              5000
+            );
+          });
+
+          const { data: userData, error } = (await Promise.race([
+            userPromise,
+            timeoutPromise,
+          ])) as any;
+
+          if (!error && userData?.user) {
+            await fetchProfile(userData.user);
           }
-        } catch (error) {
-          console.error("Error getting user for initial profile:", error);
+        } catch (error: any) {
+          if (error.message?.includes("timeout")) {
+            // Silently handle timeout errors in development
+            if (process.env.NODE_ENV !== "development") {
+              console.warn("Initial user fetch timed out");
+            }
+          } else {
+            console.error("Error getting user for initial profile:", error);
+          }
         }
       }
     };
     initializeProfile();
   }, [initialSession]);
 
-  // Initialize session on mount
+  // Initialize session on mount with graceful error handling
   useEffect(() => {
-    // Validate environment configuration first
-    console.log("SessionProvider: Validating environment...");
-    const envValidation = validateEnvironment();
-    const supabaseValidation = validateSupabaseConfig();
-
-    if (!envValidation.isValid || !supabaseValidation) {
-      console.error(
-        "❌ Environment configuration is invalid. Authentication may not work properly."
-      );
-      toast.error(
-        "Konfigurasi environment tidak valid. Silakan hubungi administrator."
-      );
-      setIsLoading(false);
-      return;
-    }
-
     const initializeSession = async () => {
       try {
-        // First check if we have a session before calling getUser
-        const {
-          data: { session: currentSession },
-          error: sessionError,
-        } = await supabase.auth.getSession();
+        // Validate environment configuration first
+        const envValidation = validateEnvironment();
+        const supabaseValidation = validateSupabaseConfig();
+
+        if (!envValidation.isValid || !supabaseValidation) {
+          console.error(
+            "❌ Environment configuration is invalid. Authentication may not work properly."
+          );
+          toast.error(
+            "Konfigurasi environment tidak valid. Silakan hubungi administrator."
+          );
+          setIsLoading(false);
+          return;
+        }
+
+        // Use native Supabase methods with timeout handling
+        const sessionPromise = supabase.auth.getSession();
+        const timeoutPromise = new Promise((_, reject) => {
+          setTimeout(
+            () => reject(new Error("Session initialization timeout")),
+            8000
+          );
+        });
+
+        const { data: sessionData, error: sessionError } = (await Promise.race([
+          sessionPromise,
+          timeoutPromise,
+        ])) as any;
 
         if (sessionError) {
-          console.error("Error getting session:", sessionError);
+          console.warn("Session error:", sessionError);
           setSession(null);
           setProfile(null);
           setIsLoading(false);
           return;
         }
 
-        // Only call getUser if we have a session to avoid AuthSessionMissingError
+        const currentSession = sessionData?.session;
+
         if (currentSession) {
+          setSession(currentSession);
+
+          // Try to fetch user data, but don't fail if it times out
           try {
-            const {
-              data: { user },
-              error: userError,
-            } = await supabase.auth.getUser();
+            const userPromise = supabase.auth.getUser();
+            const userTimeoutPromise = new Promise((_, reject) => {
+              setTimeout(() => reject(new Error("User fetch timeout")), 5000);
+            });
 
-            if (userError) {
-              // Handle AuthSessionMissingError specifically
-              if (userError.message?.includes("Auth session missing")) {
-                console.log("No active session found, setting session to null");
-                setSession(null);
-                setProfile(null);
-                setIsLoading(false);
-                return;
-              }
-              console.error("Error getting user:", userError);
-              setSession(null);
-              setProfile(null);
-              setIsLoading(false);
-              return;
-            }
+            const { data: userData, error: userError } = (await Promise.race([
+              userPromise,
+              userTimeoutPromise,
+            ])) as any;
 
-            if (user) {
-              // Use current session if user is authenticated
-              const sessionToUse = currentSession || initialSession;
-              setSession(sessionToUse);
-
-              // Fetch profile using the authenticated user object
-              await fetchProfile(user);
-            } else {
-              setSession(null);
-              setProfile(null);
+            if (!userError && userData?.user) {
+              await fetchProfile(userData.user);
             }
-          } catch (authError: any) {
-            // Handle AuthSessionMissingError specifically
-            if (authError.message?.includes("Auth session missing")) {
-              console.log(
-                "Auth session missing during user verification, clearing session"
-              );
-              setSession(null);
-              setProfile(null);
-            } else {
-              console.error("Error during user authentication:", authError);
-              setSession(null);
-              setProfile(null);
-            }
+          } catch (userFetchError) {
+            console.warn(
+              "User fetch failed, continuing with session only:",
+              userFetchError
+            );
+            // Continue with session even if user fetch fails
           }
         } else {
-          // No session available, use initial session if provided
-          setSession(initialSession);
-          if (initialSession) {
-            // Get authenticated user for profile fetch
-            try {
-              const {
-                data: { user },
-                error,
-              } = await supabase.auth.getUser();
-              if (!error && user) {
-                await fetchProfile(user);
-              }
-            } catch (error) {
-              console.error("Error getting user for profile:", error);
-            }
-          }
+          setSession(null);
+          setProfile(null);
         }
       } catch (error: any) {
-        // Handle AuthSessionMissingError specifically
-        if (error.message?.includes("Auth session missing")) {
-          console.log(
-            "Auth session missing during initialization, clearing session"
+        // Handle timeout and other errors gracefully
+        if (error.message?.includes("timeout")) {
+          console.warn(
+            "Session initialization timed out, continuing without session"
           );
         } else {
           console.error("Error initializing session:", error);
@@ -226,191 +232,92 @@ export function SessionProvider({
     };
 
     initializeSession();
-
-    // Set up periodic session refresh to handle token expiration
-    const refreshInterval = setInterval(async () => {
-      try {
-        // First check if we have a session before calling getUser
-        const {
-          data: { session: currentSession },
-          error: sessionError,
-        } = await supabase.auth.getSession();
-
-        if (sessionError) {
-          console.error("Error getting session during refresh:", sessionError);
-          return;
-        }
-
-        // Only call getUser if we have a session to avoid AuthSessionMissingError
-        if (currentSession) {
-          try {
-            const {
-              data: { user },
-              error: userError,
-            } = await supabase.auth.getUser();
-
-            if (!userError && user) {
-              // User is authenticated, use the current session
-              setSession(currentSession);
-            } else {
-              // Handle AuthSessionMissingError or other auth errors
-              if (userError?.message?.includes("Auth session missing")) {
-                console.log(
-                  "Auth session missing during refresh, clearing session"
-                );
-              } else if (userError) {
-                console.error("Error getting user during refresh:", userError);
-              }
-              setSession(null);
-              setProfile(null);
-            }
-          } catch (authError: any) {
-            // Handle AuthSessionMissingError specifically
-            if (authError.message?.includes("Auth session missing")) {
-              console.log(
-                "Auth session missing during refresh verification, clearing session"
-              );
-            } else {
-              console.error(
-                "Error during user verification in refresh:",
-                authError
-              );
-            }
-            setSession(null);
-            setProfile(null);
-          }
-        } else {
-          // No session available
-          setSession(null);
-          setProfile(null);
-        }
-      } catch (error: any) {
-        // Handle AuthSessionMissingError specifically
-        if (error.message?.includes("Auth session missing")) {
-          console.log(
-            "Auth session missing during session refresh, clearing session"
-          );
-          setSession(null);
-          setProfile(null);
-        } else {
-          console.error("Error refreshing session:", error);
-        }
-      }
-    }, 5 * 60 * 1000); // Refresh every 5 minutes
-
-    return () => clearInterval(refreshInterval);
   }, [initialSession]);
 
+  // Set up auth state change listener
   useEffect(() => {
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, _sessionFromEvent) => {
-      console.log("Auth state change:", event);
-
-      // For security, never use session directly from the event
-      // Always verify user first, then get fresh session
+    } = supabase.auth.onAuthStateChange(async (event, sessionFromEvent) => {
       if (event === "SIGNED_IN" || event === "TOKEN_REFRESHED") {
         try {
-          // First check if we have a session before calling getUser
-          const {
-            data: { session: currentSession },
-            error: sessionError,
-          } = await supabase.auth.getSession();
+          // Use the session from the event if available, otherwise fetch it
+          let currentSession = sessionFromEvent;
 
-          if (sessionError) {
-            console.error(
-              "Error getting session during auth state change:",
-              sessionError
-            );
-            setSession(null);
-            setProfile(null);
-            return;
+          if (!currentSession) {
+            const sessionPromise = supabase.auth.getSession();
+            const timeoutPromise = new Promise((_, reject) => {
+              setTimeout(
+                () => reject(new Error("Auth state session timeout")),
+                5000
+              );
+            });
+
+            const { data: sessionData, error: sessionError } =
+              (await Promise.race([sessionPromise, timeoutPromise])) as any;
+
+            if (sessionError) {
+              console.warn("Auth state session error:", sessionError);
+              return;
+            }
+            currentSession = sessionData?.session;
           }
 
-          // Only call getUser if we have a session to avoid AuthSessionMissingError
           if (currentSession) {
+            setSession(currentSession);
+
+            // Try to fetch user and profile, but don't fail if it times out
             try {
-              const {
-                data: { user },
-                error: userError,
-              } = await supabase.auth.getUser();
-
-              if (userError) {
-                // Handle AuthSessionMissingError specifically
-                if (userError.message?.includes("Auth session missing")) {
-                  console.log(
-                    "Auth session missing during auth state change, clearing session"
-                  );
-                } else {
-                  console.error(
-                    "Error verifying user during auth state change:",
-                    userError
-                  );
-                }
-                setSession(null);
-                setProfile(null);
-                return;
-              }
-
-              if (user) {
-                console.log("Verified user:", user.email);
-                setSession(currentSession);
-
-                // Fetch profile using the authenticated user object
-                await fetchProfile(user);
-
-                if (event === "SIGNED_IN") {
-                  toast.success("Anda berhasil masuk!");
-                  router.push("/");
-                } else if (event === "TOKEN_REFRESHED") {
-                  console.log("Token refreshed successfully");
-                }
-              } else {
-                setSession(null);
-                setProfile(null);
-              }
-            } catch (authError: any) {
-              // Handle AuthSessionMissingError specifically
-              if (authError.message?.includes("Auth session missing")) {
-                console.log(
-                  "Auth session missing during user verification in auth state change, clearing session"
+              const userPromise = supabase.auth.getUser();
+              const userTimeoutPromise = new Promise((_, reject) => {
+                setTimeout(
+                  () => reject(new Error("Auth state user timeout")),
+                  3000
                 );
-              } else {
-                console.error(
-                  "Error during user verification in auth state change:",
-                  authError
-                );
+              });
+
+              const { data: userData, error: userError } = (await Promise.race([
+                userPromise,
+                userTimeoutPromise,
+              ])) as any;
+
+              if (!userError && userData?.user) {
+                await fetchProfile(userData.user);
               }
-              setSession(null);
-              setProfile(null);
+            } catch (userFetchError: any) {
+              // Only log non-timeout errors in development
+              if (
+                process.env.NODE_ENV === "development" &&
+                !userFetchError.message?.includes("timeout")
+              ) {
+                console.warn("Auth state user fetch failed:", userFetchError);
+              }
+              // Continue with session even if user fetch fails
             }
-          } else {
-            // No session available
-            setSession(null);
-            setProfile(null);
           }
         } catch (error: any) {
-          // Handle AuthSessionMissingError specifically
-          if (error.message?.includes("Auth session missing")) {
-            console.log(
-              "Auth session missing during auth state change, clearing session"
-            );
+          if (error.message?.includes("timeout")) {
+            // Silently handle timeout errors - don't log in development
+            if (process.env.NODE_ENV !== "development") {
+              console.warn("Auth state change timed out");
+            }
           } else {
-            console.error("Error in auth state change handler:", error);
+            console.error("Error handling auth state change:", error);
           }
-          setSession(null);
-          setProfile(null);
+          // Don't clear session on timeout, only on actual errors
+          if (!error.message?.includes("timeout")) {
+            setSession(null);
+            setProfile(null);
+          }
         }
       } else if (event === "SIGNED_OUT") {
         setSession(null);
         setProfile(null);
-        toast.info("Anda telah keluar.");
-        router.push("/login");
       }
     });
 
     return () => subscription.unsubscribe();
-  }, [router]);
+  }, []);
 
   return (
     <SupabaseContext.Provider value={{ supabase, session, profile }}>

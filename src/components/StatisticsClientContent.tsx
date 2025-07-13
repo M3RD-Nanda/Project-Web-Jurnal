@@ -162,3 +162,5 @@ export function StatisticsClientContent({
     </>
   );
 }
+
+export default StatisticsClientContent;

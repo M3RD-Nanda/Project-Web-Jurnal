@@ -22,7 +22,7 @@ export default function DebugEnvPage() {
     // Validate environment on mount
     const envValidation = validateEnvironment();
     const supabaseValidation = validateSupabaseConfig();
-    
+
     setEnvStatus(envValidation);
     setSupabaseStatus(supabaseValidation);
   }, []);
@@ -30,7 +30,7 @@ export default function DebugEnvPage() {
   const testSupabaseConnection = async () => {
     setConnectionTest("Testing...");
     try {
-      const { data, error } = await supabase.auth.getSession();
+      const { error } = await supabase.auth.getSession();
       if (error) {
         setConnectionTest(`❌ Connection failed: ${error.message}`);
       } else {
@@ -87,17 +87,22 @@ export default function DebugEnvPage() {
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
-            <p><strong>Environment:</strong> {envStatus?.environment}</p>
-            {envStatus?.missingRequired && envStatus.missingRequired.length > 0 && (
-              <div>
-                <p className="text-red-600 font-semibold">Missing Required Variables:</p>
-                <ul className="list-disc list-inside text-red-600">
-                  {envStatus.missingRequired.map((varName) => (
-                    <li key={varName}>{varName}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
+            <p>
+              <strong>Environment:</strong> {envStatus?.environment}
+            </p>
+            {envStatus?.missingRequired &&
+              envStatus.missingRequired.length > 0 && (
+                <div>
+                  <p className="text-red-600 font-semibold">
+                    Missing Required Variables:
+                  </p>
+                  <ul className="list-disc list-inside text-red-600">
+                    {envStatus.missingRequired.map((varName) => (
+                      <li key={varName}>{varName}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
           </div>
         </CardContent>
       </Card>
@@ -119,9 +124,7 @@ export default function DebugEnvPage() {
             <Button onClick={testSupabaseConnection} variant="outline">
               Test Supabase Connection
             </Button>
-            {connectionTest && (
-              <p className="text-sm">{connectionTest}</p>
-            )}
+            {connectionTest && <p className="text-sm">{connectionTest}</p>}
           </div>
         </CardContent>
       </Card>
@@ -134,7 +137,10 @@ export default function DebugEnvPage() {
         <CardContent>
           <div className="space-y-3">
             {envVars.map((envVar) => (
-              <div key={envVar.name} className="flex items-center justify-between p-3 border rounded">
+              <div
+                key={envVar.name}
+                className="flex items-center justify-between p-3 border rounded"
+              >
                 <div>
                   <p className="font-medium">{envVar.name}</p>
                   <p className="text-sm text-muted-foreground">
@@ -150,7 +156,9 @@ export default function DebugEnvPage() {
                       </p>
                     </div>
                   ) : (
-                    <Badge variant={envVar.required ? "destructive" : "secondary"}>
+                    <Badge
+                      variant={envVar.required ? "destructive" : "secondary"}
+                    >
                       {envVar.required ? "❌ MISSING" : "⚠️ NOT SET"}
                     </Badge>
                   )}
@@ -168,9 +176,14 @@ export default function DebugEnvPage() {
         </CardHeader>
         <CardContent>
           <div className="space-y-2 text-sm">
-            <p><strong>If you see missing variables:</strong></p>
+            <p>
+              <strong>If you see missing variables:</strong>
+            </p>
             <ol className="list-decimal list-inside space-y-1">
-              <li>Go to Vercel Dashboard → Project Settings → Environment Variables</li>
+              <li>
+                Go to Vercel Dashboard → Project Settings → Environment
+                Variables
+              </li>
               <li>Add the missing environment variables</li>
               <li>Redeploy the project</li>
               <li>Refresh this page to verify</li>

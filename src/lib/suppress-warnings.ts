@@ -47,6 +47,29 @@ export function suppressDevWarnings() {
     "from the window's load event",
     "http://localhost:3000/_next/static/css/",
     "https://localhost:3000/_next/static/css/",
+    // Wallet-related debug messages and warnings
+    "WalletConnect",
+    "walletconnect",
+    "Connection request reset",
+    "Wallet connection error",
+    "Getting icon for connector",
+    "FORCED: Using centralized icon",
+    "Using EIP-6963 icon",
+    "Using connector icon",
+    "Using default icon",
+    "Building wallet list",
+    "Skipping duplicate wallet",
+    "Wallet mapped:",
+    "Attempting to reconnect",
+    "Wallet connection saved",
+    "Wallet disconnected",
+    "User cancelled wallet connection",
+    "Wallet not installed",
+    "Wallet not selected, retrying",
+    "brave wallet",
+    "Brave Wallet",
+    "MetaMask",
+    "Coinbase Wallet",
     // Note: Supabase auth warnings removed - these should be fixed at the source
   ];
 
@@ -79,23 +102,32 @@ export function suppressDevWarnings() {
     return false;
   };
 
-  // Override console.warn
-  console.warn = (...args: any[]) => {
-    const message = args.join(" ");
+  // Safely override console methods only if they're writable
+  try {
+    const warnDescriptor = Object.getOwnPropertyDescriptor(console, "warn");
+    const errorDescriptor = Object.getOwnPropertyDescriptor(console, "error");
 
-    if (!shouldSuppressMessage(message)) {
-      originalWarn.apply(console, args);
+    if (!warnDescriptor || warnDescriptor.writable !== false) {
+      console.warn = (...args: any[]) => {
+        const message = args.join(" ");
+        if (!shouldSuppressMessage(message)) {
+          originalWarn.apply(console, args);
+        }
+      };
     }
-  };
 
-  // Override console.error for specific errors
-  console.error = (...args: any[]) => {
-    const message = args.join(" ");
-
-    if (!shouldSuppressMessage(message)) {
-      originalError.apply(console, args);
+    if (!errorDescriptor || errorDescriptor.writable !== false) {
+      console.error = (...args: any[]) => {
+        const message = args.join(" ");
+        if (!shouldSuppressMessage(message)) {
+          originalError.apply(console, args);
+        }
+      };
     }
-  };
+  } catch (error) {
+    // If console override fails, just use environment flags
+    console.warn("Warning suppression failed, using environment flags only");
+  }
 
   // Set global flags to disable various dev warnings
   (window as any).litDisableBundleWarning = true;

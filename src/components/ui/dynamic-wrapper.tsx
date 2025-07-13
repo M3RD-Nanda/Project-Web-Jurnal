@@ -22,15 +22,13 @@ const DefaultLoader = ({ className }: { className?: string }) => (
 export function withDynamicImport<T extends ComponentType<any>>(
   importFn: () => Promise<{ default: T }>,
   options?: {
-    loading?: ComponentType<any>;
+    loading?: () => ReactNode;
     ssr?: boolean;
-    suspense?: boolean;
   }
 ) {
   return dynamic(importFn, {
-    loading: options?.loading || DefaultLoader,
+    loading: options?.loading || (() => <DefaultLoader />),
     ssr: options?.ssr ?? false,
-    suspense: options?.suspense ?? false,
   });
 }
 
@@ -41,7 +39,9 @@ export const DynamicChart = withDynamicImport(
     loading: () => (
       <div className="h-64 flex items-center justify-center bg-muted/50 rounded-lg">
         <Loader2 className="h-6 w-6 animate-spin text-primary" />
-        <span className="ml-2 text-sm text-muted-foreground">Memuat grafik...</span>
+        <span className="ml-2 text-sm text-muted-foreground">
+          Memuat grafik...
+        </span>
       </div>
     ),
   }
@@ -72,14 +72,12 @@ export const DynamicStatistics = withDynamicImport(
 );
 
 // Wrapper component for conditional dynamic loading
-export function DynamicWrapper({ 
-  children, 
-  fallback, 
-  className 
+export function DynamicWrapper({
+  children,
+  fallback,
+  className,
 }: DynamicWrapperProps) {
   return (
-    <div className={className}>
-      {children || fallback || <DefaultLoader />}
-    </div>
+    <div className={className}>{children || fallback || <DefaultLoader />}</div>
   );
 }

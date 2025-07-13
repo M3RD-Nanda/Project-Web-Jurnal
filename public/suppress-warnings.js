@@ -19,27 +19,37 @@ if (typeof window !== 'undefined') {
     'reactive-element.js'
   ];
   
-  // Override console.warn for production
-  console.warn = (...args) => {
-    const message = args.join(' ');
-    const shouldSuppress = suppressPatterns.some(pattern => 
-      message.includes(pattern)
-    );
-    
-    if (!shouldSuppress) {
-      originalWarn.apply(console, args);
+  // Safely override console methods for production
+  try {
+    const warnDescriptor = Object.getOwnPropertyDescriptor(console, 'warn');
+    const errorDescriptor = Object.getOwnPropertyDescriptor(console, 'error');
+
+    if (!warnDescriptor || warnDescriptor.writable !== false) {
+      console.warn = (...args) => {
+        const message = args.join(' ');
+        const shouldSuppress = suppressPatterns.some(pattern =>
+          message.includes(pattern)
+        );
+
+        if (!shouldSuppress) {
+          originalWarn.apply(console, args);
+        }
+      };
     }
-  };
-  
-  // Override console.error for production
-  console.error = (...args) => {
-    const message = args.join(' ');
-    const shouldSuppress = suppressPatterns.some(pattern => 
-      message.includes(pattern)
-    );
-    
-    if (!shouldSuppress) {
-      originalError.apply(console, args);
+
+    if (!errorDescriptor || errorDescriptor.writable !== false) {
+      console.error = (...args) => {
+        const message = args.join(' ');
+        const shouldSuppress = suppressPatterns.some(pattern =>
+          message.includes(pattern)
+        );
+
+        if (!shouldSuppress) {
+          originalError.apply(console, args);
+        }
+      };
     }
-  };
+  } catch (error) {
+    // If console override fails, silently continue
+  }
 }

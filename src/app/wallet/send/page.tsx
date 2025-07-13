@@ -1,12 +1,34 @@
 "use client";
 
-import React from 'react';
-import { StaticContentPage } from '@/components/StaticContentPage';
-import { PaymentForm } from '@/components/wallet/PaymentForm';
-import { WalletBalance } from '@/components/wallet/WalletBalance';
-import { useSupabase } from '@/components/SessionProvider';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { AlertTriangle } from 'lucide-react';
+import React from "react";
+import { StaticContentPage } from "@/components/StaticContentPage";
+import dynamic from "next/dynamic";
+
+// Dynamic imports for wallet components
+const PaymentForm = dynamic(
+  () =>
+    import("@/components/wallet/PaymentForm").then((mod) => ({
+      default: mod.PaymentForm,
+    })),
+  {
+    loading: () => <div className="h-64 bg-gray-200 animate-pulse rounded" />,
+    ssr: false,
+  }
+);
+
+const WalletBalance = dynamic(
+  () =>
+    import("@/components/wallet/WalletBalance").then((mod) => ({
+      default: mod.WalletBalance,
+    })),
+  {
+    loading: () => <div className="h-20 bg-gray-200 animate-pulse rounded" />,
+    ssr: false,
+  }
+);
+import { useSupabase } from "@/components/SessionProvider";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertTriangle } from "lucide-react";
 
 export default function SendPaymentPage() {
   const { session } = useSupabase();
@@ -36,7 +58,7 @@ export default function SendPaymentPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Payment Form */}
             <PaymentForm />
-            
+
             {/* Wallet Balance */}
             <WalletBalance />
           </div>

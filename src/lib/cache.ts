@@ -1,11 +1,11 @@
-import { unstable_cache } from 'next/cache';
+import { unstable_cache } from "next/cache";
 
 // Cache configuration
 export const CACHE_TAGS = {
-  ARTICLES: 'articles',
-  ANNOUNCEMENTS: 'announcements',
-  STATISTICS: 'statistics',
-  ARCHIVES: 'archives',
+  ARTICLES: "articles",
+  ANNOUNCEMENTS: "announcements",
+  STATISTICS: "statistics",
+  ARCHIVES: "archives",
 } as const;
 
 export const CACHE_DURATIONS = {
@@ -24,23 +24,19 @@ export function createCachedFunction<T extends any[], R>(
     tags?: string[];
   } = {}
 ) {
-  return unstable_cache(
-    fn,
-    keyParts,
-    {
-      revalidate: options.revalidate || CACHE_DURATIONS.MEDIUM,
-      tags: options.tags || [],
-    }
-  );
+  return unstable_cache(fn, keyParts, {
+    revalidate: options.revalidate || CACHE_DURATIONS.MEDIUM,
+    tags: options.tags || [],
+  });
 }
 
 // Specific cached functions for common operations
 export const getCachedArticles = createCachedFunction(
   async () => {
-    const { getAllArticles } = await import('@/lib/articles');
+    const { getAllArticles } = await import("@/lib/articles");
     return getAllArticles();
   },
-  ['articles', 'all'],
+  ["articles", "all"],
   {
     revalidate: CACHE_DURATIONS.LONG,
     tags: [CACHE_TAGS.ARTICLES],
@@ -49,10 +45,10 @@ export const getCachedArticles = createCachedFunction(
 
 export const getCachedAnnouncements = createCachedFunction(
   async () => {
-    const { getAllAnnouncements } = await import('@/lib/announcements');
+    const { getAllAnnouncements } = await import("@/lib/announcements");
     return getAllAnnouncements();
   },
-  ['announcements', 'all'],
+  ["announcements", "all"],
   {
     revalidate: CACHE_DURATIONS.LONG,
     tags: [CACHE_TAGS.ANNOUNCEMENTS],
@@ -62,10 +58,10 @@ export const getCachedAnnouncements = createCachedFunction(
 export const getCachedArticleById = (id: string) =>
   createCachedFunction(
     async (articleId: string) => {
-      const { getArticleById } = await import('@/lib/articles');
+      const { getArticleById } = await import("@/lib/articles");
       return getArticleById(articleId);
     },
-    ['article', id],
+    ["article", id],
     {
       revalidate: CACHE_DURATIONS.VERY_LONG,
       tags: [CACHE_TAGS.ARTICLES],
@@ -75,10 +71,10 @@ export const getCachedArticleById = (id: string) =>
 export const getCachedStatistics = createCachedFunction(
   async () => {
     // Import statistics functions dynamically
-    const { getVisitorStats } = await import('@/actions/analytics');
+    const { getVisitorStats } = await import("@/lib/analytics");
     return getVisitorStats();
   },
-  ['statistics', 'visitor'],
+  ["statistics", "visitor"],
   {
     revalidate: CACHE_DURATIONS.SHORT,
     tags: [CACHE_TAGS.STATISTICS],
@@ -87,8 +83,8 @@ export const getCachedStatistics = createCachedFunction(
 
 // Cache invalidation helpers
 export async function revalidateCache(tags: string[]) {
-  const { revalidateTag } = await import('next/cache');
-  tags.forEach(tag => revalidateTag(tag));
+  const { revalidateTag } = await import("next/cache");
+  tags.forEach((tag) => revalidateTag(tag));
 }
 
 export async function revalidateAllArticles() {
@@ -115,12 +111,12 @@ class MemoryCache {
   get(key: string) {
     const item = this.cache.get(key);
     if (!item) return null;
-    
+
     if (Date.now() > item.expiry) {
       this.cache.delete(key);
       return null;
     }
-    
+
     return item.data;
   }
 
@@ -146,7 +142,7 @@ class MemoryCache {
 export const memoryCache = new MemoryCache();
 
 // Auto cleanup every 5 minutes
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   setInterval(() => {
     memoryCache.cleanup();
   }, 5 * 60 * 1000);

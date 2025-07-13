@@ -24,7 +24,7 @@ import {
   generateWebsiteStructuredData,
 } from "@/lib/metadata";
 // Import warning suppression and CSS optimization for development
-import "@/lib/suppress-warnings";
+// import "@/lib/suppress-warnings";
 import "@/lib/css-optimization";
 import "@/lib/preload-prevention";
 

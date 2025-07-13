@@ -23,8 +23,8 @@ export default function SubmissionGuidelinesPage() {
       <h3 className="text-2xl font-semibold mt-8">Format Naskah:</h3>
       <ul className="list-disc list-inside space-y-2">
         <li>
-          Gunakan template artikel resmi JEBAKA (tersedia di halaman "Article
-          Template").
+          Gunakan template artikel resmi JEBAKA (tersedia di halaman
+          &ldquo;Article Template&rdquo;).
         </li>
         <li>
           Panjang naskah antara 5.000 - 8.000 kata (termasuk abstrak, referensi,
@@ -43,7 +43,7 @@ export default function SubmissionGuidelinesPage() {
       </p>
       <p>
         Untuk panduan lebih rinci tentang penggunaan OJS, silakan kunjungi
-        halaman "OJS Guidelines".
+        halaman &ldquo;OJS Guidelines&rdquo;.
       </p>
     </StaticContentPage>
   );

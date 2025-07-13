@@ -71,7 +71,7 @@ export default function RegisterPage() {
         );
         router.push("/login");
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Signup error:", error);
       toast.error("Terjadi kesalahan saat mendaftar");
     } finally {

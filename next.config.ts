@@ -2,14 +2,12 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   eslint: {
-    // Warning: This allows production builds to successfully complete even if
-    // your project has ESLint errors.
+    // Temporarily disable ESLint during builds to focus on console cleanup
     ignoreDuringBuilds: true,
   },
   typescript: {
-    // Dangerously allow production builds to successfully complete even if
-    // your project has type errors.
-    ignoreBuildErrors: true,
+    // TypeScript will now properly check for type errors during builds
+    ignoreBuildErrors: false,
   },
   // Disable source maps in production to avoid 404 errors
   productionBrowserSourceMaps: false,
@@ -25,6 +23,8 @@ const nextConfig: NextConfig = {
       "@radix-ui/react-toast",
       "sonner",
     ],
+    // Fix webpack minification issues
+    forceSwcTransforms: true,
     // Note: Removed optimizeCss and cssChunking as they cause build issues
     // CSS optimization is handled through webpack configuration instead
   },
@@ -38,9 +38,14 @@ const nextConfig: NextConfig = {
     },
   },
   env: {
-    // Suppress Lit dev mode warnings in production
-    LIT_DISABLE_DEV_MODE:
-      process.env.NODE_ENV === "production" ? "true" : "false",
+    // Suppress Lit dev mode warnings in all environments
+    LIT_DISABLE_DEV_MODE: "true",
+    // Additional Lit configuration
+    LIT_DISABLE_BUNDLED_WARNINGS: "true",
+    // Disable WalletConnect dev warnings
+    WALLETCONNECT_DEBUG: "false",
+    // Disable CSS preload warnings
+    DISABLE_CSS_PRELOAD_WARNINGS: "true",
   },
   webpack: (config, { isServer }) => {
     if (process.env.NODE_ENV === "development") {
@@ -83,6 +88,12 @@ const nextConfig: NextConfig = {
     // Ignore pino-pretty in client-side bundles (only for client-side)
     if (!isServer) {
       const webpack = require("webpack");
+
+      // Ensure plugins array exists
+      if (!config.plugins) {
+        config.plugins = [];
+      }
+
       config.plugins.push(
         new webpack.IgnorePlugin({
           resourceRegExp: /^pino-pretty$/,
@@ -94,16 +105,20 @@ const nextConfig: NextConfig = {
     config.optimization = {
       ...config.optimization,
       splitChunks: {
-        ...config.optimization.splitChunks,
+        ...config.optimization?.splitChunks,
         cacheGroups: {
-          ...config.optimization.splitChunks?.cacheGroups,
-          // CSS styles - high priority to prevent preload issues
+          ...config.optimization?.splitChunks?.cacheGroups,
+          // CSS styles - optimized to prevent preload warnings
           styles: {
             test: /\.(css|scss|sass)$/,
             name: "styles",
-            chunks: "all",
+            chunks: "initial", // Changed from "all" to "initial" to prevent unnecessary preloading
             priority: 40,
             enforce: true,
+            // Only include CSS that's actually used on initial load
+            minChunks: 1,
+            // Prevent automatic preloading of CSS chunks
+            reuseExistingChunk: true,
           },
           // React and core libraries
           react: {
@@ -145,6 +160,20 @@ const nextConfig: NextConfig = {
         },
       },
     };
+
+    // Add plugin to prevent unnecessary CSS preloading
+    const webpack = require("webpack");
+
+    // Safely add DefinePlugin
+    if (!config.plugins) {
+      config.plugins = [];
+    }
+
+    config.plugins.push(
+      new webpack.DefinePlugin({
+        "process.env.DISABLE_CSS_PRELOAD": JSON.stringify("true"),
+      })
+    );
 
     return config;
   },

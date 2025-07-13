@@ -7,11 +7,57 @@ import { useSupabase } from "@/components/SessionProvider";
 import { StaticContentPage } from "@/components/StaticContentPage";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { WalletButton } from "@/components/wallet/WalletButton";
-import { WalletBalance } from "@/components/wallet/WalletBalance";
-import { WalletProfileIntegration } from "@/components/wallet/WalletProfileIntegration";
-import { SolanaWalletButton } from "@/components/wallet/SolanaWalletButton";
-import { SolanaWalletBalance } from "@/components/wallet/SolanaWalletBalance";
+import dynamic from "next/dynamic";
+
+// Dynamic imports for wallet components to reduce bundle size
+const WalletButton = dynamic(() => import("@/components/wallet/WalletButton"), {
+  loading: () => <div className="h-10 bg-gray-200 animate-pulse rounded" />,
+  ssr: false,
+});
+
+const WalletBalance = dynamic(
+  () =>
+    import("@/components/wallet/WalletBalance").then((mod) => ({
+      default: mod.WalletBalance,
+    })),
+  {
+    loading: () => <div className="h-20 bg-gray-200 animate-pulse rounded" />,
+    ssr: false,
+  }
+);
+
+const WalletProfileIntegration = dynamic(
+  () =>
+    import("@/components/wallet/WalletProfileIntegration").then((mod) => ({
+      default: mod.WalletProfileIntegration,
+    })),
+  {
+    loading: () => <div className="h-32 bg-gray-200 animate-pulse rounded" />,
+    ssr: false,
+  }
+);
+
+const SolanaWalletButton = dynamic(
+  () =>
+    import("@/components/wallet/SolanaWalletButton").then((mod) => ({
+      default: mod.SolanaWalletButton,
+    })),
+  {
+    loading: () => <div className="h-10 bg-gray-200 animate-pulse rounded" />,
+    ssr: false,
+  }
+);
+
+const SolanaWalletBalance = dynamic(
+  () =>
+    import("@/components/wallet/SolanaWalletBalance").then((mod) => ({
+      default: mod.SolanaWalletBalance,
+    })),
+  {
+    loading: () => <div className="h-20 bg-gray-200 animate-pulse rounded" />,
+    ssr: false,
+  }
+);
 import { usePersistentWallet } from "@/hooks/usePersistentWallet";
 import {
   Wallet,

@@ -13,7 +13,10 @@ interface PerformanceMetrics {
 export function PerformanceMonitor() {
   useEffect(() => {
     // Only run in production and if performance API is available
-    if (process.env.NODE_ENV !== "production" || typeof window === "undefined") {
+    if (
+      process.env.NODE_ENV !== "production" ||
+      typeof window === "undefined"
+    ) {
       return;
     }
 
@@ -22,15 +25,20 @@ export function PerformanceMonitor() {
     // Measure Core Web Vitals
     const measureWebVitals = () => {
       // First Contentful Paint
-      const fcpEntry = performance.getEntriesByName("first-contentful-paint")[0] as PerformanceEntry;
+      const fcpEntry = performance.getEntriesByName(
+        "first-contentful-paint"
+      )[0] as PerformanceEntry;
       if (fcpEntry) {
         metrics.fcp = fcpEntry.startTime;
       }
 
       // Time to First Byte
-      const navigationEntry = performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming;
+      const navigationEntry = performance.getEntriesByType(
+        "navigation"
+      )[0] as PerformanceNavigationTiming;
       if (navigationEntry) {
-        metrics.ttfb = navigationEntry.responseStart - navigationEntry.requestStart;
+        metrics.ttfb =
+          navigationEntry.responseStart - navigationEntry.requestStart;
       }
 
       // Largest Contentful Paint
@@ -43,7 +51,10 @@ export function PerformanceMonitor() {
               metrics.lcp = lastEntry.startTime;
             }
           });
-          lcpObserver.observe({ type: "largest-contentful-paint", buffered: true });
+          lcpObserver.observe({
+            type: "largest-contentful-paint",
+            buffered: true,
+          });
 
           // First Input Delay
           const fidObserver = new PerformanceObserver((list) => {
@@ -139,13 +150,17 @@ export function usePerformanceMetrics() {
     }
 
     const getMetrics = () => {
-      const navigation = performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming;
-      
+      const navigation = performance.getEntriesByType(
+        "navigation"
+      )[0] as PerformanceNavigationTiming;
+
       return {
-        domContentLoaded: navigation.domContentLoadedEventEnd - navigation.domContentLoadedEventStart,
+        domContentLoaded:
+          navigation.domContentLoadedEventEnd -
+          navigation.domContentLoadedEventStart,
         loadComplete: navigation.loadEventEnd - navigation.loadEventStart,
         firstByte: navigation.responseStart - navigation.requestStart,
-        domInteractive: navigation.domInteractive - navigation.navigationStart,
+        domInteractive: navigation.domInteractive - navigation.fetchStart,
         resourcesLoaded: performance.getEntriesByType("resource").length,
       };
     };
@@ -169,19 +184,21 @@ export function checkPerformanceBudget() {
   const budgets = {
     fcp: 1800, // 1.8s
     lcp: 2500, // 2.5s
-    fid: 100,  // 100ms
-    cls: 0.1,  // 0.1
+    fid: 100, // 100ms
+    cls: 0.1, // 0.1
     ttfb: 600, // 600ms
   };
 
   const checkBudget = (metric: keyof typeof budgets, value: number) => {
     const budget = budgets[metric];
     const isWithinBudget = value <= budget;
-    
+
     if (!isWithinBudget) {
-      console.warn(`Performance budget exceeded for ${metric}: ${value}ms (budget: ${budget}ms)`);
+      console.warn(
+        `Performance budget exceeded for ${metric}: ${value}ms (budget: ${budget}ms)`
+      );
     }
-    
+
     return isWithinBudget;
   };
 

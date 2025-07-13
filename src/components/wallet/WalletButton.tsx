@@ -333,3 +333,5 @@ export function WalletStatus() {
     </ConnectButton.Custom>
   );
 }
+
+export default WalletButton;

@@ -22,11 +22,23 @@ export const supabase = createBrowserClient(
       storage: typeof window !== "undefined" ? window.localStorage : undefined,
       // Disable debug mode to reduce warnings
       debug: false,
+      // Add retry configuration for better connection reliability
+      flowType: "pkce",
     },
-    // Reduce client-side warnings
+    // Enhanced configuration for better connection reliability
     global: {
       headers: {
         "X-Client-Info": "supabase-js-web",
+      },
+    },
+    // Add connection pooling and retry logic
+    db: {
+      schema: "public",
+    },
+    // Realtime configuration for better connection handling
+    realtime: {
+      params: {
+        eventsPerSecond: 10,
       },
     },
   }

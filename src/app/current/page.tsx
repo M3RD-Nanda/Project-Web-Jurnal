@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { getLatestIssue } from "@/lib/issues"; // Import getLatestIssue
 import { getArticlesByIssueId } from "@/lib/articles"; // Import getArticlesByIssueId
-import { notFound } from "next/navigation";
+// import { notFound } from "next/navigation";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
 

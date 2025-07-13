@@ -34,10 +34,6 @@ export async function generateMetadata({
     };
   }
 
-  const ogImageUrl = `${SITE_CONFIG.url}/api/og?title=${encodeURIComponent(
-    article.title
-  )}&subtitle=${encodeURIComponent(`Oleh: ${article.authors}`)}&type=article`;
-
   return generateArticleMetadata({
     title: article.title,
     abstract: article.abstract,

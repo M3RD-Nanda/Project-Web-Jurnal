@@ -107,7 +107,6 @@ export function usePersistentWallet() {
       );
 
       if (savedConnector) {
-        console.log(`Attempting to reconnect to ${walletData.wallet_type}...`);
         connect({ connector: savedConnector });
       }
     } catch (error) {
@@ -135,8 +134,6 @@ export function usePersistentWallet() {
         toast.error("Failed to save wallet connection");
         return;
       }
-
-      console.log("Wallet connection saved successfully");
 
       // Update local state
       setSavedWallet({
@@ -173,8 +170,6 @@ export function usePersistentWallet() {
 
       // Clear local state
       setSavedWallet(null);
-
-      console.log("Wallet disconnected and cleared from database");
     } catch (error) {
       console.error("Error in disconnectAndClear:", error);
       // Still disconnect wallet even if database operation fails

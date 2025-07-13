@@ -230,9 +230,10 @@ export function useConnectorsSafe() {
   }, []);
 
   // Try to call Wagmi hook, but handle errors gracefully
-  let wagmiData = safeData;
+  let wagmiData: any[] = safeData;
   try {
-    wagmiData = useConnectors();
+    const connectors = useConnectors();
+    wagmiData = [...connectors];
   } catch (error) {
     // WagmiProvider not available, use safe data
     wagmiData = safeData;

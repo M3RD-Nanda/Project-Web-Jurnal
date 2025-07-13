@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useSupabase } from "@/components/SessionProvider";
 import { StaticContentPage } from "@/components/StaticContentPage";
@@ -31,7 +31,7 @@ export default function AdminUsersPage() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingUser, setEditingUser] = useState<UserProfile | null>(null);
 
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     setLoading(true);
     if (!session) {
       setLoading(false);
@@ -55,7 +55,7 @@ export default function AdminUsersPage() {
       setUsers([]);
     }
     setLoading(false);
-  };
+  }, [session]);
 
   useEffect(() => {
     if (!session) {
@@ -69,7 +69,7 @@ export default function AdminUsersPage() {
       return;
     }
     fetchUsers();
-  }, [session, profile, router]);
+  }, [session, profile, router, fetchUsers]);
 
   const handleEdit = (user: UserProfile) => {
     setEditingUser(user);

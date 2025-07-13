@@ -1,16 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useSupabase } from "@/components/SessionProvider";
 import { StaticContentPage } from "@/components/StaticContentPage";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Loader2, PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -20,6 +14,7 @@ import { ArticleForm } from "@/components/admin/ArticleForm";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -34,7 +29,7 @@ export default function AdminArticlesPage() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingArticle, setEditingArticle] = useState<Article | null>(null);
 
-  const fetchArticles = async () => {
+  const fetchArticles = useCallback(async () => {
     setLoading(true);
     if (!session) {
       setLoading(false);
@@ -58,7 +53,7 @@ export default function AdminArticlesPage() {
       setArticles([]);
     }
     setLoading(false);
-  };
+  }, [session]);
 
   useEffect(() => {
     if (!session) {
@@ -72,7 +67,7 @@ export default function AdminArticlesPage() {
       return;
     }
     fetchArticles();
-  }, [session, profile, router]);
+  }, [session, profile, router, fetchArticles]);
 
   const handleEdit = (article: Article) => {
     setEditingArticle(article);
@@ -136,11 +131,11 @@ export default function AdminArticlesPage() {
                 <DialogTitle>
                   {editingArticle ? "Edit Artikel" : "Tambah Artikel Baru"}
                 </DialogTitle>
-                <CardDescription>
+                <DialogDescription>
                   {editingArticle
                     ? "Perbarui detail artikel."
                     : "Isi detail untuk artikel baru."}
-                </CardDescription>
+                </DialogDescription>
               </DialogHeader>
               <ArticleForm
                 initialData={editingArticle}

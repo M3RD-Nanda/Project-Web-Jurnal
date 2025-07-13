@@ -1,17 +1,29 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useSupabase } from "@/components/SessionProvider";
 import { StaticContentPage } from "@/components/StaticContentPage";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { toast } from "sonner";
 import { Loader2, PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Issue } from "@/lib/issues";
 import { IssueTable } from "@/components/admin/IssueTable";
 import { IssueForm } from "@/components/admin/IssueForm";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { deleteIssueAction } from "@/actions/issues"; // Import Server Action for delete
 
 export default function AdminIssuesPage() {
@@ -22,15 +34,15 @@ export default function AdminIssuesPage() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingIssue, setEditingIssue] = useState<Issue | null>(null);
 
-  const fetchIssues = async () => {
+  const fetchIssues = useCallback(async () => {
     setLoading(true);
     if (!session) {
       setLoading(false);
       return;
     }
-    const res = await fetch('/api/admin/issues', {
+    const res = await fetch("/api/admin/issues", {
       headers: {
-        'Authorization': `Bearer ${session.access_token}`,
+        Authorization: `Bearer ${session.access_token}`,
       },
     });
     const result = await res.json();
@@ -38,11 +50,13 @@ export default function AdminIssuesPage() {
     if (res.ok) {
       setIssues(result.data);
     } else {
-      toast.error(`Gagal memuat edisi: ${result.error?.message || 'Terjadi kesalahan.'}`);
+      toast.error(
+        `Gagal memuat edisi: ${result.error?.message || "Terjadi kesalahan."}`
+      );
       setIssues([]);
     }
     setLoading(false);
-  };
+  }, [session]);
 
   useEffect(() => {
     if (!session) {
@@ -50,13 +64,13 @@ export default function AdminIssuesPage() {
       router.push("/login");
       return;
     }
-    if (profile && profile.role !== 'admin') {
+    if (profile && profile.role !== "admin") {
       toast.error("Anda tidak memiliki izin untuk mengakses halaman ini.");
       router.push("/");
       return;
     }
     fetchIssues();
-  }, [session, profile, router]);
+  }, [session, profile, router, fetchIssues]);
 
   const handleEdit = (issue: Issue) => {
     setEditingIssue(issue);
@@ -95,7 +109,7 @@ export default function AdminIssuesPage() {
     );
   }
 
-  if (profile.role !== 'admin') {
+  if (profile.role !== "admin") {
     return null; // Redirect handled by useEffect
   }
 
@@ -106,15 +120,24 @@ export default function AdminIssuesPage() {
           <CardTitle className="text-2xl font-bold">Daftar Edisi</CardTitle>
           <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
             <DialogTrigger asChild>
-              <Button onClick={() => { setEditingIssue(null); setIsFormOpen(true); }}>
+              <Button
+                onClick={() => {
+                  setEditingIssue(null);
+                  setIsFormOpen(true);
+                }}
+              >
                 <PlusCircle className="mr-2 h-4 w-4" /> Tambah Edisi
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[600px]">
               <DialogHeader>
-                <DialogTitle>{editingIssue ? "Edit Edisi" : "Tambah Edisi Baru"}</DialogTitle>
+                <DialogTitle>
+                  {editingIssue ? "Edit Edisi" : "Tambah Edisi Baru"}
+                </DialogTitle>
                 <CardDescription>
-                  {editingIssue ? "Perbarui detail edisi." : "Isi detail untuk edisi baru."}
+                  {editingIssue
+                    ? "Perbarui detail edisi."
+                    : "Isi detail untuk edisi baru."}
                 </CardDescription>
               </DialogHeader>
               <IssueForm

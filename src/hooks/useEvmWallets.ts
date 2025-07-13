@@ -80,21 +80,9 @@ export function useEvmWallets(): EvmWalletInfo[] {
 
   // Get wallet icon with centralized configuration - FORCED PRIORITY
   const getWalletIconFromConnector = (connector: Connector): string => {
-    console.log("Getting icon for connector:", {
-      name: connector.name,
-      id: connector.id,
-      connectorIcon: connector.icon,
-    });
-
     // FIRST PRIORITY: Force use our centralized wallet configuration (HIGHEST PRIORITY)
     const walletConfig = getWalletConfig(connector.name);
     if (walletConfig.icon !== DEFAULT_WALLET_ICON) {
-      console.log(
-        "FORCED: Using centralized icon for",
-        connector.name,
-        ":",
-        walletConfig.icon
-      );
       return walletConfig.icon;
     }
 
@@ -119,28 +107,15 @@ export function useEvmWallets(): EvmWalletInfo[] {
     });
 
     if (eip6963Provider && eip6963Provider.icon) {
-      console.log(
-        "Using EIP-6963 icon for",
-        connector.name,
-        ":",
-        eip6963Provider.icon
-      );
       return eip6963Provider.icon;
     }
 
     // Third, try to get icon from connector (LOW PRIORITY)
     if (connector.icon) {
-      console.log(
-        "Using connector icon for",
-        connector.name,
-        ":",
-        connector.icon
-      );
       return connector.icon;
     }
 
     // Fallback to default icon
-    console.log("Using default icon for", connector.name);
     return DEFAULT_WALLET_ICON;
   };
 
@@ -171,16 +146,6 @@ export function useEvmWallets(): EvmWalletInfo[] {
   const wallets = useMemo(() => {
     if (!mounted || !eip6963Mounted) return [];
 
-    console.log("Building wallet list with:", {
-      connectorsCount: connectors.length,
-      eip6963ProvidersCount: eip6963Providers.length,
-      connectors: connectors.map((c) => ({ name: c.name, id: c.id })),
-      eip6963Providers: eip6963Providers.map((p) => ({
-        name: p.name,
-        rdns: p.rdns,
-      })),
-    });
-
     // Track seen wallets to prevent duplicates
     const seenWallets = new Set<string>();
 
@@ -196,7 +161,6 @@ export function useEvmWallets(): EvmWalletInfo[] {
         // Prevent duplicates - use a combination of name and type for uniqueness
         const walletKey = `${name}-${id}`;
         if (seenWallets.has(walletKey)) {
-          console.log(`Skipping duplicate wallet: ${name} (${id})`);
           return false;
         }
 
@@ -205,7 +169,6 @@ export function useEvmWallets(): EvmWalletInfo[] {
           // Only allow one Brave wallet entry
           const braveKey = "brave-wallet";
           if (seenWallets.has(braveKey)) {
-            console.log(`Skipping duplicate Brave wallet: ${name}`);
             return false;
           }
           seenWallets.add(braveKey);
@@ -218,13 +181,6 @@ export function useEvmWallets(): EvmWalletInfo[] {
         const isInstalled = isWalletInstalled(connector);
         const icon = getWalletIconFromConnector(connector);
         const displayName = getWalletDisplayName(connector);
-
-        console.log(`Wallet mapped: ${displayName}`, {
-          id: connector.id,
-          isInstalled,
-          icon: icon.substring(0, 50) + "...",
-          originalName: connector.name,
-        });
 
         return {
           id: connector.id,

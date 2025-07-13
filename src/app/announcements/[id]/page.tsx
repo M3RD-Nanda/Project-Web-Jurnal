@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/card";
 import { format } from "date-fns";
 import { id as dateFnsIdLocale } from "date-fns/locale";
-import { generateAnnouncementMetadata, SITE_CONFIG } from "@/lib/metadata";
+import { generateAnnouncementMetadata } from "@/lib/metadata";
 import type { Metadata } from "next";
 
 type AnnouncementPageProps = {

@@ -54,9 +54,9 @@ export default function TermsOfServicePage() {
       </ul>
       <h3 className="text-2xl font-semibold mt-8">4. Penolakan Jaminan</h3>
       <p>
-        Situs web dan layanan JEBAKA disediakan "sebagaimana adanya" tanpa
-        jaminan dalam bentuk apa pun, baik tersurat maupun tersirat. Kami tidak
-        menjamin bahwa situs web akan bebas dari kesalahan atau gangguan.
+        Situs web dan layanan JEBAKA disediakan &ldquo;sebagaimana adanya&rdquo;
+        tanpa jaminan dalam bentuk apa pun, baik tersurat maupun tersirat. Kami
+        tidak menjamin bahwa situs web akan bebas dari kesalahan atau gangguan.
       </p>
       <h3 className="text-2xl font-semibold mt-8">5. Perubahan Syarat</h3>
       <p>

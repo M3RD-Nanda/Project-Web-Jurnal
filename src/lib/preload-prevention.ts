@@ -39,7 +39,7 @@ export function preventUnnecessaryPreloads() {
             originalSetAttribute.call(this, "rel", "stylesheet");
             originalSetAttribute.call(this, "media", "print");
             this.onload = () => {
-              this.media = "all";
+              (this as any).media = "all";
             };
             return;
           }

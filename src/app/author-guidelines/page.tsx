@@ -53,7 +53,7 @@ export default function AuthorGuidelinesPage() {
       </ul>
       <p>
         Untuk detail lebih lanjut dan template, silakan kunjungi halaman
-        "Article Template".
+        &ldquo;Article Template&rdquo;.
       </p>
     </StaticContentPage>
   );

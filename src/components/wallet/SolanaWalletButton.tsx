@@ -230,19 +230,12 @@ export function SolanaWalletButton({
                   // Handle different types of wallet errors
                   if (error.name === "WalletConnectionError") {
                     // User rejected the connection - this is normal behavior
-                    console.log("User cancelled wallet connection");
                     // Don't close modal, let user try again or choose different wallet
                   } else if (error.name === "WalletNotReadyError") {
                     // Wallet not installed - redirect to install page
-                    console.log(
-                      "Wallet not installed, redirecting to install page"
-                    );
                     // Modal will stay open for user to see other options
                   } else if (error.name === "WalletNotSelectedError") {
                     // Wallet not properly selected - retry with longer delay
-                    console.log(
-                      "Wallet not selected, retrying with longer delay..."
-                    );
                     try {
                       // Try selecting again with a longer delay
                       select(wallet.adapter.name);

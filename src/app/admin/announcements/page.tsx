@@ -1,17 +1,24 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useSupabase } from "@/components/SessionProvider";
 import { StaticContentPage } from "@/components/StaticContentPage";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { Loader2, PlusCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Announcement } from "@/lib/announcements";
 import { AnnouncementTable } from "@/components/admin/AnnouncementTable";
 import { AnnouncementForm } from "@/components/admin/AnnouncementForm";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { deleteAnnouncementAction } from "@/actions/announcements"; // Import Server Action for delete
 
 export default function AdminAnnouncementsPage() {
@@ -20,18 +27,19 @@ export default function AdminAnnouncementsPage() {
   const [loading, setLoading] = useState(true);
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
-  const [editingAnnouncement, setEditingAnnouncement] = useState<Announcement | null>(null);
+  const [editingAnnouncement, setEditingAnnouncement] =
+    useState<Announcement | null>(null);
 
-  const fetchAnnouncements = async () => {
+  const fetchAnnouncements = useCallback(async () => {
     setLoading(true);
     if (!session) {
       setLoading(false);
       return;
     }
     // Fetching data via API route is still fine for GET requests
-    const res = await fetch('/api/admin/announcements', {
+    const res = await fetch("/api/admin/announcements", {
       headers: {
-        'Authorization': `Bearer ${session.access_token}`,
+        Authorization: `Bearer ${session.access_token}`,
       },
     });
     const result = await res.json();
@@ -39,11 +47,15 @@ export default function AdminAnnouncementsPage() {
     if (res.ok) {
       setAnnouncements(result.data);
     } else {
-      toast.error(`Gagal memuat pengumuman: ${result.error?.message || 'Terjadi kesalahan.'}`);
+      toast.error(
+        `Gagal memuat pengumuman: ${
+          result.error?.message || "Terjadi kesalahan."
+        }`
+      );
       setAnnouncements([]);
     }
     setLoading(false);
-  };
+  }, [session]);
 
   useEffect(() => {
     if (!session) {
@@ -51,13 +63,13 @@ export default function AdminAnnouncementsPage() {
       router.push("/login");
       return;
     }
-    if (profile && profile.role !== 'admin') {
+    if (profile && profile.role !== "admin") {
       toast.error("Anda tidak memiliki izin untuk mengakses halaman ini.");
       router.push("/");
       return;
     }
     fetchAnnouncements();
-  }, [session, profile, router]);
+  }, [session, profile, router, fetchAnnouncements]);
 
   const handleEdit = (announcement: Announcement) => {
     setEditingAnnouncement(announcement);
@@ -96,27 +108,45 @@ export default function AdminAnnouncementsPage() {
     );
   }
 
-  if (profile.role !== 'admin') {
+  if (profile.role !== "admin") {
     return null; // Redirect handled by useEffect
   }
 
   return (
     <StaticContentPage title="Kelola Pengumuman">
       <Card className="w-full">
-        <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-2 sm:space-y-0 pb-2"> {/* Adjusted for responsiveness */}
-          <CardTitle className="text-2xl font-bold">Daftar Pengumuman</CardTitle>
+        <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between space-y-2 sm:space-y-0 pb-2">
+          {" "}
+          {/* Adjusted for responsiveness */}
+          <CardTitle className="text-2xl font-bold">
+            Daftar Pengumuman
+          </CardTitle>
           <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
             <DialogTrigger asChild>
-              <Button onClick={() => { setEditingAnnouncement(null); setIsFormOpen(true); }} className="w-full sm:w-auto"> {/* Added w-full sm:w-auto */}
+              <Button
+                onClick={() => {
+                  setEditingAnnouncement(null);
+                  setIsFormOpen(true);
+                }}
+                className="w-full sm:w-auto"
+              >
+                {" "}
+                {/* Added w-full sm:w-auto */}
                 <PlusCircle className="mr-2 h-4 w-4" /> Tambah Pengumuman
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[600px]">
               <DialogHeader>
-                <DialogTitle>{editingAnnouncement ? "Edit Pengumuman" : "Tambah Pengumuman Baru"}</DialogTitle>
-                <CardDescription>
-                  {editingAnnouncement ? "Perbarui detail pengumuman." : "Isi detail untuk pengumuman baru."}
-                </CardDescription>
+                <DialogTitle>
+                  {editingAnnouncement
+                    ? "Edit Pengumuman"
+                    : "Tambah Pengumuman Baru"}
+                </DialogTitle>
+                <DialogDescription>
+                  {editingAnnouncement
+                    ? "Perbarui detail pengumuman."
+                    : "Isi detail untuk pengumuman baru."}
+                </DialogDescription>
               </DialogHeader>
               <AnnouncementForm
                 initialData={editingAnnouncement}

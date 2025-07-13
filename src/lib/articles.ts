@@ -85,9 +85,15 @@ export async function getAllArticles(): Promise<Article[]> {
         keywords: Array.isArray(item.keywords) ? item.keywords : [],
         issueId: item.issue_id ? String(item.issue_id) : null,
         // Tambahkan data edisi jika tersedia
-        issueVolume: item.issues?.volume || undefined,
-        issueNumber: item.issues?.number || undefined,
-        issueYear: item.issues?.year || undefined,
+        issueVolume: Array.isArray(item.issues)
+          ? item.issues[0]?.volume
+          : (item.issues as any)?.volume || undefined,
+        issueNumber: Array.isArray(item.issues)
+          ? item.issues[0]?.number
+          : (item.issues as any)?.number || undefined,
+        issueYear: Array.isArray(item.issues)
+          ? item.issues[0]?.year
+          : (item.issues as any)?.year || undefined,
       };
 
       return mappedItem;

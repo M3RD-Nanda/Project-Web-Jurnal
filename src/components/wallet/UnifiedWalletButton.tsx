@@ -279,23 +279,21 @@ export function UnifiedWalletButton({
             {isEvmConnected && evmAddress && chain && (
               <div className="space-y-3">
                 <div className="flex items-center gap-3 p-3 border rounded-lg">
-                  {chain.hasIcon && (
+                  {chain.icon && (
                     <div
                       style={{
-                        background: chain.iconBackground,
+                        background: chain.color,
                         width: 24,
                         height: 24,
                         borderRadius: 999,
                         overflow: "hidden",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        fontSize: "12px",
                       }}
                     >
-                      {chain.iconUrl && (
-                        <img
-                          alt={chain.name ?? "Chain icon"}
-                          src={chain.iconUrl}
-                          style={{ width: 24, height: 24 }}
-                        />
-                      )}
+                      <span>{chain.icon}</span>
                     </div>
                   )}
                   <div className="flex-1">
@@ -319,7 +317,7 @@ export function UnifiedWalletButton({
                     variant="outline"
                     size="sm"
                     onClick={() => {
-                      const explorerUrl = chain.blockExplorers?.default?.url;
+                      const explorerUrl = chain.blockExplorer;
                       if (explorerUrl) {
                         window.open(
                           `${explorerUrl}/address/${evmAddress}`,
@@ -535,7 +533,6 @@ export function UnifiedWalletButton({
                           // Handle different types of wallet errors
                           if (error.name === "WalletConnectionError") {
                             // User rejected the connection - this is normal behavior
-                            console.log("User cancelled wallet connection");
                             // Don't close modal, let user try again or choose different wallet
                           } else if (error.name === "WalletNotReadyError") {
                             // Wallet not installed - redirect to install page
