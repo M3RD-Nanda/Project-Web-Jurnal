@@ -1,4 +1,5 @@
 import { supabaseAdmin } from "@/integrations/supabase/server"; // Menggunakan supabaseAdmin
+import { validateUUIDWithLogging } from "@/lib/uuid-validation";
 
 export interface Issue {
   id: string;
@@ -11,10 +12,10 @@ export interface Issue {
 
 export async function getAllIssues(): Promise<Issue[]> {
   const { data, error } = await supabaseAdmin // Menggunakan supabaseAdmin untuk GET
-    .from('issues')
-    .select('*')
-    .order('year', { ascending: false })
-    .order('number', { ascending: false });
+    .from("issues")
+    .select("*")
+    .order("year", { ascending: false })
+    .order("number", { ascending: false });
 
   if (error) {
     console.error("Error fetching all issues:", error);
@@ -22,7 +23,7 @@ export async function getAllIssues(): Promise<Issue[]> {
   }
 
   if (data) {
-    return data.map(item => ({
+    return data.map((item) => ({
       id: item.id,
       volume: item.volume,
       number: item.number,
@@ -35,10 +36,15 @@ export async function getAllIssues(): Promise<Issue[]> {
 }
 
 export async function getIssueById(id: string): Promise<Issue | undefined> {
+  // Validate UUID format before making database query
+  if (!validateUUIDWithLogging(id, "getIssueById")) {
+    return undefined;
+  }
+
   const { data, error } = await supabaseAdmin // Menggunakan supabaseAdmin untuk GET
-    .from('issues')
-    .select('*')
-    .eq('id', id)
+    .from("issues")
+    .select("*")
+    .eq("id", id)
     .single();
 
   if (error) {
@@ -61,9 +67,9 @@ export async function getIssueById(id: string): Promise<Issue | undefined> {
 
 export async function getLatestIssue(): Promise<Issue | undefined> {
   const { data, error } = await supabaseAdmin // Menggunakan supabaseAdmin untuk GET
-    .from('issues')
-    .select('*')
-    .order('publication_date', { ascending: false })
+    .from("issues")
+    .select("*")
+    .order("publication_date", { ascending: false })
     .limit(1)
     .single();
 

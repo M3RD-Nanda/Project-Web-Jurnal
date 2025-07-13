@@ -1,4 +1,5 @@
 import { supabaseAdmin } from "@/integrations/supabase/server"; // Menggunakan supabaseAdmin
+import { validateUUIDWithLogging } from "@/lib/uuid-validation";
 import { v4 as uuidv4 } from "uuid"; // Import uuid
 
 export interface Article {
@@ -17,6 +18,11 @@ export interface Article {
 }
 
 export async function getArticleById(id: string): Promise<Article | undefined> {
+  // Validate UUID format before making database query
+  if (!validateUUIDWithLogging(id, "getArticleById")) {
+    return undefined;
+  }
+
   const { data, error } = await supabaseAdmin // Menggunakan supabaseAdmin untuk GET
     .from("articles")
     .select(

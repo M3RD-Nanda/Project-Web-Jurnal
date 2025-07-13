@@ -14,8 +14,8 @@ import { Sidebar } from "@/components/layout/Sidebar";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
 import { PerformanceMonitor } from "@/components/PerformanceMonitor";
-import { ErrorSuppression } from "@/components/ErrorSuppression";
-import { GlobalErrorSuppression } from "@/components/GlobalErrorSuppression";
+import { AccessibilityFixer } from "@/components/AccessibilityFixer";
+import { AccessibilityTest } from "@/components/AccessibilityTest";
 import { recordPageVisit } from "@/actions/analytics";
 import { headers } from "next/headers";
 import { createClient } from "@/integrations/supabase/server"; // Import server client
@@ -173,8 +173,8 @@ export default async function RootLayout({
         <Toaster />
         <MadeWithDyad />
         <PerformanceMonitor />
-        <ErrorSuppression />
-        <GlobalErrorSuppression />
+        <AccessibilityFixer />
+        {process.env.NODE_ENV === "development" && <AccessibilityTest />}
         <SpeedInsights />
         <Analytics />
       </body>

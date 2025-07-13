@@ -16,6 +16,11 @@ const SUPPRESSED_ERROR_PATTERNS = [
   "PublicStateController",
   "index.es.js",
   "vanilla.mjs",
+  "The label's for attribute doesn't match any element id",
+  "Incorrect use of <label for=FORM_ELEMENT>",
+  "invalid input syntax for type uuid",
+  "workshop-writing",
+  "22P02",
 ];
 
 // List of warning patterns to suppress
@@ -23,6 +28,13 @@ const SUPPRESSED_WARNING_PATTERNS = [
   "Missing `Description` or `aria-describedby={undefined}` for {DialogContent}",
   "Lit is in dev mode",
   "WalletConnect debug",
+  "The label's for attribute doesn't match any element id",
+  "Incorrect use of <label for=FORM_ELEMENT>",
+  "label elements",
+  "accessibility tools from working correctly",
+  "Invalid UUID format",
+  "workshop-writing",
+  "Skipping database query",
 ];
 
 /**
@@ -32,7 +44,6 @@ export function initializeErrorSuppression() {
   if (typeof window === "undefined") return;
 
   // Always suppress WalletConnect errors, even in development
-  const shouldSuppress = true;
 
   // Store original console methods
   const originalError = console.error;

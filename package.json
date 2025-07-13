@@ -79,7 +79,7 @@
     "typescript": "^5"
   },
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev --turbopack",
     "build": "next build && node scripts/suppress-production-warnings.js",
     "build:clean": "next build",
     "start": "next start",

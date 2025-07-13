@@ -23,8 +23,8 @@ const nextConfig: NextConfig = {
       "@radix-ui/react-toast",
       "sonner",
     ],
-    // Fix webpack minification issues
-    forceSwcTransforms: true,
+    // Fix webpack minification issues (disabled for Turbopack compatibility)
+    // forceSwcTransforms: true, // Commented out for Turbopack support
     // Note: Removed optimizeCss and cssChunking as they cause build issues
     // CSS optimization is handled through webpack configuration instead
   },

@@ -1,4 +1,5 @@
 import { supabaseAdmin } from "@/integrations/supabase/server"; // Menggunakan supabaseAdmin
+import { validateUUIDWithLogging } from "@/lib/uuid-validation";
 
 export interface Announcement {
   id: string;
@@ -10,9 +11,9 @@ export interface Announcement {
 
 export async function getAllAnnouncements(): Promise<Announcement[]> {
   const { data, error } = await supabaseAdmin // Menggunakan supabaseAdmin untuk GET
-    .from('announcements')
-    .select('*')
-    .order('publication_date', { ascending: false });
+    .from("announcements")
+    .select("*")
+    .order("publication_date", { ascending: false });
 
   if (error) {
     console.error("Error fetching all announcements:", error);
@@ -20,7 +21,7 @@ export async function getAllAnnouncements(): Promise<Announcement[]> {
   }
 
   if (data) {
-    return data.map(item => ({
+    return data.map((item) => ({
       id: item.id,
       title: item.title,
       description: item.description,
@@ -31,11 +32,18 @@ export async function getAllAnnouncements(): Promise<Announcement[]> {
   return [];
 }
 
-export async function getAnnouncementById(id: string): Promise<Announcement | null> {
+export async function getAnnouncementById(
+  id: string
+): Promise<Announcement | null> {
+  // Validate UUID format before making database query
+  if (!validateUUIDWithLogging(id, "getAnnouncementById")) {
+    return null;
+  }
+
   const { data, error } = await supabaseAdmin // Menggunakan supabaseAdmin untuk GET
-    .from('announcements')
-    .select('*')
-    .eq('id', id)
+    .from("announcements")
+    .select("*")
+    .eq("id", id)
     .single();
 
   if (error) {
