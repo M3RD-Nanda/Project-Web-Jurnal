@@ -435,6 +435,15 @@ export function UnifiedWalletButton({
                           // Use connector directly without RainbowKit modal
                           await connectEvm({ connector: wallet.connector });
                         } catch (error: any) {
+                          // Silently handle WalletConnect connection reset errors
+                          if (
+                            error.message?.includes("Connection request reset")
+                          ) {
+                            setIsWalletConnectionModalOpen(false);
+                            // Don't show toast for connection reset errors
+                            return;
+                          }
+
                           const errorInfo = handleWalletError(
                             error,
                             wallet.name
@@ -446,7 +455,7 @@ export function UnifiedWalletButton({
                             case "walletconnect_error":
                               // Don't reopen modal for WalletConnect errors, let user manually retry
                               setIsWalletConnectionModalOpen(false);
-                              toast.error(errorInfo.message);
+                              // Don't show toast for these errors
                               break;
                             case "user_rejected":
                               // User cancelled - don't show error, just close modal

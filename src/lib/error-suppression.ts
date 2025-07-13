@@ -12,6 +12,10 @@ const SUPPRESSED_ERROR_PATTERNS = [
   "lit.dev/msg/dev-mode",
   "WalletConnect",
   "_rsc=",
+  "walletconnect",
+  "PublicStateController",
+  "index.es.js",
+  "vanilla.mjs",
 ];
 
 // List of warning patterns to suppress
@@ -27,12 +31,8 @@ const SUPPRESSED_WARNING_PATTERNS = [
 export function initializeErrorSuppression() {
   if (typeof window === "undefined") return;
 
-  // Only suppress in production or when explicitly enabled
-  const shouldSuppress =
-    process.env.NODE_ENV === "production" ||
-    process.env.NEXT_PUBLIC_SUPPRESS_CONSOLE_ERRORS === "true";
-
-  if (!shouldSuppress) return;
+  // Always suppress WalletConnect errors, even in development
+  const shouldSuppress = true;
 
   // Store original console methods
   const originalError = console.error;
@@ -48,7 +48,14 @@ export function initializeErrorSuppression() {
       message.includes(pattern)
     );
 
-    if (!shouldSuppressError) {
+    // Also check if it's a React error with WalletConnect in the stack
+    const isReactWalletConnectError =
+      message.includes("Error: Connection request reset") ||
+      (args.length > 0 &&
+        args[0] instanceof Error &&
+        args[0].message?.includes("Connection request reset"));
+
+    if (!shouldSuppressError && !isReactWalletConnectError) {
       originalError.apply(console, args);
     }
   };

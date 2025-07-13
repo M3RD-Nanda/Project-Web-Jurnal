@@ -15,6 +15,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
 import { PerformanceMonitor } from "@/components/PerformanceMonitor";
 import { ErrorSuppression } from "@/components/ErrorSuppression";
+import { GlobalErrorSuppression } from "@/components/GlobalErrorSuppression";
 import { recordPageVisit } from "@/actions/analytics";
 import { headers } from "next/headers";
 import { createClient } from "@/integrations/supabase/server"; // Import server client
@@ -28,7 +29,6 @@ import {
 import "@/lib/suppress-warnings";
 import "@/lib/css-optimization";
 import "@/lib/preload-prevention";
-import "@/lib/error-suppression";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -174,6 +174,7 @@ export default async function RootLayout({
         <MadeWithDyad />
         <PerformanceMonitor />
         <ErrorSuppression />
+        <GlobalErrorSuppression />
         <SpeedInsights />
         <Analytics />
       </body>

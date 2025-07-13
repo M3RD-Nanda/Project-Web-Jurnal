@@ -26,11 +26,13 @@ export class WalletErrorBoundary extends Component<Props, State> {
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     // Log the error for debugging
     console.error("Wallet Error Boundary caught an error:", error, errorInfo);
-    
+
     // Check if it's a WalletConnect error
-    if (error.message?.includes("Connection request reset") || 
-        error.message?.includes("walletconnect") ||
-        error.message?.includes("WalletConnect")) {
+    if (
+      error.message?.includes("Connection request reset") ||
+      error.message?.includes("walletconnect") ||
+      error.message?.includes("WalletConnect")
+    ) {
       console.warn("WalletConnect error detected, this is usually recoverable");
     }
   }
@@ -38,18 +40,22 @@ export class WalletErrorBoundary extends Component<Props, State> {
   render() {
     if (this.state.hasError) {
       // You can render any custom fallback UI
-      return this.props.fallback || (
-        <div className="p-4 text-center text-muted-foreground">
-          <p className="text-sm">
-            Wallet connection temporarily unavailable.
-          </p>
-          <button
-            onClick={() => this.setState({ hasError: false, error: undefined })}
-            className="mt-2 text-xs text-blue-600 hover:text-blue-800 underline"
-          >
-            Try again
-          </button>
-        </div>
+      return (
+        this.props.fallback || (
+          <div className="p-4 text-center text-muted-foreground">
+            <p className="text-sm">
+              Wallet connection temporarily unavailable.
+            </p>
+            <button
+              onClick={() =>
+                this.setState({ hasError: false, error: undefined })
+              }
+              className="mt-2 text-xs text-blue-600 hover:text-blue-800 underline"
+            >
+              Try again
+            </button>
+          </div>
+        )
       );
     }
 
@@ -60,8 +66,7 @@ export class WalletErrorBoundary extends Component<Props, State> {
 // Hook for handling wallet connection errors
 export function useWalletErrorHandler() {
   const handleWalletError = (error: any, walletName: string) => {
-    console.error(`${walletName} connection error:`, error);
-
+    // Silently handle known WalletConnect errors
     if (error.message?.includes("Connection request reset")) {
       return {
         type: "connection_reset",
@@ -70,7 +75,11 @@ export function useWalletErrorHandler() {
       };
     }
 
-    if (error.message?.includes("walletconnect") || error.message?.includes("WalletConnect")) {
+    if (
+      error.message?.includes("walletconnect") ||
+      error.message?.includes("WalletConnect")
+    ) {
+      // Silently handle WalletConnect errors
       return {
         type: "walletconnect_error",
         message: "WalletConnect error occurred. Please try again.",
