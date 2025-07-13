@@ -172,6 +172,7 @@ export function generateMetadata(config: SEOConfig): Metadata {
 
     // Additional meta tags for better SEO
     other: {
+      "google-site-verification": "2QDyIzWuQi8ND4icZkWix-PsDxAI1HnxTQC_fbPos-s",
       "theme-color": "#ffffff",
       "color-scheme": "light dark",
       "format-detection": "telephone=no",
