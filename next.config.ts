@@ -9,6 +9,36 @@ const nextConfig: NextConfig = {
     // TypeScript will properly check for type errors during builds
     ignoreBuildErrors: false,
   },
+  // Add security headers as temporary replacement for middleware
+  async headers() {
+    return [
+      {
+        source: "/(.*)",
+        headers: [
+          {
+            key: "X-Frame-Options",
+            value: "DENY",
+          },
+          {
+            key: "X-Content-Type-Options",
+            value: "nosniff",
+          },
+          {
+            key: "Referrer-Policy",
+            value: "strict-origin-when-cross-origin",
+          },
+          {
+            key: "Permissions-Policy",
+            value: "camera=(), microphone=(), geolocation=()",
+          },
+          {
+            key: "X-DNS-Prefetch-Control",
+            value: "on",
+          },
+        ],
+      },
+    ];
+  },
   // Disable source maps in production to avoid 404 errors
   productionBrowserSourceMaps: false,
   // SWC minification is enabled by default in Next.js 15
