@@ -26,12 +26,12 @@ export function UnifiedWalletButtonWrapper({
 
   useEffect(() => {
     setMounted(true);
-    
+
     // Dynamically import the actual component only on client side
     const loadComponent = async () => {
       try {
-        const module = await import("./UnifiedWalletButton");
-        setUnifiedWalletButton(() => module.UnifiedWalletButton);
+        const walletModule = await import("./UnifiedWalletButton");
+        setUnifiedWalletButton(() => walletModule.UnifiedWalletButton);
       } catch (error) {
         console.warn("Failed to load UnifiedWalletButton:", error);
       }
@@ -63,10 +63,6 @@ export function UnifiedWalletButtonWrapper({
 
   // Render the actual component once loaded
   return (
-    <UnifiedWalletButton
-      variant={variant}
-      size={size}
-      className={className}
-    />
+    <UnifiedWalletButton variant={variant} size={size} className={className} />
   );
 }
