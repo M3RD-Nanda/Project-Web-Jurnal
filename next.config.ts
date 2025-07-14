@@ -9,7 +9,7 @@ const nextConfig: NextConfig = {
     // TypeScript will properly check for type errors during builds
     ignoreBuildErrors: false,
   },
-  // Add security headers as temporary replacement for middleware
+  // Enhanced security headers to replace middleware functionality
   async headers() {
     return [
       {
@@ -34,6 +34,33 @@ const nextConfig: NextConfig = {
           {
             key: "X-DNS-Prefetch-Control",
             value: "on",
+          },
+          {
+            key: "X-XSS-Protection",
+            value: "1; mode=block",
+          },
+          {
+            key: "Strict-Transport-Security",
+            value: "max-age=31536000; includeSubDomains",
+          },
+        ],
+      },
+      // Specific caching headers for static assets
+      {
+        source: "/_next/static/(.*)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
+          },
+        ],
+      },
+      {
+        source: "/(.*\\.(js|css|woff|woff2|ttf|otf))",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
           },
         ],
       },

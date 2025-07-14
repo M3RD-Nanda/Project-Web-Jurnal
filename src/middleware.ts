@@ -19,13 +19,10 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // Only match specific routes to avoid Edge Runtime conflicts
-    "/",
-    "/articles/:path*",
-    "/announcements/:path*",
-    "/about/:path*",
-    "/search/:path*",
-    "/profile/:path*",
-    "/wallet/:path*",
+    // Disable middleware temporarily if Edge Runtime issues persist
+    // Security headers are handled by next.config.ts instead
+    // "/",
+    // "/articles/:path*",
+    // "/announcements/:path*",
   ],
 };
