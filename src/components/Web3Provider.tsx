@@ -118,11 +118,38 @@ export function Web3Provider({ children }: Web3ProviderProps) {
     isLoading,
   };
 
-  // Server-side rendering: provide context but no Web3 providers
+  // Server-side rendering: provide context with minimal WagmiProvider
   if (typeof window === "undefined") {
+    // Create a minimal server-side config
+    let serverConfig;
+    try {
+      const { createConfig, http } = require("wagmi");
+      const { mainnet } = require("wagmi/chains");
+
+      serverConfig = createConfig({
+        chains: [mainnet],
+        transports: {
+          [mainnet.id]: http(),
+        },
+        ssr: true,
+      });
+    } catch (error) {
+      console.error("Failed to create server config:", error);
+      // Return without WagmiProvider if config creation fails
+      return (
+        <Web3Context.Provider value={contextValue}>
+          {children}
+        </Web3Context.Provider>
+      );
+    }
+
     return (
       <Web3Context.Provider value={contextValue}>
-        {children}
+        <WagmiProvider config={serverConfig}>
+          <QueryClientProvider client={queryClient}>
+            {children}
+          </QueryClientProvider>
+        </WagmiProvider>
       </Web3Context.Provider>
     );
   }
