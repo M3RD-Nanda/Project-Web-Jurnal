@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Card,
   CardContent,
@@ -21,8 +21,8 @@ interface RatingsClientContentProps {
 export function RatingsClientContent({
   initialRatings,
 }: RatingsClientContentProps) {
-  const [ratings, setRatings] = useState<Rating[]>(initialRatings);
-  const [loading, setLoading] = useState(false); // Tidak lagi memuat data awal di sini
+  const [ratings] = useState<Rating[]>(initialRatings);
+  // const [loading, setLoading] = useState(false); // Not used currently
 
   // Jika Anda perlu mengambil ulang rating di klien (misalnya, setelah rating baru dikirim),
   // Anda akan menambahkan useEffect di sini atau fungsi refresh.
@@ -35,11 +35,7 @@ export function RatingsClientContent({
         Akuntansi Mahasiswa (JEBAKA).
       </p>
 
-      {loading ? (
-        <div className="text-center text-muted-foreground p-8">
-          Memuat rating...
-        </div>
-      ) : ratings.length === 0 ? (
+      {ratings.length === 0 ? (
         <div className="text-center text-muted-foreground p-8 border rounded-md bg-muted/20">
           Belum ada rating yang tersedia saat ini. Jadilah yang pertama
           memberikan rating!

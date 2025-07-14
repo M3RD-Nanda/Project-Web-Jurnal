@@ -245,8 +245,10 @@ export function createCachedJSONResponse<T>(
  * Invalidate API cache by pattern
  */
 export function invalidateAPICache(pattern: string): void {
-  const { invalidateCache } = require("./memory-cache");
-  invalidateCache(`api:${pattern}`);
+  // Dynamic import to avoid require()
+  import("./memory-cache").then(({ invalidateCache }) => {
+    invalidateCache(`api:${pattern}`);
+  });
 }
 
 /**

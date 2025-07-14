@@ -14,7 +14,7 @@ import { Edit, Trash2 } from "lucide-react";
 import { Issue } from "@/lib/issues";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
-import Link from "next/link";
+// import Link from "next/link"; // Not used currently
 
 interface IssueTableProps {
   issues: Issue[];
@@ -25,7 +25,9 @@ interface IssueTableProps {
 export function IssueTable({ issues, onEdit, onDelete }: IssueTableProps) {
   if (issues.length === 0) {
     return (
-      <p className="text-center text-muted-foreground p-4">Belum ada edisi yang tersedia.</p>
+      <p className="text-center text-muted-foreground p-4">
+        Belum ada edisi yang tersedia.
+      </p>
     );
   }
 
@@ -48,15 +50,29 @@ export function IssueTable({ issues, onEdit, onDelete }: IssueTableProps) {
               <TableCell className="font-medium">{issue.volume}</TableCell>
               <TableCell>{issue.number}</TableCell>
               <TableCell>{issue.year}</TableCell>
-              <TableCell>{format(new Date(issue.publicationDate), "dd MMMM yyyy", { locale: id })}</TableCell>
-              <TableCell className="line-clamp-2 max-w-[200px]">{issue.description || "-"}</TableCell>
+              <TableCell>
+                {format(new Date(issue.publicationDate), "dd MMMM yyyy", {
+                  locale: id,
+                })}
+              </TableCell>
+              <TableCell className="line-clamp-2 max-w-[200px]">
+                {issue.description || "-"}
+              </TableCell>
               <TableCell className="text-right">
                 <div className="flex justify-end gap-2">
-                  <Button variant="ghost" size="icon" onClick={() => onEdit(issue)}>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => onEdit(issue)}
+                  >
                     <Edit className="h-4 w-4" />
                     <span className="sr-only">Edit</span>
                   </Button>
-                  <Button variant="ghost" size="icon" onClick={() => onDelete(issue.id)}>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => onDelete(issue.id)}
+                  >
                     <Trash2 className="h-4 w-4" />
                     <span className="sr-only">Hapus</span>
                   </Button>

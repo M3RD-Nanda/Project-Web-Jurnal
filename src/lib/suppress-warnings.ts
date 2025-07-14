@@ -37,6 +37,16 @@ export function suppressDevWarnings() {
     "preloaded intentionally",
     "_next/static/css/",
     "_next/static/chunks/",
+    // Specific Next.js server chunk patterns
+    "root-of-the-server",
+    "%5Broot-of-the-server%5D",
+    "[root-of-the-server]",
+    "__cf301ea5",
+    "_.css",
+    // URL encoded patterns
+    "%5B",
+    "%5D",
+    // Common CSS file patterns
     "web3.css",
     "layout.css",
     "app/layout.css",
@@ -55,6 +65,8 @@ export function suppressDevWarnings() {
     "from the window's load event",
     "http://localhost:3000/_next/static/css/",
     "https://localhost:3000/_next/static/css/",
+    "http://localhost:3000/_next/static/chunks/",
+    "https://localhost:3000/_next/static/chunks/",
     // Wallet-related debug messages and warnings
     "WalletConnect",
     "walletconnect",
@@ -98,6 +110,19 @@ export function suppressDevWarnings() {
     // Check for CSS file patterns
     const cssPattern = /_next\/static\/css\/.*\.css/;
     if (cssPattern.test(message) && message.includes("preload")) {
+      return true;
+    }
+
+    // Check for chunks pattern specifically
+    const chunksPattern = /_next\/static\/chunks\/.*\.css/;
+    if (chunksPattern.test(message) && message.includes("preload")) {
+      return true;
+    }
+
+    // Check for root-of-the-server pattern specifically
+    const serverPattern =
+      /root-of-the-server|%5Broot-of-the-server%5D|\[root-of-the-server\]/;
+    if (serverPattern.test(message) && message.includes("preload")) {
       return true;
     }
 

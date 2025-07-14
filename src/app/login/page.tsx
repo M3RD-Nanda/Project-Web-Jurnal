@@ -40,7 +40,7 @@ export default function LoginPage() {
             );
             if (!correspondingInput) {
               // Try to find the input by other means (next sibling, parent-child relationship)
-              let targetInput = label.nextElementSibling;
+              const targetInput = label.nextElementSibling;
               if (
                 targetInput &&
                 (targetInput.tagName === "INPUT" ||

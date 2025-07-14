@@ -33,7 +33,14 @@ export function preventUnnecessaryPreloads() {
               href.includes("wagmi") ||
               href.includes("@rainbow-me") ||
               href.includes("chunks/") ||
-              href.includes("app/layout"))
+              href.includes("app/layout") ||
+              href.includes("root-of-the-server") ||
+              href.includes("%5Broot-of-the-server%5D") ||
+              href.includes("[root-of-the-server]") ||
+              href.includes("__cf301ea5") ||
+              href.includes("_.css") ||
+              href.includes("%5B") ||
+              href.includes("%5D"))
           ) {
             // Convert to lazy loading instead of preload
             originalSetAttribute.call(this, "rel", "stylesheet");
@@ -69,7 +76,14 @@ export function preventUnnecessaryPreloads() {
           href.includes("wagmi") ||
           href.includes("@rainbow-me") ||
           href.includes("chunks/") ||
-          href.includes("app/layout")
+          href.includes("app/layout") ||
+          href.includes("root-of-the-server") ||
+          href.includes("%5Broot-of-the-server%5D") ||
+          href.includes("[root-of-the-server]") ||
+          href.includes("__cf301ea5") ||
+          href.includes("_.css") ||
+          href.includes("%5B") ||
+          href.includes("%5D")
         ) {
           // Convert to lazy loading
           link.setAttribute("rel", "stylesheet");
@@ -111,7 +125,14 @@ export function preventUnnecessaryPreloads() {
                   href.includes("wagmi") ||
                   href.includes("@rainbow-me") ||
                   href.includes("chunks/") ||
-                  href.includes("app/layout")
+                  href.includes("app/layout") ||
+                  href.includes("root-of-the-server") ||
+                  href.includes("%5Broot-of-the-server%5D") ||
+                  href.includes("[root-of-the-server]") ||
+                  href.includes("__cf301ea5") ||
+                  href.includes("_.css") ||
+                  href.includes("%5B") ||
+                  href.includes("%5D")
                 ) {
                   element.setAttribute("rel", "stylesheet");
                   element.setAttribute("media", "print");

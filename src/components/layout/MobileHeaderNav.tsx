@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
 import { ModeToggle } from "@/components/ui/mode-toggle";
 import { Session } from "@supabase/supabase-js";
 import { useSupabase } from "@/components/SessionProvider";
-import { UnifiedWalletButton } from "@/components/wallet/UnifiedWalletButton";
+import { UnifiedWalletButtonWrapper as UnifiedWalletButton } from "@/components/wallet/UnifiedWalletButtonWrapper";
 
 interface MobileHeaderNavProps {
   navItems: { name: string; href: string }[];

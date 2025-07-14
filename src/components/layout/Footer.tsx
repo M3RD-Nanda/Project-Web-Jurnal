@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export function Footer() {
   // Initialize currentYear directly with the current year to prevent hydration mismatch
-  const [currentYear, setCurrentYear] = useState(new Date().getFullYear());
+  const [currentYear] = useState(new Date().getFullYear());
 
   // The useEffect is no longer needed for setting the year, but can be kept if there's
   // any other client-side logic that needs to run after mount.

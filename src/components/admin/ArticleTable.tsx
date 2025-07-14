@@ -14,7 +14,7 @@ import { Edit, Trash2 } from "lucide-react";
 import { Article } from "@/lib/articles";
 import { format } from "date-fns";
 import { id } from "date-fns/locale";
-import Link from "next/link";
+// import Link from "next/link"; // Not used currently
 
 interface ArticleTableProps {
   articles: Article[];

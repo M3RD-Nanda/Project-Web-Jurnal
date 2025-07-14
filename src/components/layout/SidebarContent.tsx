@@ -2,36 +2,36 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
+// import { Input } from "@/components/ui/input";
+// import { Label } from "@/components/ui/label";
+// import { Checkbox } from "@/components/ui/checkbox";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { usePathname } from "next/navigation";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/components/ui/form";
-import { toast } from "sonner";
+// import { useForm } from "react-hook-form";
+// import { zodResolver } from "@hookform/resolvers/zod";
+// import * as z from "zod";
+// import {
+//   Form,
+//   FormControl,
+//   FormField,
+//   FormItem,
+//   FormLabel,
+//   FormMessage,
+// } from "@/components/ui/form";
+// import { toast } from "sonner";
 import { AnalyticsMinimal } from "@/components/AnalyticsMinimal";
-import { AnalyticsDebug } from "@/components/AnalyticsDebug";
+// import { AnalyticsDebug } from "@/components/AnalyticsDebug";
 
 import { useSupabase } from "@/components/SessionProvider";
 import { RatingDialog } from "@/components/RatingDialog";
 import { useLogout } from "@/hooks/useLogout";
 
-const sidebarLoginFormSchema = z.object({
-  username: z.string().min(1, { message: "Nama pengguna tidak boleh kosong." }),
-  password: z
-    .string()
-    .min(6, { message: "Kata sandi harus minimal 6 karakter." }),
-});
+// const sidebarLoginFormSchema = z.object({
+//   username: z.string().min(1, { message: "Nama pengguna tidak boleh kosong." }),
+//   password: z
+//     .string()
+//     .min(6, { message: "Kata sandi harus minimal 6 karakter." }),
+// });
 
 const sidebarNavItems = [
   { name: "INCORPORATED WITH", href: "/incorporated" },
@@ -58,20 +58,21 @@ interface SidebarContentProps {
 
 export function SidebarContent({ onLinkClick }: SidebarContentProps) {
   const pathname = usePathname();
-  const { supabase, session, profile } = useSupabase();
+  const { session, profile } = useSupabase();
   const { logout } = useLogout();
 
-  const form = useForm<z.infer<typeof sidebarLoginFormSchema>>({
-    resolver: zodResolver(sidebarLoginFormSchema),
-    defaultValues: {
-      username: "",
-      password: "",
-    },
-  });
+  // Form handling commented out as it's not currently used
+  // const form = useForm<z.infer<typeof sidebarLoginFormSchema>>({
+  //   resolver: zodResolver(sidebarLoginFormSchema),
+  //   defaultValues: {
+  //     username: "",
+  //     password: "",
+  //   },
+  // });
 
-  function onSubmit(values: z.infer<typeof sidebarLoginFormSchema>) {
-    toast.info("Login ditangani di halaman Login utama.");
-  }
+  // function onSubmit(values: z.infer<typeof sidebarLoginFormSchema>) {
+  //   toast.info("Login ditangani di halaman Login utama.");
+  // }
 
   const handleLogout = async () => {
     await logout();

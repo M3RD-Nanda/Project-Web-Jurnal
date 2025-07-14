@@ -18,7 +18,13 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 
@@ -33,7 +39,9 @@ const userFormSchema = z.object({
   middle_name: z.string().optional(),
   last_name: z.string().min(1, "Nama belakang wajib diisi."),
   initials: z.string().optional(),
-  gender: z.enum(["Laki-laki", "Perempuan", "Lainnya", "Tidak Disebutkan"]).optional(),
+  gender: z
+    .enum(["Laki-laki", "Perempuan", "Lainnya", "Tidak Disebutkan"])
+    .optional(),
   affiliation: z.string().optional(),
   signature: z.string().optional(),
   orcid_id: z.string().optional(),
@@ -45,7 +53,11 @@ const userFormSchema = z.object({
   country: z.string().optional(),
   is_reader: z.boolean(),
   is_author: z.boolean(),
-  profile_image_url: z.string().url("URL gambar profil tidak valid.").or(z.literal("")).optional(),
+  profile_image_url: z
+    .string()
+    .url("URL gambar profil tidak valid.")
+    .or(z.literal(""))
+    .optional(),
   role: z.enum(["user", "admin", "editor", "reviewer"]),
 });
 
@@ -70,7 +82,8 @@ export function UserForm({ initialData, onSuccess, onCancel }: UserFormProps) {
       middle_name: initialData.middle_name ?? "", // Changed to ""
       last_name: initialData.last_name ?? "",
       initials: initialData.initials ?? "", // Changed to ""
-      gender: (initialData.gender as UserFormValues['gender']) ?? "Tidak Disebutkan",
+      gender:
+        (initialData.gender as UserFormValues["gender"]) ?? "Tidak Disebutkan",
       affiliation: initialData.affiliation ?? "", // Changed to ""
       signature: initialData.signature ?? "", // Changed to ""
       orcid_id: initialData.orcid_id ?? "", // Changed to ""
@@ -83,14 +96,14 @@ export function UserForm({ initialData, onSuccess, onCancel }: UserFormProps) {
       is_reader: initialData.is_reader,
       is_author: initialData.is_author,
       profile_image_url: initialData.profile_image_url ?? "", // Changed to ""
-      role: (initialData.role as UserFormValues['role']) || "user",
+      role: (initialData.role as UserFormValues["role"]) || "user",
     },
     mode: "onChange",
   });
 
   async function onSubmit(values: UserFormValues) {
     setIsSubmitting(true);
-    
+
     const profileData = {
       username: values.username || null,
       salutation: values.salutation || null,
@@ -118,7 +131,11 @@ export function UserForm({ initialData, onSuccess, onCancel }: UserFormProps) {
       last_name: values.last_name,
     };
 
-    const { data, error } = await updateProfileAdminAction(initialData.id, profileData, authMetadata);
+    const { error } = await updateProfileAdminAction(
+      initialData.id,
+      profileData,
+      authMetadata
+    );
 
     if (error) {
       toast.error(`Gagal memperbarui pengguna: ${error.message}`);
@@ -141,7 +158,9 @@ export function UserForm({ initialData, onSuccess, onCancel }: UserFormProps) {
               <FormControl>
                 <Input type="email" disabled {...field} />
               </FormControl>
-              <FormDescription>Email tidak dapat diubah dari sini.</FormDescription>
+              <FormDescription>
+                Email tidak dapat diubah dari sini.
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -217,7 +236,10 @@ export function UserForm({ initialData, onSuccess, onCancel }: UserFormProps) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Salutation</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Pilih Salutation" />
@@ -241,7 +263,10 @@ export function UserForm({ initialData, onSuccess, onCancel }: UserFormProps) {
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Gender</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Pilih Gender" />
@@ -251,7 +276,9 @@ export function UserForm({ initialData, onSuccess, onCancel }: UserFormProps) {
                     <SelectItem value="Laki-laki">Laki-laki</SelectItem>
                     <SelectItem value="Perempuan">Perempuan</SelectItem>
                     <SelectItem value="Lainnya">Lainnya</SelectItem>
-                    <SelectItem value="Tidak Disebutkan">Tidak Disebutkan</SelectItem>
+                    <SelectItem value="Tidak Disebutkan">
+                      Tidak Disebutkan
+                    </SelectItem>
                   </SelectContent>
                 </Select>
                 <FormMessage />
@@ -266,7 +293,10 @@ export function UserForm({ initialData, onSuccess, onCancel }: UserFormProps) {
             <FormItem>
               <FormLabel>Affiliation</FormLabel>
               <FormControl>
-                <Textarea placeholder="Your institution, e.g. 'Simon Fraser University'" {...field} />
+                <Textarea
+                  placeholder="Your institution, e.g. 'Simon Fraser University'"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -309,7 +339,12 @@ export function UserForm({ initialData, onSuccess, onCancel }: UserFormProps) {
           />
         </div>
         <div className="flex justify-end gap-2 pt-4">
-          <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onCancel}
+            disabled={isSubmitting}
+          >
             Batal
           </Button>
           <Button type="submit" disabled={isSubmitting}>

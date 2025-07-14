@@ -4,13 +4,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { ModeToggle } from "@/components/ui/mode-toggle";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 import { MobileNav } from "./MobileNav";
 import { useSupabase } from "@/components/SessionProvider";
-import { toast } from "sonner";
 import { MobileHeaderNav } from "./MobileHeaderNav";
-import { UnifiedWalletButton } from "@/components/wallet/UnifiedWalletButton";
+import { UnifiedWalletButtonWrapper as UnifiedWalletButton } from "@/components/wallet/UnifiedWalletButtonWrapper";
 import { useLogout } from "@/hooks/useLogout";
 
 export function Header() {

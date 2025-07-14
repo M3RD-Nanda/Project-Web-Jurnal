@@ -16,7 +16,7 @@ import { Analytics } from "@vercel/analytics/next";
 import { PerformanceMonitor } from "@/components/PerformanceMonitor";
 import { recordPageVisit } from "@/actions/analytics";
 import { headers } from "next/headers";
-
+import { createClient } from "@/integrations/supabase/server"; // Import server client
 import {
   generateMetadata as generateSEOMetadata,
   SITE_CONFIG,
@@ -110,7 +110,14 @@ export default async function RootLayout({
                           href.includes('wagmi') ||
                           href.includes('@rainbow-me') ||
                           href.includes('chunks/') ||
-                          href.includes('app/layout')
+                          href.includes('app/layout') ||
+                          href.includes('root-of-the-server') ||
+                          href.includes('%5Broot-of-the-server%5D') ||
+                          href.includes('[root-of-the-server]') ||
+                          href.includes('__cf301ea5') ||
+                          href.includes('_.css') ||
+                          href.includes('%5B') ||
+                          href.includes('%5D')
                         )) {
                           originalSetAttribute.call(this, 'rel', 'stylesheet');
                           originalSetAttribute.call(this, 'media', 'print');
@@ -171,7 +178,6 @@ export default async function RootLayout({
         <Toaster />
         <MadeWithDyad />
         <PerformanceMonitor />
-
         <SpeedInsights />
         <Analytics />
       </body>

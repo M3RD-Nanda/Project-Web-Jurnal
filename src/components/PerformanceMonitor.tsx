@@ -84,7 +84,9 @@ export function PerformanceMonitor() {
           setTimeout(() => {
             sendMetrics(metrics);
           }, 5000);
-        } catch (error) {}
+        } catch {
+          // Silently handle errors
+        }
       }
     };
 
@@ -166,6 +168,7 @@ export function usePerformanceMetrics() {
     window.addEventListener("load", () => {
       setTimeout(() => {
         const metrics = getMetrics();
+        console.log("Performance metrics:", metrics);
       }, 1000);
     });
   }, []);

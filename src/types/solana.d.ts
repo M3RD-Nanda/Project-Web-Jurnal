@@ -8,8 +8,8 @@ interface SolanaWalletProvider {
   signTransaction?(transaction: any): Promise<any>;
   signAllTransactions?(transactions: any[]): Promise<any[]>;
   signMessage?(message: Uint8Array): Promise<{ signature: Uint8Array }>;
-  on(event: string, callback: Function): void;
-  off(event: string, callback: Function): void;
+  on(event: string, callback: (...args: any[]) => void): void;
+  off(event: string, callback: (...args: any[]) => void): void;
 }
 
 declare global {

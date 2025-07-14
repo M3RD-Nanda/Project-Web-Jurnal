@@ -29,7 +29,15 @@ export function optimizeCSSLoading() {
                 href.includes("rainbow") ||
                 href.includes("rainbowkit") ||
                 href.includes("wagmi") ||
-                href.includes("@rainbow-me"))
+                href.includes("@rainbow-me") ||
+                href.includes("chunks/") ||
+                href.includes("root-of-the-server") ||
+                href.includes("%5Broot-of-the-server%5D") ||
+                href.includes("[root-of-the-server]") ||
+                href.includes("__cf301ea5") ||
+                href.includes("_.css") ||
+                href.includes("%5B") ||
+                href.includes("%5D"))
             ) {
               // Convert preload to regular stylesheet loading
               element.setAttribute("rel", "stylesheet");
@@ -51,7 +59,15 @@ export function optimizeCSSLoading() {
                 href.includes("rainbow") ||
                 href.includes("rainbowkit") ||
                 href.includes("wagmi") ||
-                href.includes("@rainbow-me"))
+                href.includes("@rainbow-me") ||
+                href.includes("chunks/") ||
+                href.includes("root-of-the-server") ||
+                href.includes("%5Broot-of-the-server%5D") ||
+                href.includes("[root-of-the-server]") ||
+                href.includes("__cf301ea5") ||
+                href.includes("_.css") ||
+                href.includes("%5B") ||
+                href.includes("%5D"))
             ) {
               link.setAttribute("rel", "stylesheet");
               link.removeAttribute("as");

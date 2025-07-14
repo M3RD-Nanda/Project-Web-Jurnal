@@ -3,15 +3,15 @@
 import React, { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { 
-  getDailyVisits, 
-  getVisitorStats, 
+import {
+  getDailyVisits,
+  getVisitorStats,
   getTopPages,
   DailyVisitData,
   VisitorStats,
-  TopPage
+  TopPage,
 } from "@/lib/analytics";
-import { Users, Activity, TrendingUp } from "lucide-react";
+import { Activity } from "lucide-react";
 
 export function AnalyticsDebug() {
   const [dailyData, setDailyData] = useState<DailyVisitData[]>([]);
@@ -23,20 +23,17 @@ export function AnalyticsDebug() {
   const fetchData = async () => {
     setLoading(true);
     setError(null);
-    
+
     try {
-      
       // Fetch data sequentially for better debugging
       const daily = await getDailyVisits(7);
       setDailyData(daily);
-      
+
       const stats = await getVisitorStats();
       setVisitorStats(stats);
-      
+
       const pages = await getTopPages(7);
       setTopPages(pages);
-      
-      
     } catch (err) {
       console.error("[AnalyticsDebug] Error:", err);
       setError(err instanceof Error ? err.message : "Unknown error");
@@ -50,7 +47,7 @@ export function AnalyticsDebug() {
   }, []);
 
   const totalVisitors = dailyData.reduce((sum, day) => sum + day.visitors, 0);
-  const maxVisitors = Math.max(...dailyData.map(day => day.visitors));
+  const maxVisitors = Math.max(...dailyData.map((day) => day.visitors));
 
   return (
     <Card className="w-full">
@@ -64,13 +61,13 @@ export function AnalyticsDebug() {
         <Button onClick={fetchData} disabled={loading} className="w-full">
           {loading ? "Loading..." : "Refresh Data"}
         </Button>
-        
+
         {error && (
           <div className="p-3 bg-red-100 text-red-800 rounded">
             <strong>Error:</strong> {error}
           </div>
         )}
-        
+
         {/* Quick Stats */}
         <div className="grid grid-cols-3 gap-4 text-center">
           <div className="p-3 bg-blue-50 rounded">
@@ -92,14 +89,15 @@ export function AnalyticsDebug() {
             <div className="text-xs text-purple-500">Halaman</div>
           </div>
         </div>
-        
+
         {/* Mini Chart */}
         {dailyData.length > 0 && (
           <div className="space-y-2">
             <h4 className="text-sm font-semibold">7 Hari Terakhir</h4>
             <div className="space-y-1">
               {dailyData.map((day, index) => {
-                const percentage = maxVisitors > 0 ? (day.visitors / maxVisitors) * 100 : 0;
+                const percentage =
+                  maxVisitors > 0 ? (day.visitors / maxVisitors) * 100 : 0;
                 return (
                   <div key={index} className="flex items-center gap-2 text-xs">
                     <div className="w-8 text-right">{day.date}</div>
@@ -116,7 +114,7 @@ export function AnalyticsDebug() {
             </div>
           </div>
         )}
-        
+
         {/* Top Pages */}
         {topPages.length > 0 && (
           <div className="space-y-2">

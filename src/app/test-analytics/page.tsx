@@ -31,7 +31,6 @@ export default function TestAnalyticsPage() {
     setError(null);
 
     try {
-
       // Test direct RPC call first
       const { supabase } = await import("@/integrations/supabase/client");
 
@@ -39,6 +38,8 @@ export default function TestAnalyticsPage() {
         start_date: "2025-07-03T00:00:00.000Z",
         end_date: "2025-07-10T23:59:59.999Z",
       });
+
+      console.log("RPC Result:", rpcResult);
 
       // Test getDailyVisits
       const daily = await getDailyVisits(7);

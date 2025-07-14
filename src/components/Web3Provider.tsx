@@ -127,48 +127,70 @@ export function Web3Provider({ children }: Web3ProviderProps) {
     );
   }
 
-  // Client-side but not yet mounted: provide context with loading state
-  if (!mounted || isLoading) {
-    return (
-      <Web3Context.Provider value={contextValue}>
-        {children}
-      </Web3Context.Provider>
-    );
-  }
-
   // Always provide WagmiProvider to prevent hook errors
-  const finalConfig = config || getWagmiConfig();
+  let finalConfig = config || getWagmiConfig();
 
-  if (finalConfig) {
-    if (isWeb3Available) {
-      // Full Web3 setup with RainbowKit
+  // If config is still null, create a minimal fallback config
+  if (!finalConfig) {
+    try {
+      const { createConfig, http } = require("wagmi");
+      const { mainnet } = require("wagmi/chains");
+
+      finalConfig = createConfig({
+        chains: [mainnet],
+        transports: {
+          [mainnet.id]: http(),
+        },
+        ssr: true,
+      });
+    } catch (error) {
+      console.error("Failed to create fallback config:", error);
+      // Return minimal provider without Wagmi if all else fails
       return (
         <Web3Context.Provider value={contextValue}>
-          <WagmiProvider config={finalConfig}>
-            <QueryClientProvider client={queryClient}>
-              <RainbowKitThemeProvider>{children}</RainbowKitThemeProvider>
-            </QueryClientProvider>
-          </WagmiProvider>
-        </Web3Context.Provider>
-      );
-    } else {
-      // Minimal setup without RainbowKit
-      return (
-        <Web3Context.Provider value={contextValue}>
-          <WagmiProvider config={finalConfig}>
-            <QueryClientProvider client={queryClient}>
-              {children}
-            </QueryClientProvider>
-          </WagmiProvider>
+          {children}
         </Web3Context.Provider>
       );
     }
   }
 
-  // Last resort: just provide context only
-  return (
-    <Web3Context.Provider value={contextValue}>{children}</Web3Context.Provider>
-  );
+  // Client-side but not yet mounted: provide context with loading state but still include WagmiProvider
+  if (!mounted || isLoading) {
+    return (
+      <Web3Context.Provider value={contextValue}>
+        <WagmiProvider config={finalConfig}>
+          <QueryClientProvider client={queryClient}>
+            {children}
+          </QueryClientProvider>
+        </WagmiProvider>
+      </Web3Context.Provider>
+    );
+  }
+
+  // At this point we should always have a valid config
+  if (isWeb3Available) {
+    // Full Web3 setup with RainbowKit
+    return (
+      <Web3Context.Provider value={contextValue}>
+        <WagmiProvider config={finalConfig}>
+          <QueryClientProvider client={queryClient}>
+            <RainbowKitThemeProvider>{children}</RainbowKitThemeProvider>
+          </QueryClientProvider>
+        </WagmiProvider>
+      </Web3Context.Provider>
+    );
+  } else {
+    // Minimal setup without RainbowKit
+    return (
+      <Web3Context.Provider value={contextValue}>
+        <WagmiProvider config={finalConfig}>
+          <QueryClientProvider client={queryClient}>
+            {children}
+          </QueryClientProvider>
+        </WagmiProvider>
+      </Web3Context.Provider>
+    );
+  }
 }
 
 // Hook to check if Web3 is available

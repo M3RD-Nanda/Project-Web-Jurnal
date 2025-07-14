@@ -12,7 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Label } from "@/components/ui/label";
+// import { Label } from "@/components/ui/label";
 import { Star } from "lucide-react";
 import { cn } from "@/lib/utils"; // Perbaikan di sini: Mengubah '=>' menjadi 'from'
 import { useForm } from "react-hook-form";
@@ -46,7 +46,7 @@ export function RatingDialog({ children }: RatingDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [stars, setStars] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [userName, setUserName] = useState("");
+  // const [userName, setUserName] = useState(""); // Not used currently
 
   const form = useForm<RatingFormValues>({
     resolver: zodResolver(ratingFormSchema),
@@ -66,11 +66,9 @@ export function RatingDialog({ children }: RatingDialogProps) {
         if (!error && user) {
           const name =
             user.user_metadata?.first_name || user.email?.split("@")[0] || "";
-          setUserName(name);
           form.setValue("name", name);
         }
       } else {
-        setUserName("");
         form.setValue("name", "");
       }
     };

@@ -71,7 +71,7 @@ import {
 
 export default function WalletPage() {
   const { address, isConnected } = useAccountSafe();
-  const { session, profile } = useSupabase();
+  const { session } = useSupabase();
 
   // Initialize persistent wallet functionality
   usePersistentWallet();

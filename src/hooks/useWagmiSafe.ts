@@ -35,14 +35,8 @@ export function useAccountSafe() {
     setMounted(true);
   }, []);
 
-  // Try to call Wagmi hook, but handle errors gracefully
-  let wagmiData = safeData;
-  try {
-    wagmiData = useAccount();
-  } catch (error) {
-    // WagmiProvider not available, use safe data
-    wagmiData = safeData;
-  }
+  // Always call hooks unconditionally to follow React rules
+  const wagmiData = useAccount();
 
   // Only return wagmi data if Web3 is available and mounted
   return mounted && isWeb3Available && !isLoading ? wagmiData : safeData;
@@ -63,14 +57,8 @@ export function useBalanceSafe(config?: { address?: `0x${string}` }) {
     setMounted(true);
   }, []);
 
-  // Try to call Wagmi hook, but handle errors gracefully
-  let wagmiData = safeData;
-  try {
-    wagmiData = useBalance(config);
-  } catch (error) {
-    // WagmiProvider not available, use safe data
-    wagmiData = safeData;
-  }
+  // Always call hooks unconditionally to follow React rules
+  const wagmiData = useBalance(config);
 
   // Only return wagmi data if Web3 is available and mounted
   return mounted && isWeb3Available && !isLoading ? wagmiData : safeData;
@@ -86,14 +74,8 @@ export function useChainIdSafe() {
     setMounted(true);
   }, []);
 
-  // Try to call Wagmi hook, but handle errors gracefully
-  let wagmiData = safeData;
-  try {
-    wagmiData = useChainId();
-  } catch (error) {
-    // WagmiProvider not available, use safe data
-    wagmiData = safeData;
-  }
+  // Always call hooks unconditionally to follow React rules
+  const wagmiData = useChainId();
 
   // Only return wagmi data if Web3 is available and mounted
   return mounted && isWeb3Available && !isLoading ? wagmiData : safeData;
@@ -119,14 +101,8 @@ export function useConnectSafe() {
     setMounted(true);
   }, []);
 
-  // Try to call Wagmi hook, but handle errors gracefully
-  let wagmiData = safeData;
-  try {
-    wagmiData = useConnect();
-  } catch (error) {
-    // WagmiProvider not available, use safe data
-    wagmiData = safeData;
-  }
+  // Always call hooks unconditionally to follow React rules
+  const wagmiData = useConnect();
 
   // Only return wagmi data if Web3 is available and mounted
   return mounted && isWeb3Available && !isLoading ? wagmiData : safeData;
@@ -151,14 +127,8 @@ export function useDisconnectSafe() {
     setMounted(true);
   }, []);
 
-  // Try to call Wagmi hook, but handle errors gracefully
-  let wagmiData = safeData;
-  try {
-    wagmiData = useDisconnect();
-  } catch (error) {
-    // WagmiProvider not available, use safe data
-    wagmiData = safeData;
-  }
+  // Always call hooks unconditionally to follow React rules
+  const wagmiData = useDisconnect();
 
   // Only return wagmi data if Web3 is available and mounted
   return mounted && isWeb3Available && !isLoading ? wagmiData : safeData;
@@ -184,14 +154,8 @@ export function useSendTransactionSafe() {
     setMounted(true);
   }, []);
 
-  // Try to call Wagmi hook, but handle errors gracefully
-  let wagmiData = safeData;
-  try {
-    wagmiData = useSendTransaction();
-  } catch (error) {
-    // WagmiProvider not available, use safe data
-    wagmiData = safeData;
-  }
+  // Always call hooks unconditionally to follow React rules
+  const wagmiData = useSendTransaction();
 
   // Only return wagmi data if Web3 is available and mounted
   return mounted && isWeb3Available && !isLoading ? wagmiData : safeData;
@@ -207,10 +171,13 @@ export function useWeb3Ready() {
   useEffect(() => {
     setMounted(true);
 
-    // Check if provider is available
+    // Check if provider is available by checking window object
     try {
-      useAccount();
-      setProviderReady(true);
+      if (typeof window !== "undefined" && window.ethereum) {
+        setProviderReady(true);
+      } else {
+        setProviderReady(false);
+      }
     } catch (error) {
       setProviderReady(false);
     }
@@ -229,15 +196,9 @@ export function useConnectorsSafe() {
     setMounted(true);
   }, []);
 
-  // Try to call Wagmi hook, but handle errors gracefully
-  let wagmiData: any[] = safeData;
-  try {
-    const connectors = useConnectors();
-    wagmiData = [...connectors];
-  } catch (error) {
-    // WagmiProvider not available, use safe data
-    wagmiData = safeData;
-  }
+  // Always call hooks unconditionally to follow React rules
+  const connectors = useConnectors();
+  const wagmiData = [...connectors];
 
   // Only return wagmi data if Web3 is available and mounted
   return mounted && isWeb3Available && !isLoading ? wagmiData : safeData;

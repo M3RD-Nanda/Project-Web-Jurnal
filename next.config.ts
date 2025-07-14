@@ -2,15 +2,25 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   eslint: {
-    // Temporarily disable ESLint during builds to focus on console cleanup
-    ignoreDuringBuilds: true,
+    // Enable ESLint during builds for better code quality
+    ignoreDuringBuilds: false,
   },
   typescript: {
-    // TypeScript will now properly check for type errors during builds
+    // TypeScript will properly check for type errors during builds
     ignoreBuildErrors: false,
   },
   // Disable source maps in production to avoid 404 errors
   productionBrowserSourceMaps: false,
+  // SWC minification is enabled by default in Next.js 15
+  // Enable compression for better performance
+  compress: true,
+  // Optimize images
+  images: {
+    formats: ["image/webp", "image/avif"],
+    minimumCacheTTL: 60 * 60 * 24 * 30, // 30 days
+    dangerouslyAllowSVG: true,
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+  },
   experimental: {
     // Enable optimizePackageImports for better tree shaking
     optimizePackageImports: [
@@ -22,11 +32,17 @@ const nextConfig: NextConfig = {
       "@radix-ui/react-navigation-menu",
       "@radix-ui/react-toast",
       "sonner",
+      "@supabase/supabase-js",
+      "@tanstack/react-query",
+      "date-fns",
+      "zod",
     ],
-    // Fix webpack minification issues (disabled for Turbopack compatibility)
-    // forceSwcTransforms: true, // Commented out for Turbopack support
-    // Note: Removed optimizeCss and cssChunking as they cause build issues
-    // CSS optimization is handled through webpack configuration instead
+    // Enable modern bundling optimizations
+    optimizeServerReact: true,
+    // Enable partial prerendering for better performance
+    ppr: false, // Keep disabled for stability
+    // Optimize CSS loading
+    optimizeCss: true,
   },
   // Move turbo config to turbopack (new stable location)
   turbopack: {
@@ -141,13 +157,31 @@ const nextConfig: NextConfig = {
             chunks: "async", // Changed to async to prevent preloading
             priority: 20,
             enforce: true,
+            maxSize: 244000, // Limit chunk size to ~244KB
+          },
+          // Supabase and database libraries
+          database: {
+            test: /[\\/]node_modules[\\/](@supabase|@tanstack)[\\/]/,
+            name: "database",
+            chunks: "all",
+            priority: 18,
+            maxSize: 244000,
           },
           // Charts and visualization
           charts: {
             test: /[\\/]node_modules[\\/](recharts|d3)[\\/]/,
             name: "charts",
-            chunks: "all",
+            chunks: "async", // Load charts asynchronously
             priority: 15,
+            maxSize: 244000,
+          },
+          // Form and validation libraries
+          forms: {
+            test: /[\\/]node_modules[\\/](react-hook-form|zod|@hookform)[\\/]/,
+            name: "forms",
+            chunks: "async",
+            priority: 12,
+            maxSize: 244000,
           },
           // Other vendor libraries
           vendor: {
@@ -156,6 +190,7 @@ const nextConfig: NextConfig = {
             chunks: "all",
             priority: 10,
             minChunks: 2,
+            maxSize: 244000,
           },
         },
       },

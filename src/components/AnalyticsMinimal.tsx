@@ -57,7 +57,6 @@ export function AnalyticsMinimal() {
         setLoading(true);
       }
 
-
       // Fetch visitor data with detailed logging
       const dailyData = await getDailyVisits(7);
 
@@ -77,7 +76,6 @@ export function AnalyticsMinimal() {
       );
       setTopPages((pagesData || []).slice(0, 5));
       setLastUpdated(new Date());
-
     } catch (error) {
       console.error("[AnalyticsMinimal] Error fetching analytics data:", error);
       // Set fallback data on error
@@ -314,9 +312,9 @@ export function AnalyticsMinimal() {
                       }
                     >
                       {visitorStats?.percentageChange !== undefined
-                        ? `${
-                            visitorStats.percentageChange > 0 ? "+" : ""
-                          }${visitorStats.percentageChange}%`
+                        ? `${visitorStats.percentageChange > 0 ? "+" : ""}${
+                            visitorStats.percentageChange
+                          }%`
                         : "0%"}
                     </Badge>
                   )}
@@ -372,7 +370,7 @@ export function AnalyticsMinimal() {
                 </div>
 
                 <div className="space-y-3">
-                  {topPages.map((page, index) => (
+                  {topPages.map((page) => (
                     <div
                       key={page.path}
                       className="flex items-center gap-3 p-3 rounded-lg hover:bg-muted/50 transition-colors"

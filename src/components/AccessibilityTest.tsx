@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { fixLabelAccessibility } from "@/lib/accessibility-fixes";
@@ -15,10 +15,10 @@ export function AccessibilityTest() {
 
   const runAccessibilityTest = () => {
     const results: string[] = [];
-    
+
     // Create a test container
-    const testContainer = document.createElement('div');
-    testContainer.id = 'accessibility-test-container';
+    const testContainer = document.createElement("div");
+    testContainer.id = "accessibility-test-container";
     testContainer.innerHTML = `
       <!-- Test case 1: Label with non-existent for attribute -->
       <label for="non-existent-input">Test Label 1</label>
@@ -35,141 +35,170 @@ export function AccessibilityTest() {
       <!-- Test case 4: Input without label -->
       <input type="password" placeholder="Password without label" />
     `;
-    
+
     document.body.appendChild(testContainer);
-    
+
     try {
       // Count issues before fix
-      const labelsBefore = testContainer.querySelectorAll('label[for]');
-      const inputsBefore = testContainer.querySelectorAll('input');
+      const labelsBefore = testContainer.querySelectorAll("label[for]");
+      const inputsBefore = testContainer.querySelectorAll("input");
       let issuesBefore = 0;
-      
-      labelsBefore.forEach(label => {
-        const forAttr = label.getAttribute('for');
+
+      labelsBefore.forEach((label) => {
+        const forAttr = label.getAttribute("for");
         if (forAttr && !testContainer.querySelector(`#${forAttr}`)) {
           issuesBefore++;
         }
       });
-      
-      inputsBefore.forEach(input => {
+
+      inputsBefore.forEach((input) => {
         if (!input.id) {
-          const associatedLabel = testContainer.querySelector(`label[for="${input.id}"]`);
-          if (!associatedLabel && !input.getAttribute('aria-label')) {
+          const associatedLabel = testContainer.querySelector(
+            `label[for="${input.id}"]`
+          );
+          if (!associatedLabel && !input.getAttribute("aria-label")) {
             issuesBefore++;
           }
         }
       });
-      
+
       results.push(`Issues found before fix: ${issuesBefore}`);
-      
+
       // Apply the fix
       fixLabelAccessibility(testContainer);
-      
+
       // Count issues after fix
-      const labelsAfter = testContainer.querySelectorAll('label[for]');
-      const inputsAfter = testContainer.querySelectorAll('input');
+      const labelsAfter = testContainer.querySelectorAll("label[for]");
+      const inputsAfter = testContainer.querySelectorAll("input");
       let issuesAfter = 0;
-      
-      labelsAfter.forEach(label => {
-        const forAttr = label.getAttribute('for');
+
+      labelsAfter.forEach((label) => {
+        const forAttr = label.getAttribute("for");
         if (forAttr && !testContainer.querySelector(`#${forAttr}`)) {
           issuesAfter++;
         }
       });
-      
-      inputsAfter.forEach(input => {
+
+      inputsAfter.forEach((input) => {
         if (!input.id) {
           issuesAfter++;
         } else {
-          const associatedLabel = testContainer.querySelector(`label[for="${input.id}"]`);
-          if (!associatedLabel && !input.getAttribute('aria-label')) {
+          const associatedLabel = testContainer.querySelector(
+            `label[for="${input.id}"]`
+          );
+          if (!associatedLabel && !input.getAttribute("aria-label")) {
             issuesAfter++;
           }
         }
       });
-      
+
       results.push(`Issues found after fix: ${issuesAfter}`);
-      results.push(`Fix successful: ${issuesAfter === 0 ? 'YES' : 'NO'}`);
-      
+      results.push(`Fix successful: ${issuesAfter === 0 ? "YES" : "NO"}`);
+
       // Detailed analysis
-      results.push('--- Detailed Analysis ---');
+      results.push("--- Detailed Analysis ---");
       labelsAfter.forEach((label, index) => {
-        const forAttr = label.getAttribute('for');
-        const correspondingInput = forAttr ? testContainer.querySelector(`#${forAttr}`) : null;
-        results.push(`Label ${index + 1}: for="${forAttr}" -> ${correspondingInput ? 'MATCHED' : 'NO MATCH'}`);
+        const forAttr = label.getAttribute("for");
+        const correspondingInput = forAttr
+          ? testContainer.querySelector(`#${forAttr}`)
+          : null;
+        results.push(
+          `Label ${index + 1}: for="${forAttr}" -> ${
+            correspondingInput ? "MATCHED" : "NO MATCH"
+          }`
+        );
       });
-      
+
       inputsAfter.forEach((input, index) => {
         const id = input.id;
-        const ariaLabel = input.getAttribute('aria-label');
-        const associatedLabel = id ? testContainer.querySelector(`label[for="${id}"]`) : null;
-        results.push(`Input ${index + 1}: id="${id}" aria-label="${ariaLabel}" -> ${associatedLabel ? 'HAS LABEL' : 'NO LABEL'}`);
+        const ariaLabel = input.getAttribute("aria-label");
+        const associatedLabel = id
+          ? testContainer.querySelector(`label[for="${id}"]`)
+          : null;
+        results.push(
+          `Input ${index + 1}: id="${id}" aria-label="${ariaLabel}" -> ${
+            associatedLabel ? "HAS LABEL" : "NO LABEL"
+          }`
+        );
       });
-      
     } catch (error) {
       results.push(`Error during test: ${error}`);
     } finally {
       // Clean up
       document.body.removeChild(testContainer);
     }
-    
+
     setTestResults(results);
   };
 
   const checkCurrentPageAccessibility = () => {
     const results: string[] = [];
-    
+
     // Check current page for accessibility issues
-    const allLabels = document.querySelectorAll('label[for]');
-    const allInputs = document.querySelectorAll('input, select, textarea');
-    
+    const allLabels = document.querySelectorAll("label[for]");
+    const allInputs = document.querySelectorAll("input, select, textarea");
+
     let totalIssues = 0;
-    
-    results.push('=== Current Page Accessibility Check ===');
-    
+
+    results.push("=== Current Page Accessibility Check ===");
+
     // Check labels
     allLabels.forEach((label, index) => {
-      const forAttr = label.getAttribute('for');
+      const forAttr = label.getAttribute("for");
       if (forAttr) {
         const correspondingInput = document.querySelector(`#${forAttr}`);
         if (!correspondingInput) {
-          results.push(`❌ Label ${index + 1}: for="${forAttr}" has no matching element`);
+          results.push(
+            `❌ Label ${index + 1}: for="${forAttr}" has no matching element`
+          );
           totalIssues++;
         } else {
-          results.push(`✅ Label ${index + 1}: for="${forAttr}" correctly matched`);
+          results.push(
+            `✅ Label ${index + 1}: for="${forAttr}" correctly matched`
+          );
         }
       }
     });
-    
+
     // Check inputs without proper labels
     allInputs.forEach((input, index) => {
       const id = input.id;
-      const ariaLabel = input.getAttribute('aria-label');
-      const ariaLabelledBy = input.getAttribute('aria-labelledby');
-      
+      const ariaLabel = input.getAttribute("aria-label");
+      const ariaLabelledBy = input.getAttribute("aria-labelledby");
+
       if (id) {
         const associatedLabel = document.querySelector(`label[for="${id}"]`);
         if (!associatedLabel && !ariaLabel && !ariaLabelledBy) {
-          results.push(`❌ Input ${index + 1}: id="${id}" has no associated label or aria-label`);
+          results.push(
+            `❌ Input ${
+              index + 1
+            }: id="${id}" has no associated label or aria-label`
+          );
           totalIssues++;
         } else {
           results.push(`✅ Input ${index + 1}: id="${id}" properly labeled`);
         }
       } else if (!ariaLabel && !ariaLabelledBy) {
-        results.push(`❌ Input ${index + 1}: no id, aria-label, or aria-labelledby`);
+        results.push(
+          `❌ Input ${index + 1}: no id, aria-label, or aria-labelledby`
+        );
         totalIssues++;
       }
     });
-    
+
     results.push(`\n📊 Total accessibility issues found: ${totalIssues}`);
-    results.push(`🎯 Page accessibility status: ${totalIssues === 0 ? 'GOOD' : 'NEEDS IMPROVEMENT'}`);
-    
+    results.push(
+      `🎯 Page accessibility status: ${
+        totalIssues === 0 ? "GOOD" : "NEEDS IMPROVEMENT"
+      }`
+    );
+
     setTestResults(results);
   };
 
   if (!isVisible) {
     return (
-      <Button 
+      <Button
         onClick={() => setIsVisible(true)}
         variant="outline"
         className="fixed bottom-4 right-4 z-50"
@@ -184,11 +213,7 @@ export function AccessibilityTest() {
       <CardHeader className="pb-2">
         <CardTitle className="text-sm flex justify-between items-center">
           Accessibility Test
-          <Button 
-            onClick={() => setIsVisible(false)}
-            variant="ghost"
-            size="sm"
-          >
+          <Button onClick={() => setIsVisible(false)} variant="ghost" size="sm">
             ✕
           </Button>
         </CardTitle>
@@ -198,11 +223,15 @@ export function AccessibilityTest() {
           <Button onClick={runAccessibilityTest} size="sm" variant="outline">
             Run Test
           </Button>
-          <Button onClick={checkCurrentPageAccessibility} size="sm" variant="outline">
+          <Button
+            onClick={checkCurrentPageAccessibility}
+            size="sm"
+            variant="outline"
+          >
             Check Page
           </Button>
         </div>
-        
+
         {testResults.length > 0 && (
           <div className="mt-4 p-2 bg-muted rounded text-xs font-mono max-h-48 overflow-auto">
             {testResults.map((result, index) => (
