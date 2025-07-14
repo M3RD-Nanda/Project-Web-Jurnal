@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useEffect, useState, createContext, useContext } from "react";
-import { WagmiProvider } from "wagmi";
+import { WagmiProvider, createConfig, http } from "wagmi";
+import { mainnet } from "wagmi/chains";
 import {
   RainbowKitProvider,
   darkTheme,
@@ -123,9 +124,6 @@ export function Web3Provider({ children }: Web3ProviderProps) {
     // Create a minimal server-side config
     let serverConfig;
     try {
-      const { createConfig, http } = require("wagmi");
-      const { mainnet } = require("wagmi/chains");
-
       serverConfig = createConfig({
         chains: [mainnet],
         transports: {
@@ -160,9 +158,6 @@ export function Web3Provider({ children }: Web3ProviderProps) {
   // If config is still null, create a minimal fallback config
   if (!finalConfig) {
     try {
-      const { createConfig, http } = require("wagmi");
-      const { mainnet } = require("wagmi/chains");
-
       finalConfig = createConfig({
         chains: [mainnet],
         transports: {
