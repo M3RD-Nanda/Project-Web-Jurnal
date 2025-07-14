@@ -59,32 +59,23 @@ export { z } from "zod";
 export { useForm, Controller } from "react-hook-form";
 export { zodResolver } from "@hookform/resolvers/zod";
 
-// Utility function to help with dynamic imports
-export function createOptimizedDynamicImport<T>(
-  importFn: () => Promise<{ default: T }>,
-  options?: {
-    ssr?: boolean;
-    loading?: React.ComponentType;
-  }
-) {
-  const dynamic = require("next/dynamic");
-  
-  return dynamic(importFn, {
-    ssr: options?.ssr ?? false,
-    loading: options?.loading || (() => null),
-  });
-}
+// Note: createOptimizedDynamicImport function removed to eliminate require() calls
+// Use the withDynamicImport function from @/components/ui/dynamic-wrapper instead
 
 // Bundle analysis helper
 export function analyzeBundleSize() {
   if (typeof window !== "undefined" && process.env.NODE_ENV === "development") {
     console.log("Bundle analysis available in development mode");
-    
+
     // Log performance metrics
     if (window.performance) {
-      const navigation = window.performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming;
+      const navigation = window.performance.getEntriesByType(
+        "navigation"
+      )[0] as PerformanceNavigationTiming;
       console.log("Page Load Performance:", {
-        domContentLoaded: navigation.domContentLoadedEventEnd - navigation.domContentLoadedEventStart,
+        domContentLoaded:
+          navigation.domContentLoadedEventEnd -
+          navigation.domContentLoadedEventStart,
         loadComplete: navigation.loadEventEnd - navigation.loadEventStart,
         totalTime: navigation.loadEventEnd - navigation.fetchStart,
       });

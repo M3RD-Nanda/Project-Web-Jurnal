@@ -345,3 +345,5 @@ export function SolanaWalletBalanceCompact() {
     </div>
   );
 }
+
+export default SolanaWalletButton;

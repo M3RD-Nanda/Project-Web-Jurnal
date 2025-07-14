@@ -181,3 +181,5 @@ export function WalletBalanceCompact() {
     </div>
   );
 }
+
+export default WalletBalance;

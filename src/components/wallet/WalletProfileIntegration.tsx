@@ -284,3 +284,5 @@ export function WalletProfileIntegration({
     </Card>
   );
 }
+
+export default WalletProfileIntegration;

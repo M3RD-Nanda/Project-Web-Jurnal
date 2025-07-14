@@ -46,7 +46,9 @@ export function preventUnnecessaryPreloads() {
             originalSetAttribute.call(this, "rel", "stylesheet");
             originalSetAttribute.call(this, "media", "print");
             this.onload = () => {
-              (this as any).media = "all";
+              if (this && typeof this.setAttribute === "function") {
+                this.setAttribute("media", "all");
+              }
             };
             return;
           }
@@ -90,7 +92,9 @@ export function preventUnnecessaryPreloads() {
           link.setAttribute("media", "print");
           link.removeAttribute("as");
           (link as HTMLLinkElement).onload = () => {
-            (link as HTMLLinkElement).media = "all";
+            if (link && typeof link.setAttribute === "function") {
+              link.setAttribute("media", "all");
+            }
           };
         }
       }
@@ -138,7 +142,9 @@ export function preventUnnecessaryPreloads() {
                   element.setAttribute("media", "print");
                   element.removeAttribute("as");
                   (element as HTMLLinkElement).onload = () => {
-                    (element as HTMLLinkElement).media = "all";
+                    if (element && typeof element.setAttribute === "function") {
+                      element.setAttribute("media", "all");
+                    }
                   };
                 }
               }

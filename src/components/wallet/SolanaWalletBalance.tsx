@@ -176,3 +176,5 @@ export function SolanaWalletBalanceCompact() {
     </div>
   );
 }
+
+export default SolanaWalletBalance;

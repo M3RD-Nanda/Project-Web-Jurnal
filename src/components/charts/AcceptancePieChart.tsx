@@ -1,14 +1,14 @@
 "use client";
 
-import React from 'react';
+import React from "react";
 import {
   ResponsiveContainer,
   PieChart,
   Pie,
   Cell,
   Tooltip,
-  Legend
-} from 'recharts';
+  Legend,
+} from "recharts";
 import { AcceptanceRateData } from "@/lib/statistics";
 
 interface AcceptancePieChartProps {
@@ -21,7 +21,7 @@ export function AcceptancePieChart({ data }: AcceptancePieChartProps) {
   const PIE_COLORS = [PIE_COLOR_1, PIE_COLOR_2];
 
   const totalAcceptedRejected = data.reduce((sum, item) => sum + item.count, 0);
-  const pieChartData = data.map(item => ({
+  const pieChartData = data.map((item) => ({
     name: item.status,
     value: item.count,
     percent: totalAcceptedRejected > 0 ? item.count / totalAcceptedRejected : 0,
@@ -29,7 +29,9 @@ export function AcceptancePieChart({ data }: AcceptancePieChartProps) {
 
   if (pieChartData.length === 0 || totalAcceptedRejected === 0) {
     return (
-      <p className="text-center text-muted-foreground p-4 h-full flex items-center justify-center">Data tingkat penerimaan tidak tersedia.</p>
+      <p className="text-center text-muted-foreground p-4 h-full flex items-center justify-center">
+        Data tingkat penerimaan tidak tersedia.
+      </p>
     );
   }
 
@@ -45,10 +47,15 @@ export function AcceptancePieChart({ data }: AcceptancePieChartProps) {
           innerRadius={60} // Ditambahkan untuk membuat grafik donat
           dataKey="value"
           nameKey="name"
-          label={({ name, percent }: { name: string; percent: number }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+          label={({ name, percent }: { name: string; percent: number }) =>
+            `${name}: ${(percent * 100).toFixed(0)}%`
+          }
         >
           {pieChartData.map((entry, index) => (
-            <Cell key={`cell-${index}`} fill={PIE_COLORS[index % PIE_COLORS.length]} />
+            <Cell
+              key={`cell-${index}`}
+              fill={PIE_COLORS[index % PIE_COLORS.length]}
+            />
           ))}
         </Pie>
         <Tooltip />
@@ -57,3 +64,5 @@ export function AcceptancePieChart({ data }: AcceptancePieChartProps) {
     </ResponsiveContainer>
   );
 }
+
+export default AcceptancePieChart;

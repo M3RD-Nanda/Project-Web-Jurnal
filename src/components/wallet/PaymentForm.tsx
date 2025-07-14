@@ -383,3 +383,5 @@ export function ReceivePaymentCard({ className }: { className?: string }) {
     </Card>
   );
 }
+
+export default PaymentForm;
