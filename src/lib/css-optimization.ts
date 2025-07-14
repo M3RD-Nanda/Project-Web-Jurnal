@@ -92,12 +92,55 @@ export function optimizeCSSLoading() {
   }, 10000);
 }
 
-// Auto-initialize in development
-if (typeof window !== "undefined" && process.env.NODE_ENV === "development") {
+// Auto-initialize in all environments for better performance
+if (typeof window !== "undefined") {
   // Wait for DOM to be ready
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", optimizeCSSLoading);
   } else {
     optimizeCSSLoading();
+  }
+}
+
+// Additional CSS purging for unused styles
+export function purgeUnusedCSS() {
+  if (typeof window === "undefined") return;
+
+  const currentPath = window.location.pathname;
+  const walletPages = ["/wallet", "/wallet/send", "/wallet/receive"];
+  const statsPages = ["/statistics", "/admin"];
+
+  // Remove wallet-specific styles if not on wallet pages
+  if (!walletPages.includes(currentPath)) {
+    const walletStyles = document.querySelectorAll(
+      'link[href*="rainbowkit"], link[href*="web3"], link[href*="wallet"]'
+    );
+    walletStyles.forEach((link) => {
+      if (link.parentNode) {
+        link.parentNode.removeChild(link);
+      }
+    });
+  }
+
+  // Remove chart-specific styles if not on stats pages
+  if (!statsPages.includes(currentPath)) {
+    const chartStyles = document.querySelectorAll(
+      'link[href*="recharts"], link[href*="chart"]'
+    );
+    chartStyles.forEach((link) => {
+      if (link.parentNode) {
+        link.parentNode.removeChild(link);
+      }
+    });
+  }
+}
+
+// Initialize CSS purging
+if (typeof window !== "undefined") {
+  // Run CSS purging after DOM is loaded
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", purgeUnusedCSS);
+  } else {
+    purgeUnusedCSS();
   }
 }

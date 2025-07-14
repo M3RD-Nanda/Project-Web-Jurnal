@@ -4,10 +4,10 @@ import React, { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { format } from "date-fns";
+import { format } from "date-fns/format";
 import { CalendarIcon, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { id as dateFnsIdLocale } from "date-fns/locale";
+import { id as dateFnsIdLocale } from "date-fns/locale/id";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";

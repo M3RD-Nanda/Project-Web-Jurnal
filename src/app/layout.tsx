@@ -84,6 +84,20 @@ export default async function RootLayout({
   return (
     <html lang="id" suppressHydrationWarning>
       <head>
+        {/* Resource Hints for Critical Resources */}
+        <link rel="dns-prefetch" href="//fonts.googleapis.com" />
+        <link rel="dns-prefetch" href="//fonts.gstatic.com" />
+        <link
+          rel="preconnect"
+          href="https://fonts.googleapis.com"
+          crossOrigin=""
+        />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin=""
+        />
+
         {/* Preload Prevention Script - Run Early */}
         <script
           dangerouslySetInnerHTML={{
@@ -101,6 +115,7 @@ export default async function RootLayout({
                     element.setAttribute = function(name, value) {
                       if (name === 'rel' && value === 'preload') {
                         const href = this.getAttribute('href') || '';
+                        // Only prevent preload for non-critical resources
                         if (href.includes('.css') && (
                           href.includes('web3') ||
                           href.includes('wallet') ||
@@ -110,15 +125,11 @@ export default async function RootLayout({
                           href.includes('wagmi') ||
                           href.includes('@rainbow-me') ||
                           href.includes('chunks/') ||
-                          href.includes('app/layout') ||
-                          href.includes('root-of-the-server') ||
-                          href.includes('%5Broot-of-the-server%5D') ||
-                          href.includes('[root-of-the-server]') ||
-                          href.includes('__cf301ea5') ||
-                          href.includes('_.css') ||
-                          href.includes('%5B') ||
-                          href.includes('%5D')
+                          href.includes('forms') ||
+                          href.includes('charts') ||
+                          href.includes('analytics')
                         )) {
+                          // Defer loading of non-critical CSS
                           originalSetAttribute.call(this, 'rel', 'stylesheet');
                           originalSetAttribute.call(this, 'media', 'print');
                           this.onload = () => { this.media = 'all'; };

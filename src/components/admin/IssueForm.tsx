@@ -4,10 +4,10 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { format } from "date-fns";
+import { format } from "date-fns/format";
 import { CalendarIcon, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { id as dateFnsIdLocale } from "date-fns/locale";
+import { id as dateFnsIdLocale } from "date-fns/locale/id";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -21,15 +21,26 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
 import { Issue } from "@/lib/issues";
 import { createIssueAction, updateIssueAction } from "@/actions/issues"; // Import Server Actions
 
 const issueFormSchema = z.object({
-  volume: z.coerce.number().min(1, "Volume wajib diisi dan harus angka positif."),
-  number: z.coerce.number().min(1, "Nomor wajib diisi dan harus angka positif."),
-  year: z.coerce.number().min(1900, "Tahun tidak valid.").max(2100, "Tahun tidak valid."),
+  volume: z.coerce
+    .number()
+    .min(1, "Volume wajib diisi dan harus angka positif."),
+  number: z.coerce
+    .number()
+    .min(1, "Nomor wajib diisi dan harus angka positif."),
+  year: z.coerce
+    .number()
+    .min(1900, "Tahun tidak valid.")
+    .max(2100, "Tahun tidak valid."),
   publicationDate: z.date({
     required_error: "Tanggal publikasi wajib diisi.",
   }),
@@ -44,7 +55,11 @@ interface IssueFormProps {
   onCancel: () => void;
 }
 
-export function IssueForm({ initialData, onSuccess, onCancel }: IssueFormProps) {
+export function IssueForm({
+  initialData,
+  onSuccess,
+  onCancel,
+}: IssueFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<IssueFormValues>({
@@ -75,7 +90,7 @@ export function IssueForm({ initialData, onSuccess, onCancel }: IssueFormProps) 
       volume: values.volume,
       number: values.number,
       year: values.year,
-      publicationDate: format(values.publicationDate, 'yyyy-MM-dd'),
+      publicationDate: format(values.publicationDate, "yyyy-MM-dd"),
       description: values.description || null,
     };
 
@@ -90,7 +105,9 @@ export function IssueForm({ initialData, onSuccess, onCancel }: IssueFormProps) 
     if (resultError) {
       toast.error(`Gagal menyimpan edisi: ${resultError}`);
     } else {
-      toast.success(`Edisi berhasil ${initialData ? "diperbarui" : "ditambahkan"}!`);
+      toast.success(
+        `Edisi berhasil ${initialData ? "diperbarui" : "ditambahkan"}!`
+      );
       onSuccess();
     }
     setIsSubmitting(false);
@@ -107,7 +124,11 @@ export function IssueForm({ initialData, onSuccess, onCancel }: IssueFormProps) 
               <FormItem>
                 <FormLabel>Volume</FormLabel>
                 <FormControl>
-                  <Input type="number" {...field} onChange={e => field.onChange(parseInt(e.target.value))} />
+                  <Input
+                    type="number"
+                    {...field}
+                    onChange={(e) => field.onChange(parseInt(e.target.value))}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -120,7 +141,11 @@ export function IssueForm({ initialData, onSuccess, onCancel }: IssueFormProps) 
               <FormItem>
                 <FormLabel>Nomor</FormLabel>
                 <FormControl>
-                  <Input type="number" {...field} onChange={e => field.onChange(parseInt(e.target.value))} />
+                  <Input
+                    type="number"
+                    {...field}
+                    onChange={(e) => field.onChange(parseInt(e.target.value))}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -133,7 +158,11 @@ export function IssueForm({ initialData, onSuccess, onCancel }: IssueFormProps) 
               <FormItem>
                 <FormLabel>Tahun</FormLabel>
                 <FormControl>
-                  <Input type="number" {...field} onChange={e => field.onChange(parseInt(e.target.value))} />
+                  <Input
+                    type="number"
+                    {...field}
+                    onChange={(e) => field.onChange(parseInt(e.target.value))}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -185,14 +214,23 @@ export function IssueForm({ initialData, onSuccess, onCancel }: IssueFormProps) 
             <FormItem>
               <FormLabel>Deskripsi (Opsional)</FormLabel>
               <FormControl>
-                <Textarea placeholder="Deskripsi singkat edisi..." className="resize-none" {...field} />
+                <Textarea
+                  placeholder="Deskripsi singkat edisi..."
+                  className="resize-none"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
         <div className="flex justify-end gap-2 pt-4">
-          <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onCancel}
+            disabled={isSubmitting}
+          >
             Batal
           </Button>
           <Button type="submit" disabled={isSubmitting}>

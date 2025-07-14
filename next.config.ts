@@ -36,6 +36,13 @@ const nextConfig: NextConfig = {
       "@tanstack/react-query",
       "date-fns",
       "zod",
+      "react-hook-form",
+      "@hookform/resolvers",
+      "viem",
+      "wagmi",
+      "@rainbow-me/rainbowkit",
+      "@solana/wallet-adapter-react",
+      "@solana/web3.js",
     ],
     // Enable modern bundling optimizations
     optimizeServerReact: true,
@@ -43,6 +50,8 @@ const nextConfig: NextConfig = {
     ppr: false, // Keep disabled for stability
     // Optimize CSS loading
     optimizeCss: true,
+    // Enable more aggressive code splitting (moved to root level)
+    // serverComponentsExternalPackages moved to serverExternalPackages
   },
   // Move turbo config to turbopack (new stable location)
   turbopack: {
@@ -117,11 +126,20 @@ const nextConfig: NextConfig = {
       );
     }
 
-    // Enhanced chunk optimization with CSS handling
+    // Enhanced chunk optimization with CSS handling and tree shaking
     config.optimization = {
       ...config.optimization,
+      // Enable tree shaking for better bundle size
+      usedExports: true,
+      sideEffects: false,
+      // Enable module concatenation for smaller bundles
+      concatenateModules: true,
       splitChunks: {
         ...config.optimization?.splitChunks,
+        // Optimize chunk splitting strategy
+        chunks: "all",
+        minSize: 20000,
+        maxSize: 244000,
         cacheGroups: {
           ...config.optimization?.splitChunks?.cacheGroups,
           // CSS styles - optimized to prevent preload warnings
@@ -157,7 +175,8 @@ const nextConfig: NextConfig = {
             chunks: "async", // Changed to async to prevent preloading
             priority: 20,
             enforce: true,
-            maxSize: 244000, // Limit chunk size to ~244KB
+            maxSize: 200000, // Reduced chunk size to ~200KB for better loading
+            minChunks: 1, // Only include if used at least once
           },
           // Supabase and database libraries
           database: {
@@ -173,7 +192,8 @@ const nextConfig: NextConfig = {
             name: "charts",
             chunks: "async", // Load charts asynchronously
             priority: 15,
-            maxSize: 244000,
+            maxSize: 200000,
+            minChunks: 1,
           },
           // Form and validation libraries
           forms: {
@@ -181,7 +201,17 @@ const nextConfig: NextConfig = {
             name: "forms",
             chunks: "async",
             priority: 12,
-            maxSize: 244000,
+            maxSize: 150000, // Smaller chunk for forms
+            minChunks: 1,
+          },
+          // Analytics and monitoring
+          analytics: {
+            test: /[\\/]node_modules[\\/](@vercel\/analytics|@vercel\/speed-insights)[\\/]/,
+            name: "analytics",
+            chunks: "async",
+            priority: 8,
+            maxSize: 100000,
+            minChunks: 1,
           },
           // Other vendor libraries
           vendor: {
@@ -212,6 +242,8 @@ const nextConfig: NextConfig = {
 
     return config;
   },
+  // Server external packages removed to avoid conflicts
+  // Will be handled by webpack optimization instead
   // Remove standalone output for now to avoid build issues
   // output: "standalone",
 };

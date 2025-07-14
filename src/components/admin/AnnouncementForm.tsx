@@ -4,10 +4,10 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { format } from "date-fns";
+import { format } from "date-fns/format";
 import { CalendarIcon, Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { id as dateFnsIdLocale } from "date-fns/locale"; // Rename 'id' to avoid potential conflicts
+import { id as dateFnsIdLocale } from "date-fns/locale/id"; // More specific import
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -21,13 +21,23 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
 import { Announcement } from "@/lib/announcements";
-import { createAnnouncementAction, updateAnnouncementAction } from "@/actions/announcements"; // Import Server Actions
+import {
+  createAnnouncementAction,
+  updateAnnouncementAction,
+} from "@/actions/announcements"; // Import Server Actions
 
 const announcementFormSchema = z.object({
-  title: z.string().min(1, "Judul wajib diisi.").max(255, "Judul terlalu panjang."),
+  title: z
+    .string()
+    .min(1, "Judul wajib diisi.")
+    .max(255, "Judul terlalu panjang."),
   description: z.string().max(1000, "Deskripsi terlalu panjang.").optional(),
   publicationDate: z.date({
     required_error: "Tanggal publikasi wajib diisi.",
@@ -43,10 +53,15 @@ interface AnnouncementFormProps {
   onCancel: () => void;
 }
 
-export function AnnouncementForm({ initialData, onSuccess, onCancel }: AnnouncementFormProps) {
+export function AnnouncementForm({
+  initialData,
+  onSuccess,
+  onCancel,
+}: AnnouncementFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const form = useForm<AnnouncementFormValues>({ // Explicitly type useForm
+  const form = useForm<AnnouncementFormValues>({
+    // Explicitly type useForm
     resolver: zodResolver(announcementFormSchema),
     defaultValues: initialData
       ? {
@@ -64,7 +79,8 @@ export function AnnouncementForm({ initialData, onSuccess, onCancel }: Announcem
     mode: "onChange",
   });
 
-  async function onSubmit(values: AnnouncementFormValues) { // Explicitly type values
+  async function onSubmit(values: AnnouncementFormValues) {
+    // Explicitly type values
     setIsSubmitting(true);
     let resultError: string | null = null;
 
@@ -72,13 +88,16 @@ export function AnnouncementForm({ initialData, onSuccess, onCancel }: Announcem
     const dataToSave = {
       title: values.title,
       description: values.description || null,
-      publicationDate: format(values.publicationDate, 'yyyy-MM-dd'),
+      publicationDate: format(values.publicationDate, "yyyy-MM-dd"),
       link: values.link || null,
     };
 
     if (initialData) {
       // Update existing announcement using Server Action
-      const { error } = await updateAnnouncementAction(initialData.id, dataToSave);
+      const { error } = await updateAnnouncementAction(
+        initialData.id,
+        dataToSave
+      );
       resultError = error;
     } else {
       // Insert new announcement using Server Action
@@ -89,7 +108,9 @@ export function AnnouncementForm({ initialData, onSuccess, onCancel }: Announcem
     if (resultError) {
       toast.error(`Gagal menyimpan pengumuman: ${resultError}`);
     } else {
-      toast.success(`Pengumuman berhasil ${initialData ? "diperbarui" : "ditambahkan"}!`);
+      toast.success(
+        `Pengumuman berhasil ${initialData ? "diperbarui" : "ditambahkan"}!`
+      );
       onSuccess();
     }
     setIsSubmitting(false);
@@ -118,7 +139,11 @@ export function AnnouncementForm({ initialData, onSuccess, onCancel }: Announcem
             <FormItem>
               <FormLabel>Deskripsi (Opsional)</FormLabel>
               <FormControl>
-                <Textarea placeholder="Deskripsi singkat pengumuman..." className="resize-none" {...field} />
+                <Textarea
+                  placeholder="Deskripsi singkat pengumuman..."
+                  className="resize-none"
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -176,7 +201,12 @@ export function AnnouncementForm({ initialData, onSuccess, onCancel }: Announcem
           )}
         />
         <div className="flex justify-end gap-2 pt-4">
-          <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onCancel}
+            disabled={isSubmitting}
+          >
             Batal
           </Button>
           <Button type="submit" disabled={isSubmitting}>

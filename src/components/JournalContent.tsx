@@ -7,13 +7,8 @@ import { Announcement } from "@/lib/announcements"; // Import Announcement
 import dynamic from "next/dynamic";
 import { LazyComponent } from "@/components/ui/intersection-observer";
 
-// Lazy load heavy components with better optimization
-const HeroSection = dynamic(() => import("@/components/sections/HeroSection"), {
-  loading: () => (
-    <div className="h-64 bg-gradient-to-r from-primary to-jimeka-blue rounded-lg animate-pulse" />
-  ),
-  ssr: false, // Disable SSR for better initial load
-});
+// Import HeroSection directly for better LCP performance
+import HeroSection from "@/components/sections/HeroSection";
 
 const CallForPapersSection = dynamic(
   () => import("@/components/sections/CallForPapersSection"),
@@ -69,7 +64,7 @@ export const JournalContent = memo(function JournalContent({
 
   return (
     <div className="flex-1 p-4 md:p-8 space-y-8">
-      {/* Hero Section - Now lazy loaded */}
+      {/* Hero Section - Direct import for better LCP */}
       <HeroSection />
 
       {/* Latest Articles Section */}
