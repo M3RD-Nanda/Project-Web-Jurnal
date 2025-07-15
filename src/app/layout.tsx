@@ -152,10 +152,7 @@ export default async function RootLayout({
 
         {/* Preload critical resources for LCP */}
         <link rel="preload" href="/jimeka-logo.png" as="image" />
-        {/* Only preload CSS in production where it exists */}
-        {process.env.NODE_ENV === "production" && (
-          <link rel="preload" href="/_next/static/css/app.css" as="style" />
-        )}
+        {/* CSS is automatically handled by Next.js - no manual preload needed */}
         <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
         <link
           rel="preconnect"

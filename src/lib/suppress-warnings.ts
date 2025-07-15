@@ -37,7 +37,6 @@ export function suppressDevWarnings() {
     "label elements",
     "accessibility tools from working correctly",
     "invalid input syntax for type uuid",
-    "workshop-writing",
     "Invalid UUID format",
     "22P02",
     // CSS preload warnings - comprehensive patterns

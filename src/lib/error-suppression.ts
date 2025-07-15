@@ -19,7 +19,6 @@ const SUPPRESSED_ERROR_PATTERNS = [
   "The label's for attribute doesn't match any element id",
   "Incorrect use of <label for=FORM_ELEMENT>",
   "invalid input syntax for type uuid",
-  "workshop-writing",
   "22P02",
 ];
 
@@ -33,7 +32,6 @@ const SUPPRESSED_WARNING_PATTERNS = [
   "label elements",
   "accessibility tools from working correctly",
   "Invalid UUID format",
-  "workshop-writing",
   "Skipping database query",
 ];
 

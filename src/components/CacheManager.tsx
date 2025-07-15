@@ -155,26 +155,13 @@ export function prefetchOnHover(url: string) {
 }
 
 /**
- * Preload critical CSS
+ * Preload critical CSS - DISABLED
+ * CSS is automatically handled by Next.js, manual preloading causes MIME type issues
  */
 export function preloadCriticalCSS() {
-  const criticalCSS = [
-    "/_next/static/css/app.css",
-    "/_next/static/css/globals.css",
-  ];
-
-  criticalCSS.forEach((href) => {
-    const link = document.createElement("link");
-    link.rel = "preload";
-    link.as = "style";
-    link.href = href;
-    link.onload = function () {
-      const linkElement = this as HTMLLinkElement;
-      linkElement.onload = null;
-      linkElement.rel = "stylesheet";
-    };
-    document.head.appendChild(link);
-  });
+  // Disabled: Next.js handles CSS loading automatically
+  // Manual CSS preloading was causing MIME type errors in production
+  return;
 }
 
 /**

@@ -9,6 +9,21 @@ const nextConfig: NextConfig = {
     // TypeScript will properly check for type errors during builds
     ignoreBuildErrors: false,
   },
+  // Redirects for old announcement URLs
+  async redirects() {
+    return [
+      {
+        source: "/announcements/workshop-writing",
+        destination: "/announcements/1be1d981-d686-4ba5-880c-9e919bab1728",
+        permanent: true,
+      },
+      {
+        source: "/announcements/call-for-papers-vol10-no2",
+        destination: "/announcements/2a4e8fac-818d-4bd2-ade8-4ebaadb9f315",
+        permanent: true,
+      },
+    ];
+  },
   // Enhanced security headers to replace middleware functionality
   async headers() {
     return [
@@ -69,6 +84,20 @@ const nextConfig: NextConfig = {
           {
             key: "Vary",
             value: "Accept-Encoding",
+          },
+        ],
+      },
+      // Specific CSS MIME type headers to fix MIME type issues
+      {
+        source: "/(.*)\\.(css)",
+        headers: [
+          {
+            key: "Content-Type",
+            value: "text/css; charset=utf-8",
+          },
+          {
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
           },
         ],
       },

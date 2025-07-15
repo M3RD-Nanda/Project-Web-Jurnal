@@ -311,10 +311,7 @@ export function ResourcePreloader({
 export const JournalResourcePreloader = () => (
   <ResourcePreloader
     criticalResources={[
-      // Only include CSS in production where it exists
-      ...(process.env.NODE_ENV === "production"
-        ? ["/_next/static/css/app.css"]
-        : []),
+      // CSS is automatically handled by Next.js - no manual preload needed
       "/favicon.ico",
       "/jimeka-logo.png",
     ]}
