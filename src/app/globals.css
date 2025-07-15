@@ -21,7 +21,7 @@
     --secondary-foreground: 222.2 47.4% 11.2%;
 
     --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%; /* Medium grey */
+    --muted-foreground: 215.4 16.3% 40%; /* Darker grey for better contrast in light mode */
 
     --accent: 210 40% 96.1%;
     --accent-foreground: 222.2 47.4% 11.2%;
@@ -71,7 +71,7 @@
     --secondary-foreground: 210 40% 98%;
 
     --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%; /* Lighter grey */
+    --muted-foreground: 215 20.2% 75%; /* Improved contrast - lighter grey for better readability */
 
     --accent: 217.2 32.6% 17.5%;
     --accent-foreground: 210 40% 98%;
@@ -92,11 +92,11 @@
     --radius: 0.75rem;
 
     --sidebar-background: 222.2 47.4% 10%; /* Even darker, almost black-blue */
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 217.2 75% 65%; /* Brighter for better visibility of section headers */
+    --sidebar-foreground: 210 40% 98%; /* High contrast white text */
+    --sidebar-primary: 217.2 75% 70%; /* Even brighter for better visibility and contrast */
     --sidebar-primary-foreground: 222.2 47.4% 11.2%;
-    --sidebar-accent: 217.2 32.6% 15%; /* Slightly lighter dark hover state */
-    --sidebar-accent-foreground: 210 40% 98%;
+    --sidebar-accent: 217.2 32.6% 18%; /* Improved contrast for hover states */
+    --sidebar-accent-foreground: 210 40% 98%; /* High contrast white text */
     --sidebar-border: 217.2 32.6% 15%;
     --sidebar-ring: 217.2 75% 65%; /* Match with sidebar primary for consistency */
 
@@ -110,5 +110,48 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+/* Accessibility improvements for better contrast */
+@layer utilities {
+  /* High contrast text for better readability */
+  .text-high-contrast {
+    color: hsl(210 40% 85%) !important;
+  }
+
+  .dark .text-high-contrast {
+    color: hsl(210 40% 90%) !important;
+  }
+
+  /* Improve contrast for sidebar elements */
+  .sidebar .text-muted-foreground {
+    color: hsl(215 20.2% 75%) !important;
+  }
+
+  .dark .sidebar .text-muted-foreground {
+    color: hsl(215 20.2% 80%) !important;
+  }
+
+  /* Better contrast for analytics components */
+  .analytics-card .text-muted-foreground {
+    color: hsl(215.4 16.3% 35%) !important;
+  }
+
+  .dark .analytics-card .text-muted-foreground {
+    color: hsl(215 20.2% 78%) !important;
+  }
+
+  /* Screen reader only text */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
   }
 }

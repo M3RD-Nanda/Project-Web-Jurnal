@@ -27,6 +27,7 @@ import {
 import "@/lib/suppress-warnings";
 import "@/lib/css-optimization";
 import "@/lib/preload-prevention";
+import { AccessibilityFixer } from "@/components/AccessibilityFixer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -60,10 +61,15 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Record page visit on every page load
-  const headersList = await headers();
-  const path = headersList.get("x-pathname") || "/";
-  await recordPageVisit(path);
+  // Record page visit on every page load (with error handling)
+  try {
+    const headersList = await headers();
+    const path = headersList.get("x-pathname") || "/";
+    await recordPageVisit(path);
+  } catch (error) {
+    // Silently fail analytics to prevent layout errors
+    console.error("Analytics error:", error);
+  }
 
   // For security, we don't fetch session on server-side to avoid warnings
   // The client-side SessionProvider will handle authentication properly
@@ -84,20 +90,6 @@ export default async function RootLayout({
   return (
     <html lang="id" suppressHydrationWarning>
       <head>
-        {/* Resource Hints for Critical Resources */}
-        <link rel="dns-prefetch" href="//fonts.googleapis.com" />
-        <link rel="dns-prefetch" href="//fonts.gstatic.com" />
-        <link
-          rel="preconnect"
-          href="https://fonts.googleapis.com"
-          crossOrigin=""
-        />
-        <link
-          rel="preconnect"
-          href="https://fonts.gstatic.com"
-          crossOrigin=""
-        />
-
         {/* Preload Prevention Script - Run Early */}
         <script
           dangerouslySetInnerHTML={{
@@ -115,7 +107,6 @@ export default async function RootLayout({
                     element.setAttribute = function(name, value) {
                       if (name === 'rel' && value === 'preload') {
                         const href = this.getAttribute('href') || '';
-                        // Only prevent preload for non-critical resources
                         if (href.includes('.css') && (
                           href.includes('web3') ||
                           href.includes('wallet') ||
@@ -125,11 +116,8 @@ export default async function RootLayout({
                           href.includes('wagmi') ||
                           href.includes('@rainbow-me') ||
                           href.includes('chunks/') ||
-                          href.includes('forms') ||
-                          href.includes('charts') ||
-                          href.includes('analytics')
+                          href.includes('app/layout')
                         )) {
-                          // Defer loading of non-critical CSS
                           originalSetAttribute.call(this, 'rel', 'stylesheet');
                           originalSetAttribute.call(this, 'media', 'print');
                           this.onload = () => { this.media = 'all'; };
@@ -189,6 +177,7 @@ export default async function RootLayout({
         <Toaster />
         <MadeWithDyad />
         <PerformanceMonitor />
+        <AccessibilityFixer />
         <SpeedInsights />
         <Analytics />
       </body>

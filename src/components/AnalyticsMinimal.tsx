@@ -139,7 +139,12 @@ export function AnalyticsMinimal() {
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
-        <Card className="bg-sidebar-accent text-sidebar-accent-foreground border-sidebar-border shadow-none cursor-pointer hover:bg-sidebar-accent/80 transition-all duration-200 hover:shadow-sm">
+        <Card
+          className="analytics-card bg-sidebar-accent text-sidebar-accent-foreground border-sidebar-border shadow-none cursor-pointer hover:bg-sidebar-accent/80 transition-all duration-200 hover:shadow-sm"
+          role="button"
+          aria-label="Buka dashboard analytics untuk melihat statistik pengunjung website"
+          tabIndex={0}
+        >
           <CardContent className="p-3">
             {loading ? (
               <div className="space-y-2">
@@ -228,7 +233,10 @@ export function AnalyticsMinimal() {
         </Card>
       </DialogTrigger>
 
-      <DialogContent className="max-w-6xl max-h-[85vh] overflow-y-auto w-[95vw] sm:w-full">
+      <DialogContent
+        className="max-w-6xl max-h-[85vh] overflow-y-auto w-[95vw] sm:w-full"
+        aria-describedby="analytics-description"
+      >
         <DialogHeader>
           <div className="flex items-center justify-between">
             <DialogTitle className="flex items-center gap-2 text-xl">
@@ -247,14 +255,24 @@ export function AnalyticsMinimal() {
                 onClick={handleRefresh}
                 disabled={refreshing}
                 className="h-8"
+                aria-label={
+                  refreshing
+                    ? "Sedang memperbarui data analytics"
+                    : "Perbarui data analytics"
+                }
+                type="button"
               >
                 <RefreshCw
                   className={`h-3 w-3 ${refreshing ? "animate-spin" : ""}`}
+                  aria-hidden="true"
                 />
+                <span className="sr-only">
+                  {refreshing ? "Sedang memperbarui..." : "Perbarui data"}
+                </span>
               </Button>
             </div>
           </div>
-          <DialogDescription>
+          <DialogDescription id="analytics-description">
             Lihat statistik pengunjung website JEBAKA secara detail dengan data
             real-time dan analisis halaman populer.
           </DialogDescription>
