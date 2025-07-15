@@ -56,6 +56,7 @@ import "@/lib/suppress-warnings";
 import "@/lib/css-optimization";
 import "@/lib/preload-prevention";
 import { AccessibilityFixer } from "@/components/AccessibilityFixer";
+import { DisclaimerPopup } from "@/components/DisclaimerPopup";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -243,6 +244,7 @@ export default async function RootLayout({
           </ClientProviders>
         </ThemeProvider>
         <Toaster />
+        <DisclaimerPopup />
         <MadeWithDyad />
         <AccessibilityFixer />
         {/* Load analytics asynchronously to reduce main thread work */}
