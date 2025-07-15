@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback } from "react";
 
 interface ResourcePreloaderProps {
   criticalResources?: string[];
@@ -16,30 +16,29 @@ export function ResourcePreloader({
   criticalResources = [],
   prefetchResources = [],
   preloadImages = [],
-  enableIntelligentPrefetch = true
+  enableIntelligentPrefetch = true,
 }: ResourcePreloaderProps) {
-  
   // Preload critical resources immediately
   const preloadCriticalResources = useCallback(() => {
-    criticalResources.forEach(url => {
-      const link = document.createElement('link');
-      link.rel = 'preload';
-      
+    criticalResources.forEach((url) => {
+      const link = document.createElement("link");
+      link.rel = "preload";
+
       // Determine resource type
-      if (url.endsWith('.css')) {
-        link.as = 'style';
-      } else if (url.endsWith('.js')) {
-        link.as = 'script';
+      if (url.endsWith(".css")) {
+        link.as = "style";
+      } else if (url.endsWith(".js")) {
+        link.as = "script";
       } else if (url.match(/\.(jpg|jpeg|png|webp|avif|svg)$/)) {
-        link.as = 'image';
-      } else if (url.endsWith('.woff2') || url.endsWith('.woff')) {
-        link.as = 'font';
-        link.crossOrigin = 'anonymous';
+        link.as = "image";
+      } else if (url.endsWith(".woff2") || url.endsWith(".woff")) {
+        link.as = "font";
+        link.crossOrigin = "anonymous";
       } else {
-        link.as = 'fetch';
-        link.crossOrigin = 'anonymous';
+        link.as = "fetch";
+        link.crossOrigin = "anonymous";
       }
-      
+
       link.href = url;
       document.head.appendChild(link);
     });
@@ -48,13 +47,13 @@ export function ResourcePreloader({
   // Prefetch resources during idle time
   const prefetchResourcesOnIdle = useCallback(() => {
     const prefetchResource = (url: string) => {
-      const link = document.createElement('link');
-      link.rel = 'prefetch';
+      const link = document.createElement("link");
+      link.rel = "prefetch";
       link.href = url;
       document.head.appendChild(link);
     };
 
-    if ('requestIdleCallback' in window) {
+    if ("requestIdleCallback" in window) {
       requestIdleCallback(() => {
         prefetchResources.forEach(prefetchResource);
       });
@@ -67,7 +66,7 @@ export function ResourcePreloader({
 
   // Preload images with intersection observer
   const preloadImagesOnDemand = useCallback(() => {
-    preloadImages.forEach(src => {
+    preloadImages.forEach((src) => {
       const img = new Image();
       img.src = src;
     });
@@ -79,29 +78,29 @@ export function ResourcePreloader({
 
     // Track mouse movements to predict next page
     let mouseMovements: Array<{ x: number; y: number; timestamp: number }> = [];
-    
+
     const handleMouseMove = (e: MouseEvent) => {
       mouseMovements.push({
         x: e.clientX,
         y: e.clientY,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
-      
+
       // Keep only recent movements
       mouseMovements = mouseMovements.filter(
-        movement => Date.now() - movement.timestamp < 1000
+        (movement) => Date.now() - movement.timestamp < 1000
       );
     };
 
     // Prefetch on hover with delay
     const handleLinkHover = (e: Event) => {
       const target = e.target as HTMLAnchorElement;
-      if (target.tagName === 'A' && target.href) {
+      if (target.tagName === "A" && target.href) {
         setTimeout(() => {
           // Check if still hovering
-          if (target.matches(':hover')) {
-            const link = document.createElement('link');
-            link.rel = 'prefetch';
+          if (target.matches(":hover")) {
+            const link = document.createElement("link");
+            link.rel = "prefetch";
             link.href = target.href;
             document.head.appendChild(link);
           }
@@ -110,12 +109,12 @@ export function ResourcePreloader({
     };
 
     // Setup event listeners
-    document.addEventListener('mousemove', handleMouseMove, { passive: true });
-    document.addEventListener('mouseover', handleLinkHover, { passive: true });
+    document.addEventListener("mousemove", handleMouseMove, { passive: true });
+    document.addEventListener("mouseover", handleLinkHover, { passive: true });
 
     return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseover', handleLinkHover);
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseover", handleLinkHover);
     };
   }, [enableIntelligentPrefetch]);
 
@@ -139,7 +138,7 @@ export function ResourcePreloader({
       }
     `;
 
-    const style = document.createElement('style');
+    const style = document.createElement("style");
     style.textContent = criticalCSS;
     document.head.appendChild(style);
   }, []);
@@ -148,30 +147,30 @@ export function ResourcePreloader({
   const setupResourceHints = useCallback(() => {
     // DNS prefetch for external domains
     const externalDomains = [
-      'fonts.googleapis.com',
-      'fonts.gstatic.com',
-      'vercel.live',
-      'vitals.vercel-insights.com'
+      "fonts.googleapis.com",
+      "fonts.gstatic.com",
+      "vercel.live",
+      "vitals.vercel-insights.com",
     ];
 
-    externalDomains.forEach(domain => {
-      const link = document.createElement('link');
-      link.rel = 'dns-prefetch';
+    externalDomains.forEach((domain) => {
+      const link = document.createElement("link");
+      link.rel = "dns-prefetch";
       link.href = `//${domain}`;
       document.head.appendChild(link);
     });
 
     // Preconnect to critical third-party origins
     const preconnectDomains = [
-      'https://fonts.googleapis.com',
-      'https://fonts.gstatic.com'
+      "https://fonts.googleapis.com",
+      "https://fonts.gstatic.com",
     ];
 
-    preconnectDomains.forEach(url => {
-      const link = document.createElement('link');
-      link.rel = 'preconnect';
+    preconnectDomains.forEach((url) => {
+      const link = document.createElement("link");
+      link.rel = "preconnect";
       link.href = url;
-      link.crossOrigin = 'anonymous';
+      link.crossOrigin = "anonymous";
       document.head.appendChild(link);
     });
   }, []);
@@ -180,22 +179,22 @@ export function ResourcePreloader({
   const optimizeFontLoading = useCallback(() => {
     // Preload critical fonts
     const criticalFonts = [
-      '/fonts/geist-sans.woff2',
-      '/fonts/geist-mono.woff2'
+      "/fonts/geist-sans.woff2",
+      "/fonts/geist-mono.woff2",
     ];
 
-    criticalFonts.forEach(font => {
-      const link = document.createElement('link');
-      link.rel = 'preload';
-      link.as = 'font';
-      link.type = 'font/woff2';
+    criticalFonts.forEach((font) => {
+      const link = document.createElement("link");
+      link.rel = "preload";
+      link.as = "font";
+      link.type = "font/woff2";
       link.href = font;
-      link.crossOrigin = 'anonymous';
+      link.crossOrigin = "anonymous";
       document.head.appendChild(link);
     });
 
     // Add font-display: swap to existing fonts
-    const style = document.createElement('style');
+    const style = document.createElement("style");
     style.textContent = `
       @font-face {
         font-family: 'Geist';
@@ -212,49 +211,86 @@ export function ResourcePreloader({
   // Setup performance monitoring
   const setupPerformanceMonitoring = useCallback(() => {
     // Monitor resource loading performance
-    if ('PerformanceObserver' in window) {
+    if ("PerformanceObserver" in window) {
       const observer = new PerformanceObserver((list) => {
         list.getEntries().forEach((entry) => {
-          if (entry.entryType === 'resource') {
+          if (entry.entryType === "resource") {
             const resourceEntry = entry as PerformanceResourceTiming;
-            
+
             // Log slow resources in development
-            if (process.env.NODE_ENV === 'development' && resourceEntry.duration > 1000) {
-              console.warn('Slow resource detected:', {
+            if (
+              process.env.NODE_ENV === "development" &&
+              resourceEntry.duration > 1000
+            ) {
+              console.warn("Slow resource detected:", {
                 name: resourceEntry.name,
                 duration: resourceEntry.duration,
-                size: resourceEntry.transferSize
+                size: resourceEntry.transferSize,
               });
             }
           }
         });
       });
 
-      observer.observe({ entryTypes: ['resource'] });
+      observer.observe({ entryTypes: ["resource"] });
 
       return () => observer.disconnect();
     }
   }, []);
 
   useEffect(() => {
-    // Execute preloading strategies
+    // Execute critical preloading immediately
     preloadCriticalResources();
     preloadCriticalCSS();
     setupResourceHints();
     optimizeFontLoading();
-    
-    // Defer non-critical operations
-    const timeoutId = setTimeout(() => {
-      prefetchResourcesOnIdle();
-      preloadImagesOnDemand();
-      setupPerformanceMonitoring();
-    }, 100);
 
-    // Setup intelligent prefetching
-    const cleanupIntelligentPrefetch = setupIntelligentPrefetch();
+    // Use requestIdleCallback for non-critical operations to reduce main thread work
+    const scheduleNonCritical = () => {
+      if ("requestIdleCallback" in window) {
+        window.requestIdleCallback(
+          () => {
+            prefetchResourcesOnIdle();
+            preloadImagesOnDemand();
+            setupPerformanceMonitoring();
+          },
+          { timeout: 5000 }
+        );
+      } else {
+        // Fallback for browsers without requestIdleCallback
+        setTimeout(() => {
+          prefetchResourcesOnIdle();
+          preloadImagesOnDemand();
+          setupPerformanceMonitoring();
+        }, 1000);
+      }
+    };
+
+    // Defer non-critical operations even more to reduce initial main thread work
+    const timeoutId = setTimeout(scheduleNonCritical, 200);
+
+    // Setup intelligent prefetching with lower priority
+    let cleanupIntelligentPrefetch: (() => void) | undefined;
+    const setupPrefetchLater = () => {
+      if ("requestIdleCallback" in window) {
+        window.requestIdleCallback(
+          () => {
+            cleanupIntelligentPrefetch = setupIntelligentPrefetch();
+          },
+          { timeout: 10000 }
+        );
+      } else {
+        setTimeout(() => {
+          cleanupIntelligentPrefetch = setupIntelligentPrefetch();
+        }, 2000);
+      }
+    };
+
+    const prefetchTimeoutId = setTimeout(setupPrefetchLater, 500);
 
     return () => {
       clearTimeout(timeoutId);
+      clearTimeout(prefetchTimeoutId);
       cleanupIntelligentPrefetch?.();
     };
   }, [
@@ -265,7 +301,7 @@ export function ResourcePreloader({
     prefetchResourcesOnIdle,
     preloadImagesOnDemand,
     setupPerformanceMonitoring,
-    setupIntelligentPrefetch
+    setupIntelligentPrefetch,
   ]);
 
   return null; // This component has no visual output
@@ -275,19 +311,19 @@ export function ResourcePreloader({
 export const JournalResourcePreloader = () => (
   <ResourcePreloader
     criticalResources={[
-      '/_next/static/css/app.css',
-      '/favicon.ico',
-      '/jimeka-logo.png'
+      // Only include CSS in production where it exists
+      ...(process.env.NODE_ENV === "production"
+        ? ["/_next/static/css/app.css"]
+        : []),
+      "/favicon.ico",
+      "/jimeka-logo.png",
     ]}
     prefetchResources={[
-      '/api/articles',
-      '/api/announcements',
-      '/api/statistics'
+      "/api/articles",
+      "/api/announcements",
+      "/api/statistics",
     ]}
-    preloadImages={[
-      '/jimeka-logo.png',
-      '/images/hero-bg.jpg'
-    ]}
+    preloadImages={["/jimeka-logo.png", "/images/hero-bg.jpg"]}
     enableIntelligentPrefetch={true}
   />
 );

@@ -19,10 +19,7 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // Disable middleware temporarily if Edge Runtime issues persist
+    // Middleware disabled - analytics moved to client-side
     // Security headers are handled by next.config.ts instead
-    // "/",
-    // "/articles/:path*",
-    // "/announcements/:path*",
   ],
 };

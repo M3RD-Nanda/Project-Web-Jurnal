@@ -175,22 +175,7 @@ export function UnifiedWalletButton({
     }
   }, []);
 
-  // Handle copy address
-  const handleCopyAddress = () => {
-    const address =
-      isEvmConnected && evmAddress
-        ? evmAddress
-        : isSolanaConnected && solanaPublicKey
-        ? solanaPublicKey.toString()
-        : "";
-
-    if (address) {
-      navigator.clipboard.writeText(address);
-      toast.success("Address copied to clipboard");
-    }
-  };
-
-  // Show loading state during hydration
+  // Show loading state during hydration - moved after all hooks
   if (!mounted) {
     return (
       <Button
@@ -208,6 +193,21 @@ export function UnifiedWalletButton({
       </Button>
     );
   }
+
+  // Handle copy address
+  const handleCopyAddress = () => {
+    const address =
+      isEvmConnected && evmAddress
+        ? evmAddress
+        : isSolanaConnected && solanaPublicKey
+        ? solanaPublicKey.toString()
+        : "";
+
+    if (address) {
+      navigator.clipboard.writeText(address);
+      toast.success("Address copied to clipboard");
+    }
+  };
 
   // Always show the unified button, never delegate to individual wallet components
 

@@ -71,6 +71,82 @@ export const DynamicStatistics = withDynamicImport(
   }
 );
 
+// Dynamic imports for non-essential UI components to reduce initial bundle size
+const UILoadingFallback = ({ className = "" }: { className?: string }) => (
+  <div className={`animate-pulse bg-muted rounded ${className}`} />
+);
+
+export const DynamicAccordion = withDynamicImport(
+  () =>
+    import("@/components/ui/accordion").then((mod) => ({
+      default: mod.Accordion,
+    })),
+  { loading: () => <UILoadingFallback className="h-12 w-full" /> }
+);
+
+export const DynamicAccordionItem = withDynamicImport(
+  () =>
+    import("@/components/ui/accordion").then((mod) => ({
+      default: mod.AccordionItem,
+    })),
+  { loading: () => <UILoadingFallback className="h-12 w-full" /> }
+);
+
+export const DynamicAccordionTrigger = withDynamicImport(
+  () =>
+    import("@/components/ui/accordion").then((mod) => ({
+      default: mod.AccordionTrigger,
+    })),
+  { loading: () => <UILoadingFallback className="h-8 w-full" /> }
+);
+
+export const DynamicAccordionContent = withDynamicImport(
+  () =>
+    import("@/components/ui/accordion").then((mod) => ({
+      default: mod.AccordionContent,
+    })),
+  { loading: () => <UILoadingFallback className="h-16 w-full" /> }
+);
+
+export const DynamicAlertDialog = withDynamicImport(
+  () =>
+    import("@/components/ui/alert-dialog").then((mod) => ({
+      default: mod.AlertDialog,
+    })),
+  { loading: () => null }
+);
+
+export const DynamicAvatar = withDynamicImport(
+  () =>
+    import("@/components/ui/avatar").then((mod) => ({ default: mod.Avatar })),
+  { loading: () => <UILoadingFallback className="h-10 w-10 rounded-full" /> }
+);
+
+export const DynamicCheckbox = withDynamicImport(
+  () =>
+    import("@/components/ui/checkbox").then((mod) => ({
+      default: mod.Checkbox,
+    })),
+  { loading: () => <UILoadingFallback className="h-4 w-4" /> }
+);
+
+export const DynamicSelect = withDynamicImport(
+  () =>
+    import("@/components/ui/select").then((mod) => ({ default: mod.Select })),
+  { loading: () => <UILoadingFallback className="h-10 w-full" /> }
+);
+
+export const DynamicTabs = withDynamicImport(
+  () => import("@/components/ui/tabs").then((mod) => ({ default: mod.Tabs })),
+  { loading: () => <UILoadingFallback className="h-10 w-full" /> }
+);
+
+export const DynamicTooltip = withDynamicImport(
+  () =>
+    import("@/components/ui/tooltip").then((mod) => ({ default: mod.Tooltip })),
+  { loading: () => null }
+);
+
 // Wrapper component for conditional dynamic loading
 export function DynamicWrapper({
   children,

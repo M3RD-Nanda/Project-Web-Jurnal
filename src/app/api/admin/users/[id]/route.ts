@@ -1,5 +1,9 @@
 import { NextResponse } from "next/server";
 
+// Add runtime configuration
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
 // This file is now only for reference. PUT and DELETE operations are handled by Server Actions.
 // The GET operation for /api/admin/users is in route.ts
 // This file can be deleted if no other specific ID-based GET/POST is needed.

@@ -43,6 +43,12 @@ export function AnalyticsMinimal() {
   const [topPages, setTopPages] = useState<TopPage[]>([]);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [isMounted, setIsMounted] = useState(false);
+
+  // Prevent hydration mismatch by only rendering after mount
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   useEffect(() => {
     // Trigger data fetch on component mount
@@ -136,16 +142,45 @@ export function AnalyticsMinimal() {
   const maxVisitors = Math.max(...visitorData.map((d) => d.visitors), 1);
   const totalVisitors = visitorData.reduce((sum, d) => sum + d.visitors, 0);
 
+  // Prevent hydration mismatch by not rendering until mounted
+  if (!isMounted) {
+    return (
+      <div className="analytics-card bg-sidebar-accent text-sidebar-accent-foreground border-sidebar-border shadow-none rounded-xl border">
+        <div className="p-3">
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <BarChart3 className="h-4 w-4 text-sidebar-primary animate-pulse" />
+                <div className="h-3 w-16 bg-muted rounded animate-pulse" />
+              </div>
+              <div className="h-3 w-3 bg-muted rounded animate-pulse" />
+            </div>
+            <div className="space-y-2">
+              <div className="h-3 w-full bg-muted rounded animate-pulse" />
+              <div className="h-3 w-3/4 bg-muted rounded animate-pulse" />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+    <Dialog
+      key="analytics-dialog"
+      open={isDialogOpen}
+      onOpenChange={setIsDialogOpen}
+    >
       <DialogTrigger asChild>
-        <Card
-          className="analytics-card bg-sidebar-accent text-sidebar-accent-foreground border-sidebar-border shadow-none cursor-pointer hover:bg-sidebar-accent/80 transition-all duration-200 hover:shadow-sm"
+        <div
+          className="analytics-card bg-sidebar-accent text-sidebar-accent-foreground border-sidebar-border shadow-none cursor-pointer hover:bg-sidebar-accent/80 transition-all duration-200 hover:shadow-sm rounded-xl border"
           role="button"
           aria-label="Buka dashboard analytics untuk melihat statistik pengunjung website"
           tabIndex={0}
+          onClick={() => setIsDialogOpen(true)}
+          suppressHydrationWarning
         >
-          <CardContent className="p-3">
+          <div className="p-3">
             {loading ? (
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
@@ -229,8 +264,8 @@ export function AnalyticsMinimal() {
                 </div>
               </div>
             )}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       </DialogTrigger>
 
       <DialogContent

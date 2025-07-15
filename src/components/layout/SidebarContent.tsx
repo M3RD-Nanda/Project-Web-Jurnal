@@ -19,7 +19,37 @@ import { usePathname } from "next/navigation";
 //   FormMessage,
 // } from "@/components/ui/form";
 // import { toast } from "sonner";
-import { AnalyticsMinimal } from "@/components/AnalyticsMinimal";
+import dynamic from "next/dynamic";
+
+// Dynamically import AnalyticsMinimal to prevent hydration mismatch
+const AnalyticsMinimal = dynamic(
+  () =>
+    import("@/components/AnalyticsMinimal").then((mod) => ({
+      default: mod.AnalyticsMinimal,
+    })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="analytics-card bg-sidebar-accent text-sidebar-accent-foreground border-sidebar-border shadow-none rounded-xl border">
+        <div className="p-3">
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="h-4 w-4 bg-muted rounded animate-pulse" />
+                <div className="h-3 w-16 bg-muted rounded animate-pulse" />
+              </div>
+              <div className="h-3 w-3 bg-muted rounded animate-pulse" />
+            </div>
+            <div className="space-y-2">
+              <div className="h-3 w-full bg-muted rounded animate-pulse" />
+              <div className="h-3 w-3/4 bg-muted rounded animate-pulse" />
+            </div>
+          </div>
+        </div>
+      </div>
+    ),
+  }
+);
 // import { AnalyticsDebug } from "@/components/AnalyticsDebug";
 
 import { useSupabase } from "@/components/SessionProvider";

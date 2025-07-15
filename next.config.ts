@@ -45,7 +45,7 @@ const nextConfig: NextConfig = {
           },
         ],
       },
-      // Specific caching headers for static assets
+      // Enhanced caching headers for static assets
       {
         source: "/_next/static/(.*)",
         headers: [
@@ -53,14 +53,60 @@ const nextConfig: NextConfig = {
             key: "Cache-Control",
             value: "public, max-age=31536000, immutable",
           },
+          {
+            key: "Vary",
+            value: "Accept-Encoding",
+          },
         ],
       },
       {
-        source: "/(.*)\\.(js|css|woff|woff2|ttf|otf)",
+        source: "/(.*)\\.(js|css|woff|woff2|ttf|otf|eot)",
         headers: [
           {
             key: "Cache-Control",
             value: "public, max-age=31536000, immutable",
+          },
+          {
+            key: "Vary",
+            value: "Accept-Encoding",
+          },
+        ],
+      },
+      // Image caching with longer TTL
+      {
+        source: "/(.*)\\.(png|jpg|jpeg|gif|webp|avif|ico|svg)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=2592000, stale-while-revalidate=86400",
+          },
+          {
+            key: "Vary",
+            value: "Accept",
+          },
+        ],
+      },
+      // API routes caching
+      {
+        source: "/api/(.*)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=300, stale-while-revalidate=60",
+          },
+          {
+            key: "Vary",
+            value: "Accept, Authorization",
+          },
+        ],
+      },
+      // HTML pages caching
+      {
+        source: "/((?!api).*)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=0, must-revalidate",
           },
         ],
       },
@@ -109,6 +155,10 @@ const nextConfig: NextConfig = {
     optimizeCss: true,
     // Enable more aggressive code splitting (moved to root level)
     // serverComponentsExternalPackages moved to serverExternalPackages
+    // Enable concurrent features for better main thread performance
+    serverComponentsHmrCache: false, // Disable in production for better performance
+    // Enable modern JavaScript features
+    esmExternals: true,
   },
   // Move turbo config to turbopack (new stable location)
   turbopack: {
@@ -193,10 +243,12 @@ const nextConfig: NextConfig = {
       concatenateModules: true,
       splitChunks: {
         ...config.optimization?.splitChunks,
-        // Optimize chunk splitting strategy
+        // Optimize chunk splitting strategy for better main thread performance
         chunks: "all",
         minSize: 20000,
-        maxSize: 244000,
+        maxSize: 200000, // Reduced from 244000 to improve loading
+        maxAsyncRequests: 30, // Increase for better code splitting
+        maxInitialRequests: 25, // Increase for better initial loading
         cacheGroups: {
           ...config.optimization?.splitChunks?.cacheGroups,
           // CSS styles - optimized to prevent preload warnings
@@ -218,12 +270,22 @@ const nextConfig: NextConfig = {
             chunks: "all",
             priority: 30,
           },
-          // UI libraries
+          // Core UI libraries (only essential ones)
           ui: {
-            test: /[\\/]node_modules[\\/](@radix-ui|@headlessui|framer-motion)[\\/]/,
-            name: "ui",
+            test: /[\\/]node_modules[\\/](@radix-ui\/(react-dialog|react-dropdown-menu|react-navigation-menu|react-toast|react-slot|react-label))[\\/]/,
+            name: "ui-core",
             chunks: "all",
             priority: 25,
+            maxSize: 150000, // Smaller chunk for core UI
+          },
+          // Non-essential UI libraries (lazy loaded)
+          uiExtended: {
+            test: /[\\/]node_modules[\\/](@radix-ui\/(react-accordion|react-alert-dialog|react-aspect-ratio|react-avatar|react-checkbox|react-collapsible|react-context-menu|react-hover-card|react-menubar|react-popover|react-progress|react-radio-group|react-scroll-area|react-select|react-separator|react-slider|react-switch|react-tabs|react-toggle|react-toggle-group|react-tooltip))[\\/]/,
+            name: "ui-extended",
+            chunks: "async", // Load only when needed
+            priority: 20,
+            maxSize: 200000,
+            minChunks: 1,
           },
           // Web3 libraries - separate chunk to prevent CSS preloading
           web3: {

@@ -13,43 +13,42 @@ export { subDays } from "date-fns/subDays";
 export { startOfDay } from "date-fns/startOfDay";
 export { endOfDay } from "date-fns/endOfDay";
 
-// Lucide React optimized exports (most commonly used icons)
+// Lucide React optimized exports (only icons actually used in the app)
 export {
-  Calendar,
-  CalendarIcon,
-  Loader2,
+  // Core navigation icons
+  Menu,
+  X,
+  Home,
+  Search,
   ChevronDown,
   ChevronUp,
   ChevronLeft,
   ChevronRight,
-  Search,
-  Menu,
-  X,
-  Home,
+
+  // Essential UI icons
+  Loader2,
   User,
   Settings,
-  Bell,
+  Check,
+  AlertCircle,
+
+  // Content icons
+  Calendar,
   Mail,
   Phone,
   MapPin,
   Clock,
-  Download,
-  Upload,
+
+  // Action icons
   Edit,
   Trash2,
   Plus,
-  Minus,
-  Check,
-  AlertCircle,
-  Info,
-  Eye,
-  EyeOff,
   Copy,
   ExternalLink,
+
+  // Arrow icons
   ArrowLeft,
   ArrowRight,
-  ArrowUp,
-  ArrowDown,
 } from "lucide-react";
 
 // Zod optimized exports

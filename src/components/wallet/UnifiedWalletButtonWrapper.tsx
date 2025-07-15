@@ -23,6 +23,7 @@ export function UnifiedWalletButtonWrapper({
 }: UnifiedWalletButtonWrapperProps) {
   const [mounted, setMounted] = useState(false);
   const [UnifiedWalletButton, setUnifiedWalletButton] = useState<any>(null);
+  const [loadError, setLoadError] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -30,10 +31,14 @@ export function UnifiedWalletButtonWrapper({
     // Dynamically import the actual component only on client side
     const loadComponent = async () => {
       try {
+        // Add a small delay to ensure Web3Provider is mounted
+        await new Promise((resolve) => setTimeout(resolve, 100));
+
         const walletModule = await import("./UnifiedWalletButton");
         setUnifiedWalletButton(() => walletModule.UnifiedWalletButton);
       } catch (error) {
         console.warn("Failed to load UnifiedWalletButton:", error);
+        setLoadError(true);
       }
     };
 
@@ -43,7 +48,7 @@ export function UnifiedWalletButtonWrapper({
   }, [mounted]);
 
   // Show loading state during SSR and while component is loading
-  if (!mounted || !UnifiedWalletButton) {
+  if (!mounted || (!UnifiedWalletButton && !loadError)) {
     return (
       <Button
         variant={variant}
@@ -57,6 +62,25 @@ export function UnifiedWalletButtonWrapper({
       >
         <Wallet className="h-4 w-4" />
         Connect Wallet
+      </Button>
+    );
+  }
+
+  // Show error state if component failed to load
+  if (loadError || !UnifiedWalletButton) {
+    return (
+      <Button
+        variant={variant}
+        size={size}
+        className={`gap-2 font-semibold text-[10px] lg:text-xs transition-colors px-1.5 lg:px-2 h-8 border bg-transparent ${
+          className?.includes("header-wallet")
+            ? "text-primary-foreground border-primary-foreground/20"
+            : "text-muted-foreground border-border bg-background"
+        } ${className || ""}`}
+        disabled
+      >
+        <Wallet className="h-4 w-4" />
+        Wallet Unavailable
       </Button>
     );
   }

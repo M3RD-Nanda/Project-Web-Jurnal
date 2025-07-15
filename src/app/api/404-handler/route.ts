@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 
+// Add runtime configuration
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
 // Handle common 404 requests that shouldn't cause errors
 export async function GET(request: NextRequest) {
   const url = new URL(request.url);
@@ -14,16 +18,13 @@ export async function GET(request: NextRequest) {
     "/sitemap.xml",
   ];
 
-  if (ignoredPaths.some(path => pathname.includes(path))) {
+  if (ignoredPaths.some((path) => pathname.includes(path))) {
     // Return empty response for ignored paths to prevent 404 logs
     return new NextResponse(null, { status: 204 });
   }
 
   // For other 404s, return proper 404 response
-  return NextResponse.json(
-    { error: "Not Found" },
-    { status: 404 }
-  );
+  return NextResponse.json({ error: "Not Found" }, { status: 404 });
 }
 
 // Handle other HTTP methods

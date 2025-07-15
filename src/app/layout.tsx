@@ -5,18 +5,46 @@ import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/sonner";
 import { MadeWithDyad } from "@/components/made-with-dyad";
 import { SessionProvider } from "@/components/SessionProvider";
-import { Web3Provider } from "@/components/Web3Provider";
-import { SolanaProvider } from "@/components/SolanaProvider";
 import React from "react";
-import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
-import { Sidebar } from "@/components/layout/Sidebar";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
-import { PerformanceMonitor } from "@/components/PerformanceMonitor";
-import { recordPageVisit } from "@/actions/analytics";
-import { headers } from "next/headers";
 import { createClient } from "@/integrations/supabase/server"; // Import server client
+import dynamic from "next/dynamic";
+import { ClientProviders } from "@/components/ClientProviders";
+
+// Server-side dynamic imports for layout components
+const Header = dynamic(
+  () =>
+    import("@/components/layout/Header").then((mod) => ({
+      default: mod.Header,
+    })),
+  {
+    ssr: true,
+    loading: () => <div className="h-16 bg-primary" />, // Prevent layout shift
+  }
+);
+
+const Footer = dynamic(
+  () =>
+    import("@/components/layout/Footer").then((mod) => ({
+      default: mod.Footer,
+    })),
+  {
+    ssr: true,
+    loading: () => <div className="h-32 bg-muted" />, // Prevent layout shift
+  }
+);
+
+const Sidebar = dynamic(
+  () =>
+    import("@/components/layout/Sidebar").then((mod) => ({
+      default: mod.Sidebar,
+    })),
+  {
+    ssr: true,
+    loading: () => <div className="w-64 bg-muted hidden md:block" />, // Prevent layout shift
+  }
+);
 import {
   generateMetadata as generateSEOMetadata,
   SITE_CONFIG,
@@ -32,11 +60,15 @@ import { AccessibilityFixer } from "@/components/AccessibilityFixer";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+  display: "swap", // Improve font loading performance
+  preload: true,
 });
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
+  display: "swap", // Improve font loading performance
+  preload: false, // Only preload primary font
 });
 
 export const metadata: Metadata = generateSEOMetadata({
@@ -61,15 +93,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Record page visit on every page load (with error handling)
-  try {
-    const headersList = await headers();
-    const path = headersList.get("x-pathname") || "/";
-    await recordPageVisit(path);
-  } catch (error) {
-    // Silently fail analytics to prevent layout errors
-    console.error("Analytics error:", error);
-  }
+  // Analytics tracking moved to client-side to prevent dynamic server usage errors
 
   // For security, we don't fetch session on server-side to avoid warnings
   // The client-side SessionProvider will handle authentication properly
@@ -90,6 +114,55 @@ export default async function RootLayout({
   return (
     <html lang="id" suppressHydrationWarning>
       <head>
+        {/* Critical CSS for LCP optimization */}
+        <style
+          dangerouslySetInnerHTML={{
+            __html: `
+              /* Critical CSS for above-the-fold content */
+              .hero-section {
+                background: linear-gradient(to right, hsl(var(--primary)), hsl(var(--jimeka-blue)));
+                color: hsl(var(--primary-foreground));
+                padding: 2rem;
+                border-radius: 0.5rem;
+                box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+                position: relative;
+                overflow: hidden;
+              }
+              .hero-content {
+                max-width: 48rem;
+                margin: 0 auto;
+                text-align: center;
+                position: relative;
+                z-index: 10;
+              }
+              .hero-title {
+                font-size: 2.25rem;
+                font-weight: 800;
+                margin-bottom: 1rem;
+                line-height: 1.1;
+              }
+              @media (min-width: 768px) {
+                .hero-title {
+                  font-size: 3rem;
+                }
+              }
+            `,
+          }}
+        />
+
+        {/* Preload critical resources for LCP */}
+        <link rel="preload" href="/jimeka-logo.png" as="image" />
+        {/* Only preload CSS in production where it exists */}
+        {process.env.NODE_ENV === "production" && (
+          <link rel="preload" href="/_next/static/css/app.css" as="style" />
+        )}
+        <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin="anonymous"
+        />
+
         {/* Preload Prevention Script - Run Early */}
         <script
           dangerouslySetInnerHTML={{
@@ -158,28 +231,27 @@ export default async function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Web3Provider>
-            <SolanaProvider>
-              {/* Pass initialSession to SessionProvider */}
-              <SessionProvider initialSession={initialSession}>
-                <div className="min-h-screen flex flex-col">
-                  <Header />
-                  <div className="flex flex-1 flex-col md:flex-row">
-                    <Sidebar />
-                    <main className="flex-1">{children}</main>
-                  </div>
-                  <Footer />
+          <ClientProviders>
+            {/* Pass initialSession to SessionProvider */}
+            <SessionProvider initialSession={initialSession}>
+              <div className="min-h-screen flex flex-col">
+                <Header />
+                <div className="flex flex-1 flex-col md:flex-row">
+                  <Sidebar />
+                  <main className="flex-1">{children}</main>
                 </div>
-              </SessionProvider>
-            </SolanaProvider>
-          </Web3Provider>
+                <Footer />
+              </div>
+            </SessionProvider>
+          </ClientProviders>
         </ThemeProvider>
         <Toaster />
         <MadeWithDyad />
-        <PerformanceMonitor />
         <AccessibilityFixer />
+        {/* Load analytics asynchronously to reduce main thread work */}
         <SpeedInsights />
-        <Analytics />
+        {/* Only load Analytics in production to prevent 404 errors in development */}
+        {process.env.NODE_ENV === "production" && <Analytics />}
       </body>
     </html>
   );

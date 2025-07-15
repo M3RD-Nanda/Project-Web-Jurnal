@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { readFile } from "fs/promises";
 import { join } from "path";
 
+// Add runtime configuration
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
 export async function GET(_request: NextRequest) {
   try {
     // Get the template file path
