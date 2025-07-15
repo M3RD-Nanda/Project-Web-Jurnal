@@ -151,7 +151,7 @@ export default async function RootLayout({
         />
 
         {/* Preload critical resources for LCP */}
-        <link rel="preload" href="/jimeka-logo.webp" as="image" />
+        {/* Logo preloading is handled by Next.js Image component with priority prop */}
         {/* CSS is automatically handled by Next.js - no manual preload needed */}
         <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
         <link
