@@ -67,7 +67,7 @@ export const SITE_CONFIG = {
   author: "Universitas Percobaan Nanda",
   category: "Education",
   language: "id-ID",
-  logo: "/jimeka-logo.png",
+  logo: "/jimeka-logo.webp",
   favicon: "/favicon.ico",
   authors: ["Universitas Percobaan Nanda"],
   creator: "@jimeka_journal",
@@ -196,10 +196,10 @@ export function generateMetadata(config: SEOConfig): Metadata {
     icons: {
       icon: [
         { url: "/favicon.ico", sizes: "any" },
-        { url: "/jimeka-logo.png", sizes: "32x32", type: "image/png" },
+        { url: "/jimeka-logo.webp", sizes: "32x32", type: "image/webp" },
       ],
       shortcut: "/favicon.ico",
-      apple: "/jimeka-logo.png",
+      apple: "/jimeka-logo.webp",
     },
 
     // Verification (add your verification codes here)

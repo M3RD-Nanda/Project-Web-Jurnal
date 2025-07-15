@@ -40,7 +40,7 @@ export function Header() {
           <MobileNav />
           <Link href="/" className="flex items-center gap-2 min-w-0">
             <Image
-              src="/jimeka-logo.png"
+              src="/jimeka-logo.webp"
               alt="Jurnal Ekonomi Bisnis dan Akuntansi Mahasiswa (JEBAKA) Logo Universitas Percobaan Nanda"
               width={32}
               height={32}

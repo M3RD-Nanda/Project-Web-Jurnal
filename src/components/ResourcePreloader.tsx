@@ -313,14 +313,14 @@ export const JournalResourcePreloader = () => (
     criticalResources={[
       // CSS is automatically handled by Next.js - no manual preload needed
       "/favicon.ico",
-      "/jimeka-logo.png",
+      "/jimeka-logo.webp",
     ]}
     prefetchResources={[
       "/api/articles",
       "/api/announcements",
       "/api/statistics",
     ]}
-    preloadImages={["/jimeka-logo.png", "/images/hero-bg.jpg"]}
+    preloadImages={["/jimeka-logo.webp", "/images/hero-bg.jpg"]}
     enableIntelligentPrefetch={true}
   />
 );
