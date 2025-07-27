@@ -373,6 +373,43 @@ export function UnifiedWalletButton({
     }
   };
 
+  // Enhanced EVM wallet connection that works with any available EVM wallet
+  const handleConnectAnyEvmWallet = async () => {
+    try {
+      // Find the first installed EVM wallet
+      const installedWallet = evmWallets.find((wallet) => wallet.isInstalled);
+
+      if (!installedWallet) {
+        toast.error(
+          "No EVM wallets detected. Please install a wallet extension."
+        );
+        return;
+      }
+
+      // Connect using the first available installed wallet
+      await connectEvm({ connector: installedWallet.connector });
+      toast.success(`${installedWallet.name} connected successfully!`);
+      setIsWalletConnectionModalOpen(false);
+      setIsWalletTypeModalOpen(false);
+
+      // Dispatch wallet connection event with updated status
+      const eventDetail = createWalletEventDetail(
+        true, // EVM connected
+        solana.isConnected,
+        wagmiEvmAddress || phantomEvmAddress,
+        solana.publicKey
+      );
+      dispatchWalletEvent(eventDetail);
+    } catch (error: any) {
+      console.error("Failed to connect EVM wallet:", error);
+      if (error.code === 4001) {
+        toast.error("Connection rejected by user");
+      } else {
+        toast.error("Failed to connect to EVM wallet. Please try again.");
+      }
+    }
+  };
+
   // Handle EVM wallet connections (Brave, MetaMask, etc.)
   const handleConnectEvmWallet = async (walletId: string) => {
     try {
@@ -661,76 +698,15 @@ export function UnifiedWalletButton({
 
             {selectedWalletType === "evm" ? (
               <div className="space-y-4">
-                <p className="text-sm text-muted-foreground text-center">
-                  Choose your preferred EVM wallet
-                </p>
-
-                {/* Show available EVM wallets */}
-                <div className="space-y-3">
-                  {evmWallets.length > 0 ? (
-                    evmWallets.map((wallet) => (
-                      <Button
-                        key={wallet.id}
-                        onClick={() => handleConnectEvmWallet(wallet.id)}
-                        className="w-full justify-start gap-3 h-12"
-                        variant="outline"
-                        disabled={!wallet.isInstalled}
-                      >
-                        <img
-                          src={wallet.icon}
-                          alt={wallet.name}
-                          className="w-6 h-6"
-                          onError={(e) => {
-                            // Fallback to emoji if image fails to load
-                            const target = e.target as HTMLImageElement;
-                            target.style.display = "none";
-                            target.nextElementSibling!.textContent = "🔗";
-                          }}
-                        />
-                        <span className="hidden">🔗</span>
-                        <div className="flex-1 text-left">
-                          <div className="font-medium">{wallet.name}</div>
-                          {wallet.isInstalled && (
-                            <div className="text-xs text-green-600">
-                              Installed
-                            </div>
-                          )}
-                          {!wallet.isInstalled && (
-                            <div className="text-xs text-muted-foreground">
-                              Not installed
-                            </div>
-                          )}
-                        </div>
-                      </Button>
-                    ))
-                  ) : (
-                    <div className="text-center py-4">
-                      <p className="text-sm text-muted-foreground">
-                        No EVM wallets detected. Please install a wallet
-                        extension.
-                      </p>
-                    </div>
-                  )}
-                </div>
-
-                {/* Phantom Ethereum option */}
-                <div className="border-t pt-4">
-                  <p className="text-sm text-muted-foreground text-center mb-3">
-                    Or connect to Phantom Ethereum wallet
+                {/* Enhanced EVM Wallet Connection */}
+                <div className="text-center">
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Connect to your EVM wallet
                   </p>
-                  {!isInstalled ? (
+                  {evmWallets.length > 0 &&
+                  evmWallets.some((w) => w.isInstalled) ? (
                     <Button
-                      onClick={redirectToPhantomDownload}
-                      className="w-full"
-                      size="lg"
-                      variant="outline"
-                    >
-                      <ExternalLink className="w-4 h-4 mr-2" />
-                      Install Phantom Wallet
-                    </Button>
-                  ) : (
-                    <Button
-                      onClick={handleConnectEthereum}
+                      onClick={handleConnectAnyEvmWallet}
                       className="w-full"
                       size="lg"
                       disabled={ethereum.isConnecting}
@@ -738,8 +714,26 @@ export function UnifiedWalletButton({
                       <Wallet className="w-4 h-4 mr-2" />
                       {ethereum.isConnecting
                         ? "Connecting..."
-                        : "Connect Phantom Ethereum"}
+                        : "Connect EVM Wallet"}
                     </Button>
+                  ) : (
+                    <div className="space-y-3">
+                      <p className="text-sm text-muted-foreground">
+                        No EVM wallets detected. Please install a wallet
+                        extension.
+                      </p>
+                      <Button
+                        onClick={() =>
+                          window.open("https://metamask.io/download/", "_blank")
+                        }
+                        className="w-full"
+                        size="lg"
+                        variant="outline"
+                      >
+                        <ExternalLink className="w-4 h-4 mr-2" />
+                        Install MetaMask
+                      </Button>
+                    </div>
                   )}
                 </div>
               </div>
