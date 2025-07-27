@@ -205,6 +205,22 @@ export default async function RootLayout({
           }}
         />
 
+        {/* Google Analytics (gtag.js) */}
+        <script
+          async
+          src="https://www.googletagmanager.com/gtag/js?id=G-Z9B6FQVR5V"
+        />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-Z9B6FQVR5V');
+            `,
+          }}
+        />
+
         {/* Structured Data */}
         <script
           type="application/ld+json"

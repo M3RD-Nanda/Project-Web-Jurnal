@@ -1,12 +1,15 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import {
   useWallet,
   useConnection,
   useSolanaContext,
 } from "@/components/SolanaProvider";
-import { fetchBalanceWithFallback } from "@/lib/solana-connection";
+import {
+  fetchBalanceWithFallback,
+  clearBalanceCache,
+} from "@/lib/solana-connection";
 
 // Safe wrapper for Solana wallet
 export function useWalletSafe() {
@@ -61,69 +64,115 @@ export function useSolanaBalance(publicKey?: any) {
   const [balance, setBalance] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const { network } = useSolanaContext();
 
-  const fetchBalance = async () => {
-    if (!publicKey) {
-      setBalance(null);
-      return;
-    }
-
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      // Use the enhanced balance fetching with fallback and retry
-      const balanceInLamports = await fetchBalanceWithFallback(
-        publicKey,
-        network
-      );
-      setBalance(balanceInLamports);
-    } catch (err: any) {
-      console.error("Error fetching Solana balance:", err);
-
-      // Handle specific error types with user-friendly messages
-      if (
-        err.message?.includes("403") ||
-        err.message?.includes("Access forbidden") ||
-        err.message?.includes("rate limit")
-      ) {
-        setError(
-          "RPC endpoint rate limited. Please try again in a few moments."
-        );
-      } else if (
-        err.message?.includes("429") ||
-        err.message?.includes("Too Many Requests")
-      ) {
-        setError("Too many requests. Please wait a moment and try again.");
-      } else if (err.message?.includes("Failed to connect")) {
-        setError(
-          "Unable to connect to Solana network. Please check your internet connection."
-        );
-      } else {
-        setError("Failed to fetch balance. Please try again later.");
+  // Create a stable fetchBalance function that doesn't change on every render
+  const fetchBalance = useCallback(
+    async (forceRefresh = false) => {
+      if (!publicKey) {
+        setBalance(null);
+        return;
       }
 
-      setBalance(null);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+      setIsLoading(true);
+      setError(null);
+
+      try {
+        // Clear cache if this is a forced refresh
+        if (forceRefresh) {
+          clearBalanceCache(publicKey, network);
+        }
+
+        // Use the enhanced balance fetching with fallback and retry
+        const balanceInLamports = await fetchBalanceWithFallback(
+          publicKey,
+          network
+        );
+        setBalance(balanceInLamports);
+      } catch (err: any) {
+        // Reduce console spam - only log in development
+        if (process.env.NODE_ENV === "development") {
+          console.error("Error fetching Solana balance:", err);
+        }
+
+        // Handle specific error types with user-friendly messages
+        if (
+          err.message?.includes("403") ||
+          err.message?.includes("Access forbidden")
+        ) {
+          setError(
+            "RPC endpoint access forbidden. Please check your API configuration."
+          );
+        } else if (
+          err.message?.includes("429") ||
+          err.message?.includes("Too Many Requests") ||
+          err.message?.includes("rate limit") ||
+          err.message?.includes("Exceeded rate limit") ||
+          err.message?.includes("Rate limit exceeded")
+        ) {
+          setError("Rate limit exceeded. Please wait a moment and try again.");
+        } else if (err.message?.includes("Failed to connect")) {
+          setError(
+            "Unable to connect to Solana network. Please check your internet connection."
+          );
+        } else {
+          setError("Failed to fetch balance. Please try again later.");
+        }
+
+        setBalance(null);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [publicKey, network]
+  );
 
   useEffect(() => {
+    // Clear any existing timer
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+      debounceTimerRef.current = null;
+    }
+
     if (publicKey) {
-      fetchBalance();
+      // Debounce the balance fetch to prevent rapid calls
+      debounceTimerRef.current = setTimeout(() => {
+        fetchBalance();
+      }, 500); // 500ms debounce
     } else {
       setBalance(null);
     }
-  }, [publicKey, network]);
+
+    // Cleanup function
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+        debounceTimerRef.current = null;
+      }
+    };
+  }, [publicKey, network]); // Removed fetchBalance from dependencies to prevent infinite loop
+
+  // Enhanced refetch function that clears cache
+  const refetch = useCallback(() => {
+    if (publicKey) {
+      // Clear any existing timer first
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+        debounceTimerRef.current = null;
+      }
+
+      // Call fetchBalance with forceRefresh to clear cache and get fresh data
+      fetchBalance(true);
+    }
+  }, [publicKey, fetchBalance]);
 
   return {
     balance,
     isLoading,
     error,
-    refetch: fetchBalance,
+    refetch,
   };
 }
 

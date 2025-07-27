@@ -147,7 +147,7 @@ export default function CryptoWalletDashboard() {
       icon: Send,
       href: "/wallet/send",
       description: "Send crypto to any address",
-      color: "bg-blue-500 hover:bg-blue-600",
+      neonClass: "neon-blue-purple",
     },
     {
       id: "receive",
@@ -155,7 +155,7 @@ export default function CryptoWalletDashboard() {
       icon: Download,
       href: "/wallet/receive",
       description: "Get your wallet address",
-      color: "bg-green-500 hover:bg-green-600",
+      neonClass: "neon-red-orange",
     },
     {
       id: "history",
@@ -163,7 +163,7 @@ export default function CryptoWalletDashboard() {
       icon: History,
       href: "/wallet/history",
       description: "Transaction history",
-      color: "bg-purple-500 hover:bg-purple-600",
+      neonClass: "neon-purple-magenta",
     },
     {
       id: "refresh",
@@ -171,7 +171,7 @@ export default function CryptoWalletDashboard() {
       icon: RefreshCw,
       onClick: handleRefreshData,
       description: "Update balances",
-      color: "bg-orange-500 hover:bg-orange-600",
+      neonClass: "neon-orange-yellow",
     },
   ];
 
@@ -426,10 +426,9 @@ export default function CryptoWalletDashboard() {
                     </CardHeader>
                     <CardContent className="space-y-3">
                       {quickActions.map((action) => (
-                        <Button
+                        <button
                           key={action.id}
-                          variant="outline"
-                          className={`w-full justify-start h-auto p-4 ${action.color} text-white border-0`}
+                          className={`w-full justify-start h-auto p-4 rounded-lg border-2 bg-transparent text-foreground transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed ${action.neonClass}`}
                           onClick={
                             action.onClick || (() => router.push(action.href!))
                           }
@@ -447,7 +446,7 @@ export default function CryptoWalletDashboard() {
                               <RefreshCw className="h-4 w-4 animate-spin ml-auto" />
                             )}
                           </div>
-                        </Button>
+                        </button>
                       ))}
                     </CardContent>
                   </Card>

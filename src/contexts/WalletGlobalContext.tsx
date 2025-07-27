@@ -1,6 +1,12 @@
 "use client";
 
-import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+} from "react";
 import { usePhantomWallet } from "@/hooks/usePhantomWallet";
 import { useAccountSafe } from "@/hooks/useWagmiSafe";
 import { useWallet } from "@solana/wallet-adapter-react";
@@ -12,23 +18,23 @@ interface WalletGlobalState {
   isEvmConnected: boolean;
   isSolanaConnected: boolean;
   isAnyConnected: boolean;
-  
+
   // Addresses
   evmAddress: string | null;
   solanaAddress: string | null;
-  
+
   // Connection Methods
   connectPhantomEvm: () => Promise<void>;
   connectPhantomSolana: () => Promise<void>;
   disconnectAll: () => Promise<void>;
-  
+
   // Loading States
   isConnecting: boolean;
   isDisconnecting: boolean;
-  
+
   // Error States
   error: string | null;
-  
+
   // Refresh Method
   refresh: () => void;
 }
@@ -86,10 +92,12 @@ export function WalletGlobalProvider({ children }: WalletGlobalProviderProps) {
   // Derived state - unified connection status
   const isEvmConnected = phantom.ethereum.isConnected || wagmi.isConnected;
   const evmAddress = phantom.ethereum.address || wagmi.address || null;
-  
-  const isSolanaConnected = phantom.solana.isConnected || solanaAdapter.connected;
-  const solanaAddress = phantom.solana.publicKey || solanaAdapter.publicKey?.toString() || null;
-  
+
+  const isSolanaConnected =
+    phantom.solana.isConnected || solanaAdapter.connected;
+  const solanaAddress =
+    phantom.solana.publicKey || solanaAdapter.publicKey?.toString() || null;
+
   const isAnyConnected = isEvmConnected || isSolanaConnected;
   const isConnected = isAnyConnected;
 
@@ -121,7 +129,7 @@ export function WalletGlobalProvider({ children }: WalletGlobalProviderProps) {
         solanaAddress,
         timestamp: Date.now(),
       };
-      
+
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(stateToSave));
         console.log("💾 Persisted wallet state:", stateToSave);
@@ -139,7 +147,8 @@ export function WalletGlobalProvider({ children }: WalletGlobalProviderProps) {
       await phantom.ethereum.connect();
       console.log("✅ Phantom EVM connected");
     } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : "Failed to connect Phantom EVM";
+      const errorMsg =
+        err instanceof Error ? err.message : "Failed to connect Phantom EVM";
       setError(errorMsg);
       console.error("❌ Phantom EVM connection failed:", err);
     } finally {
@@ -154,7 +163,8 @@ export function WalletGlobalProvider({ children }: WalletGlobalProviderProps) {
       await phantom.solana.connect();
       console.log("✅ Phantom Solana connected");
     } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : "Failed to connect Phantom Solana";
+      const errorMsg =
+        err instanceof Error ? err.message : "Failed to connect Phantom Solana";
       setError(errorMsg);
       console.error("❌ Phantom Solana connection failed:", err);
     } finally {
@@ -176,15 +186,16 @@ export function WalletGlobalProvider({ children }: WalletGlobalProviderProps) {
       if (solanaAdapter.connected && solanaAdapter.disconnect) {
         await solanaAdapter.disconnect();
       }
-      
+
       // Clear persisted state
       if (typeof window !== "undefined") {
         localStorage.removeItem(STORAGE_KEY);
       }
-      
+
       console.log("✅ All wallets disconnected");
     } catch (err) {
-      const errorMsg = err instanceof Error ? err.message : "Failed to disconnect wallets";
+      const errorMsg =
+        err instanceof Error ? err.message : "Failed to disconnect wallets";
       setError(errorMsg);
       console.error("❌ Wallet disconnection failed:", err);
     } finally {
@@ -193,37 +204,9 @@ export function WalletGlobalProvider({ children }: WalletGlobalProviderProps) {
   }, [phantom.ethereum, phantom.solana, solanaAdapter]);
 
   const refresh = useCallback(() => {
-    setRefreshTrigger(prev => prev + 1);
+    setRefreshTrigger((prev) => prev + 1);
     console.log("🔄 Wallet state refreshed");
   }, []);
-
-  // Debug logging
-  useEffect(() => {
-    console.log("🌐 Global Wallet State Update:", {
-      unified: {
-        isConnected,
-        isEvmConnected,
-        isSolanaConnected,
-        isAnyConnected,
-        evmAddress,
-        solanaAddress,
-      },
-      sources: {
-        phantom: {
-          evm: { connected: phantom.ethereum.isConnected, address: phantom.ethereum.address },
-          solana: { connected: phantom.solana.isConnected, address: phantom.solana.publicKey },
-        },
-        wagmi: { connected: wagmi.isConnected, address: wagmi.address },
-        solanaAdapter: { connected: solanaAdapter.connected, address: solanaAdapter.publicKey?.toString() },
-      },
-      states: { isConnecting, isDisconnecting, error },
-      refreshTrigger,
-    });
-  }, [
-    isConnected, isEvmConnected, isSolanaConnected, isAnyConnected,
-    evmAddress, solanaAddress, phantom, wagmi, solanaAdapter,
-    isConnecting, isDisconnecting, error, refreshTrigger
-  ]);
 
   const contextValue: WalletGlobalState = {
     isConnected,

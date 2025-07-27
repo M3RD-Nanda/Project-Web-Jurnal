@@ -128,53 +128,7 @@ export function UnifiedWalletButton({
     setMounted(true);
   }, []);
 
-  // Auto-navigate to wallet dashboard when wallet connects in header
-  useEffect(() => {
-    if (
-      mounted &&
-      isAnyWalletConnected &&
-      className?.includes("header-wallet")
-    ) {
-      // Longer delay to ensure connection is fully established and state is synced
-      const timer = setTimeout(() => {
-        console.log("Auto-navigating to wallet dashboard from header");
-        router.push("/wallet");
-
-        // Dispatch event to ensure wallet page is updated
-        window.dispatchEvent(
-          new CustomEvent("walletConnected", {
-            detail: {
-              evmConnected: isEvmConnected,
-              solanaConnected: isSolanaConnected,
-              evmAddress,
-              solanaPublicKey: solanaPublicKey?.toString(),
-              timestamp: Date.now(),
-              walletType:
-                isEvmConnected && isSolanaConnected
-                  ? "both"
-                  : isEvmConnected
-                  ? "evm"
-                  : isSolanaConnected
-                  ? "solana"
-                  : "none",
-              connected: true,
-            },
-          })
-        );
-      }, 1000);
-
-      return () => clearTimeout(timer);
-    }
-  }, [
-    mounted,
-    isAnyWalletConnected,
-    className,
-    router,
-    isEvmConnected,
-    isSolanaConnected,
-    evmAddress,
-    solanaPublicKey,
-  ]);
+  // Remove auto-navigation - user prefers manual navigation via button click
 
   // Force refresh wallet dashboard when wallet connects with debouncing
   useEffect(() => {
@@ -290,8 +244,13 @@ export function UnifiedWalletButton({
   // Handle button click
   const handleButtonClick = () => {
     if (isAnyWalletConnected) {
-      // Always show wallet status modal when connected
-      setIsWalletConnectionModalOpen(true);
+      // If connected and in header, navigate to wallet dashboard
+      if (className?.includes("header-wallet")) {
+        router.push("/wallet");
+      } else {
+        // Otherwise show wallet status modal when connected
+        setIsWalletConnectionModalOpen(true);
+      }
     } else {
       // Always reset and show wallet type selection modal for new connections
       setSelectedWalletType(null);
@@ -786,7 +745,7 @@ export function UnifiedWalletButton({
         } ${className || ""}`}
       >
         <Wallet className="h-4 w-4" />
-        Connect Wallet
+        {isAnyWalletConnected ? "Wallet Dashboard" : "Connect Wallet"}
       </Button>
     </>
   );

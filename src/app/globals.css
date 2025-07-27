@@ -2,6 +2,51 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Neon Button Styles */
+.neon-blue-purple {
+  border: 2px solid;
+  border-image: linear-gradient(45deg, #3b82f6, #8b5cf6) 1;
+  box-shadow: 0 0 10px rgba(59, 130, 246, 0.4), 0 0 20px rgba(139, 92, 246, 0.2);
+}
+
+.neon-blue-purple:hover {
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.6), 0 0 30px rgba(139, 92, 246, 0.4),
+    0 0 45px rgba(59, 130, 246, 0.2);
+}
+
+.neon-red-orange {
+  border: 2px solid;
+  border-image: linear-gradient(45deg, #ef4444, #f97316) 1;
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.4), 0 0 20px rgba(249, 115, 22, 0.2);
+}
+
+.neon-red-orange:hover {
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.6), 0 0 30px rgba(249, 115, 22, 0.4),
+    0 0 45px rgba(239, 68, 68, 0.2);
+}
+
+.neon-purple-magenta {
+  border: 2px solid;
+  border-image: linear-gradient(45deg, #8b5cf6, #ec4899) 1;
+  box-shadow: 0 0 10px rgba(139, 92, 246, 0.4), 0 0 20px rgba(236, 72, 153, 0.2);
+}
+
+.neon-purple-magenta:hover {
+  box-shadow: 0 0 15px rgba(139, 92, 246, 0.6), 0 0 30px rgba(236, 72, 153, 0.4),
+    0 0 45px rgba(139, 92, 246, 0.2);
+}
+
+.neon-orange-yellow {
+  border: 2px solid;
+  border-image: linear-gradient(45deg, #f97316, #eab308) 1;
+  box-shadow: 0 0 10px rgba(249, 115, 22, 0.4), 0 0 20px rgba(234, 179, 8, 0.2);
+}
+
+.neon-orange-yellow:hover {
+  box-shadow: 0 0 15px rgba(249, 115, 22, 0.6), 0 0 30px rgba(234, 179, 8, 0.4),
+    0 0 45px rgba(249, 115, 22, 0.2);
+}
+
 @layer base {
   :root {
     --background: 210 40% 98%; /* Slightly off-white, very light grey-blue */

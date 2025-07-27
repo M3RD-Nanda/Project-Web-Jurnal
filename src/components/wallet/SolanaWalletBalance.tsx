@@ -57,42 +57,7 @@ export function SolanaWalletBalance({
     setIsClient(true);
   }, []);
 
-  // Debug logging
-  useEffect(() => {
-    console.log("SolanaWalletBalance Debug:", {
-      connected,
-      publicKeyString,
-      publicKey: publicKey?.toString(),
-      balance,
-      isLoading,
-      error,
-      network,
-      phantomSolana: {
-        isConnected: solana.isConnected,
-        isInstalled: solana.isInstalled,
-        publicKey: solana.publicKey,
-      },
-    });
-  }, [
-    connected,
-    publicKeyString,
-    publicKey,
-    balance,
-    isLoading,
-    error,
-    network,
-    solana,
-  ]);
-
-  // Auto-refresh balance every 30 seconds
-  useEffect(() => {
-    if (!connected || !publicKey) return;
-
-    const interval = setInterval(() => {
-      refetch();
-    }, 30000);
-    return () => clearInterval(interval);
-  }, [connected, publicKey, refetch]);
+  // Auto-refresh removed - balance will only update on manual refresh or reconnection
 
   if (!isClient) {
     return (
