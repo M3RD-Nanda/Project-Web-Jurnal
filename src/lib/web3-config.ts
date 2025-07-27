@@ -1,4 +1,11 @@
-import { getDefaultConfig } from "@rainbow-me/rainbowkit";
+import { getDefaultConfig, connectorsForWallets } from "@rainbow-me/rainbowkit";
+import {
+  metaMaskWallet,
+  coinbaseWallet,
+  walletConnectWallet,
+  braveWallet,
+  injectedWallet,
+} from "@rainbow-me/rainbowkit/wallets";
 import {
   mainnet,
   polygon,
@@ -9,12 +16,6 @@ import {
   polygonAmoy,
 } from "wagmi/chains";
 import { createConfig, http } from "wagmi";
-import {
-  metaMask,
-  walletConnect,
-  coinbaseWallet,
-  injected,
-} from "wagmi/connectors";
 
 // Define the chains we want to support
 export const supportedChains = [
@@ -46,91 +47,8 @@ if (!hasValidProjectId) {
 // Configure wagmi with RainbowKit - only create on client side
 let _wagmiConfig: any = null;
 
-// Function to create custom connectors with proper wallet detection
-function createCustomConnectors() {
-  const connectors = [];
-
-  // Always add MetaMask connector (will be filtered by detection later)
-  connectors.push(
-    metaMask({
-      dappMetadata: {
-        name: "JEBAKA - Crypto Wallet",
-      },
-    })
-  );
-
-  // Always add Coinbase Wallet connector (will be filtered by detection later)
-  connectors.push(
-    coinbaseWallet({
-      appName: "JEBAKA - Crypto Wallet",
-      appLogoUrl: undefined,
-    })
-  );
-
-  // Add WalletConnect only if we have a valid project ID
-  if (hasValidProjectId) {
-    try {
-      connectors.push(
-        walletConnect({
-          projectId: projectId!,
-          metadata: {
-            name: "JEBAKA - Crypto Wallet",
-            description: "Connect your wallet to JEBAKA",
-            url:
-              typeof window !== "undefined"
-                ? window.location.origin
-                : "https://localhost:3000",
-            icons: [],
-          },
-          showQrModal: true,
-          qrModalOptions: {
-            themeMode: "light",
-            themeVariables: {
-              "--wcm-z-index": "1000",
-            },
-          },
-        })
-      );
-    } catch (error) {
-      console.warn("Failed to initialize WalletConnect:", error);
-    }
-  }
-
-  // Always add Brave Wallet connector (will be filtered by detection later)
-  connectors.push(
-    injected({
-      target: {
-        id: "brave",
-        name: "Brave Wallet",
-        provider:
-          typeof window !== "undefined" ? (window as any).ethereum : undefined,
-      },
-    })
-  );
-
-  // Add generic injected connector for other wallets (Trust, etc.)
-  if (typeof window !== "undefined" && (window as any).ethereum) {
-    const ethereum = (window as any).ethereum;
-    // Only add if it's not MetaMask, Coinbase, or Brave (to avoid duplicates)
-    if (
-      !ethereum.isMetaMask &&
-      !ethereum.isCoinbaseWallet &&
-      !ethereum.isBraveWallet
-    ) {
-      connectors.push(
-        injected({
-          target: {
-            id: "injected",
-            name: "Injected Wallet",
-            provider: ethereum,
-          },
-        })
-      );
-    }
-  }
-
-  return connectors;
-}
+// Removed custom connector creation to prevent duplicates
+// RainbowKit's getDefaultConfig handles wallet detection automatically
 
 export function getWagmiConfig() {
   if (!_wagmiConfig) {
@@ -143,16 +61,19 @@ export function getWagmiConfig() {
         // Set global flag to disable Lit dev mode
         (window as any).litDisableBundleWarning = true;
 
-        // Suppress specific console warnings for Lit
+        // Suppress specific console warnings for Lit and Phantom
         const originalWarn = console.warn;
         console.warn = (...args: any[]) => {
           const message = args.join(" ");
           if (
             message.includes("Lit is in dev mode") ||
             message.includes("lit.dev/msg/dev-mode") ||
-            message.includes("Not recommended for production")
+            message.includes("Not recommended for production") ||
+            message.includes("❌ Phantom Ethereum provider not found") ||
+            message.includes("⚠️ Phantom wallet not detected") ||
+            message.includes("Phantom Ethereum provider not found")
           ) {
-            return; // Suppress Lit dev mode warnings
+            return; // Suppress Lit dev mode and Phantom warnings
           }
           originalWarn.apply(console, args);
         };
@@ -163,39 +84,43 @@ export function getWagmiConfig() {
         }, 2000);
       }
 
-      // Create custom config with only relevant wallets
-      const customConnectors = createCustomConnectors();
-
-      if (customConnectors.length > 0) {
-        // Create config with custom connectors
-        _wagmiConfig = createConfig({
-          chains: supportedChains,
-          connectors: customConnectors,
-          transports: {
-            [mainnet.id]: http(),
-            [polygon.id]: http(),
-            [optimism.id]: http(),
-            [arbitrum.id]: http(),
-            [base.id]: http(),
-            [sepolia.id]: http(),
-            [polygonAmoy.id]: http(),
+      // Use explicit wallet list to prevent duplicates
+      const connectors = connectorsForWallets(
+        [
+          {
+            groupName: "Popular",
+            wallets: [
+              metaMaskWallet,
+              coinbaseWallet,
+              walletConnectWallet,
+              braveWallet,
+              injectedWallet,
+            ],
           },
-          ssr: true,
-          // Add error handling for connection issues
-          multiInjectedProviderDiscovery: true,
-        });
-      } else {
-        // Fallback to default config if no wallets detected
-
-        _wagmiConfig = getDefaultConfig({
+        ],
+        {
           appName: "JEBAKA - Crypto Wallet",
           projectId: hasValidProjectId
             ? projectId!
             : "00000000-0000-0000-0000-000000000000",
-          chains: supportedChains,
-          ssr: true,
-        });
-      }
+        }
+      );
+
+      // Create config with explicit connectors to avoid duplicates
+      _wagmiConfig = createConfig({
+        connectors,
+        chains: supportedChains,
+        transports: {
+          [mainnet.id]: http(),
+          [polygon.id]: http(),
+          [optimism.id]: http(),
+          [arbitrum.id]: http(),
+          [base.id]: http(),
+          [sepolia.id]: http(),
+          [polygonAmoy.id]: http(),
+        },
+        ssr: true,
+      });
     } catch (error) {
       console.error("Failed to create Wagmi config:", error);
       // Return null if config creation fails

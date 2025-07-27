@@ -148,6 +148,7 @@ export function useEvmWallets(): EvmWalletInfo[] {
 
     // Track seen wallets to prevent duplicates
     const seenWallets = new Set<string>();
+    const seenWalletTypes = new Set<string>();
 
     return connectors
       .filter((connector) => {
@@ -158,32 +159,63 @@ export function useEvmWallets(): EvmWalletInfo[] {
         // Skip mock connectors in development
         if (name.includes("mock")) return false;
 
-        // Prevent duplicates - use a combination of name and type for uniqueness
+        // Create a unique identifier for this wallet
         const walletKey = `${name}-${id}`;
+
+        // Check for exact duplicates first
         if (seenWallets.has(walletKey)) {
+          console.log(`Skipping duplicate wallet: ${walletKey}`);
           return false;
         }
 
-        // Special handling for Brave Wallet duplicates
-        if (name.includes("brave")) {
-          // Only allow one Brave wallet entry
-          const braveKey = "brave-wallet";
-          if (seenWallets.has(braveKey)) {
-            return false;
-          }
-          seenWallets.add(braveKey);
+        // Enhanced duplicate detection for specific wallet types
+        let walletType = "";
+
+        // Determine wallet type for deduplication
+        if (
+          name.includes("brave") ||
+          (name.includes("injected") &&
+            (window as any)?.ethereum?.isBraveWallet)
+        ) {
+          walletType = "brave";
+        } else if (name.includes("metamask")) {
+          walletType = "metamask";
+        } else if (name.includes("coinbase")) {
+          walletType = "coinbase";
+        } else if (name.includes("walletconnect")) {
+          walletType = "walletconnect";
+        } else if (name.includes("safe")) {
+          walletType = "safe";
+        } else {
+          walletType = `${name}-${id}`; // Use full identifier for unknown wallets
         }
 
+        // Check if we've already seen this wallet type
+        if (seenWalletTypes.has(walletType)) {
+          console.log(
+            `Skipping duplicate wallet type: ${walletType} (${walletKey})`
+          );
+          return false;
+        }
+
+        // Add to seen sets
         seenWallets.add(walletKey);
+        seenWalletTypes.add(walletType);
+
         return true;
       })
-      .map((connector): EvmWalletInfo => {
+      .map((connector, index): EvmWalletInfo => {
         const isInstalled = isWalletInstalled(connector);
         const icon = getWalletIconFromConnector(connector);
         const displayName = getWalletDisplayName(connector);
 
+        // Create a truly unique ID by combining multiple factors
+        const uniqueId = `${connector.id}-${connector.name
+          .toLowerCase()
+          .replace(/\s+/g, "-")}-${index}`;
+
         return {
-          id: connector.id,
+          id: uniqueId,
           name: displayName,
           icon,
           isInstalled,

@@ -92,13 +92,17 @@ export function Header() {
           {/* Separator */}
           <div className="h-5 w-px bg-white/30 mx-1"></div>
 
-          {/* Wallet Connection */}
+          {/* Wallet Connection - Enhanced */}
           <div className="flex items-center">
-            <UnifiedWalletButton
-              variant="outline"
-              size="sm"
-              className="header-wallet text-[10px] lg:text-xs"
-            />
+            <div className="relative group">
+              <UnifiedWalletButton
+                variant="outline"
+                size="sm"
+                className="header-wallet text-[10px] lg:text-xs relative z-10 transition-all duration-300 group-hover:shadow-md group-hover:scale-105"
+              />
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-primary-foreground/20 to-primary/20 rounded-md blur opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-0"></div>
+              <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-0 h-0.5 bg-primary-foreground group-hover:w-full transition-all duration-300"></div>
+            </div>
           </div>
 
           {/* Separator */}

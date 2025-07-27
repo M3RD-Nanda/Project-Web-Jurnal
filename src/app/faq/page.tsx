@@ -63,6 +63,14 @@ Ilmu Terapan dan Hobi – robotika, olahraga.
 
 Dan lain-lain – sebagai wujud eksplorasi keilmuan yang terus berkembang.`,
     },
+    {
+      question: "Apakah website jurnal ilmiah ini asli?",
+      answer: `Tidak, jurnal ilmiah ini bukan asli tetapi hanya sebuah website portofolio yang dibuat oleh Muhammad Trinanda sebagai sebuah kredibilitas pada bidang pembuatan website "Fullstack Developer".
+
+Website ini dibuat untuk mendemonstrasikan kemampuan dalam pengembangan aplikasi web modern dengan teknologi terdepan seperti Next.js, TypeScript, Supabase, dan integrasi Web3 cryptocurrency. Semua konten, artikel, dan informasi yang ditampilkan adalah untuk tujuan edukasi dan portofolio semata.
+
+Meskipun bukan jurnal akademik yang sesungguhnya, website ini menampilkan fitur-fitur lengkap yang biasanya ditemukan pada platform jurnal ilmiah profesional, termasuk sistem manajemen artikel, autentikasi pengguna, analitik, dan berbagai fitur modern lainnya.`,
+    },
   ];
 
   return (

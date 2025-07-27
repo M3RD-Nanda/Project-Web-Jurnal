@@ -86,7 +86,13 @@ export function useWalletErrorHandler() {
       };
     }
 
-    if (error.name === "UserRejectedRequestError") {
+    if (
+      error.name === "UserRejectedRequestError" ||
+      error.name === "WalletConnectionError" ||
+      (error.message && error.message.includes("user rejected")) ||
+      (error.message && error.message.includes("User rejected")) ||
+      (error.message && error.message.includes("rejected the request"))
+    ) {
       return {
         type: "user_rejected",
         message: "Connection was cancelled by user.",
@@ -99,6 +105,14 @@ export function useWalletErrorHandler() {
         type: "not_installed",
         message: `${walletName} is not installed.`,
         shouldRetry: false,
+      };
+    }
+
+    if (error.name === "WalletNotSelectedError") {
+      return {
+        type: "wallet_not_selected",
+        message: "Please select a wallet first.",
+        shouldRetry: true,
       };
     }
 

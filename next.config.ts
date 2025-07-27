@@ -188,6 +188,8 @@ const nextConfig: NextConfig = {
     serverComponentsHmrCache: false, // Disable in production for better performance
     // Enable modern JavaScript features
     esmExternals: true,
+    // Disable preload warnings for better development experience
+    webpackBuildWorker: true,
   },
   // Move turbo config to turbopack (new stable location)
   turbopack: {
@@ -207,6 +209,10 @@ const nextConfig: NextConfig = {
     WALLETCONNECT_DEBUG: "false",
     // Disable CSS preload warnings
     DISABLE_CSS_PRELOAD_WARNINGS: "true",
+    // Disable resource preload warnings
+    DISABLE_RESOURCE_PRELOAD_WARNINGS: "true",
+    // Disable Next.js preload warnings
+    NEXT_DISABLE_PRELOAD_WARNINGS: "true",
   },
   webpack: (config, { isServer }) => {
     if (process.env.NODE_ENV === "development") {

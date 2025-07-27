@@ -51,10 +51,10 @@ export function usePersistentWallet() {
     getAuthenticatedUser();
   }, [session, supabase]);
 
-  // Load saved wallet connection when user logs in
+  // Load saved wallet connection when user logs in (but don't auto-connect)
   useEffect(() => {
     if (authenticatedUserId && !isConnected) {
-      loadSavedWallet();
+      loadSavedWalletInfo();
     }
   }, [authenticatedUserId, isConnected]);
 
@@ -65,6 +65,36 @@ export function usePersistentWallet() {
     }
   }, [isConnected, address, chainId, connector, authenticatedUserId]);
 
+  // Load saved wallet info without auto-connecting
+  const loadSavedWalletInfo = async () => {
+    if (!authenticatedUserId) return;
+
+    try {
+      setIsLoading(true);
+
+      // Call the get_active_wallet function
+      const { data, error } = await supabase.rpc("get_active_wallet", {
+        user_uuid: authenticatedUserId,
+      });
+
+      if (error) {
+        console.error("Error loading saved wallet:", error);
+        return;
+      }
+
+      if (data && data.length > 0) {
+        const walletData = data[0];
+        setSavedWallet(walletData);
+        // Don't auto-connect, just store the info
+      }
+    } catch (error) {
+      console.error("Error in loadSavedWalletInfo:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Manual reconnect function for user-initiated connections
   const loadSavedWallet = async () => {
     if (!authenticatedUserId) return;
 
@@ -85,7 +115,7 @@ export function usePersistentWallet() {
         const walletData = data[0];
         setSavedWallet(walletData);
 
-        // Try to auto-reconnect if wallet is not currently connected
+        // Try to reconnect if wallet is not currently connected
         if (!isConnected) {
           await attemptAutoReconnect(walletData);
         }

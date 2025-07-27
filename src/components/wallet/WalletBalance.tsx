@@ -6,6 +6,8 @@ import {
   useBalanceSafe,
   useChainIdSafe,
 } from "@/hooks/useWagmiSafe";
+import { usePhantomWallet } from "@/hooks/usePhantomWallet";
+import { useWalletGlobalSafe } from "@/contexts/WalletGlobalContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -18,8 +20,17 @@ interface WalletBalanceProps {
 }
 
 export function WalletBalance({ className }: WalletBalanceProps) {
+  // Use Global Wallet Context as single source of truth
+  const globalWallet = useWalletGlobalSafe();
+
+  // Fallback to individual hooks for balance functionality
   const { address, isConnected } = useAccountSafe();
   const chainId = useChainIdSafe();
+
+  // Use Global Context for connection status (single source of truth)
+  const isWalletConnected = globalWallet.isEvmConnected;
+  const walletAddress = globalWallet.evmAddress;
+
   const [showBalance, setShowBalance] = React.useState(true);
 
   const {
@@ -27,12 +38,44 @@ export function WalletBalance({ className }: WalletBalanceProps) {
     isLoading,
     error,
   } = useBalanceSafe({
-    address,
+    address: walletAddress as `0x${string}` | undefined,
   });
 
   const chainConfig = getChainConfig(chainId);
 
-  if (!isConnected || !address) {
+  // Debug logging
+  React.useEffect(() => {
+    console.log("🔍 WalletBalance Debug (Global Context):", {
+      global: {
+        isEvmConnected: globalWallet.isEvmConnected,
+        isSolanaConnected: globalWallet.isSolanaConnected,
+        isAnyConnected: globalWallet.isAnyConnected,
+        evmAddress: globalWallet.evmAddress,
+        solanaAddress: globalWallet.solanaAddress,
+      },
+      fallback: { isConnected, address },
+      unified: { isWalletConnected, walletAddress },
+      balance: { balance, isLoading, error },
+      chain: { chainId, chainConfig },
+    });
+  }, [
+    globalWallet.isEvmConnected,
+    globalWallet.isSolanaConnected,
+    globalWallet.isAnyConnected,
+    globalWallet.evmAddress,
+    globalWallet.solanaAddress,
+    isConnected,
+    address,
+    isWalletConnected,
+    walletAddress,
+    chainId,
+    balance,
+    isLoading,
+    error,
+    chainConfig,
+  ]);
+
+  if (!isWalletConnected || !walletAddress) {
     return (
       <Card className={`${className} border border-border`}>
         <CardHeader className="pb-3">
@@ -148,7 +191,7 @@ export function WalletBalance({ className }: WalletBalanceProps) {
           <div className="flex items-center justify-between">
             <span className="text-sm font-bold text-foreground">Address</span>
             <code className="text-sm bg-primary/10 text-primary px-3 py-2 rounded-lg font-mono border border-primary/20 font-bold">
-              {address.slice(0, 6)}...{address.slice(-4)}
+              {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
             </code>
           </div>
         </div>
@@ -159,12 +202,21 @@ export function WalletBalance({ className }: WalletBalanceProps) {
 
 // Compact version for sidebar or header
 export function WalletBalanceCompact() {
+  // Use Global Wallet Context as single source of truth
+  const globalWallet = useWalletGlobalSafe();
+
+  // Fallback to individual hooks for balance functionality
   const { address, isConnected } = useAccountSafe();
+
+  // Use Global Context for connection status (single source of truth)
+  const isWalletConnected = globalWallet.isEvmConnected;
+  const walletAddress = globalWallet.evmAddress;
+
   const { data: balance, isLoading } = useBalanceSafe({
-    address,
+    address: walletAddress as `0x${string}` | undefined,
   });
 
-  if (!isConnected || !address) {
+  if (!isWalletConnected || !walletAddress) {
     return null;
   }
 

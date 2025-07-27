@@ -96,8 +96,9 @@ export function useEIP6963Wallets() {
 
     // Check for MetaMask (if not already detected via EIP-6963)
     if (ethereum?.isMetaMask && !ethereum?.isBraveWallet) {
-      const hasMetaMask = providers.some((p) =>
-        p.name.toLowerCase().includes("metamask")
+      const hasMetaMask = providers.some(
+        (p) =>
+          p.name.toLowerCase().includes("metamask") || p.rdns === "io.metamask"
       );
       if (!hasMetaMask) {
         const metamaskConfig = getWalletConfig("MetaMask");
@@ -114,8 +115,10 @@ export function useEIP6963Wallets() {
 
     // Check for Brave Wallet (if not already detected via EIP-6963)
     if (ethereum?.isBraveWallet) {
-      const hasBrave = providers.some((p) =>
-        p.name.toLowerCase().includes("brave")
+      const hasBrave = providers.some(
+        (p) =>
+          p.name.toLowerCase().includes("brave") ||
+          p.rdns === "com.brave.wallet"
       );
       if (!hasBrave) {
         const braveConfig = getWalletConfig("Brave Wallet");
@@ -132,8 +135,10 @@ export function useEIP6963Wallets() {
 
     // Check for Coinbase Wallet (if not already detected via EIP-6963)
     if (ethereum?.isCoinbaseWallet || (window as any).coinbaseWalletExtension) {
-      const hasCoinbase = providers.some((p) =>
-        p.name.toLowerCase().includes("coinbase")
+      const hasCoinbase = providers.some(
+        (p) =>
+          p.name.toLowerCase().includes("coinbase") ||
+          p.rdns === "com.coinbase.wallet"
       );
       if (!hasCoinbase) {
         const coinbaseConfig = getWalletConfig("Coinbase Wallet");
@@ -149,7 +154,14 @@ export function useEIP6963Wallets() {
     }
 
     if (fallbackWallets.length > 0) {
-      setProviders((prev) => [...prev, ...fallbackWallets]);
+      setProviders((prev) => {
+        // Deduplicate by rdns to prevent duplicate keys
+        const existingRdns = new Set(prev.map((p) => p.rdns));
+        const newWallets = fallbackWallets.filter(
+          (wallet) => !existingRdns.has(wallet.rdns)
+        );
+        return [...prev, ...newWallets];
+      });
     }
   }, [mounted, providers]);
 
@@ -167,8 +179,17 @@ export function useEIP6963Wallets() {
     },
   ];
 
+  // Final deduplication by rdns to prevent React key conflicts
+  const deduplicatedProviders = allProviders.reduce((acc, provider) => {
+    const existingProvider = acc.find((p) => p.rdns === provider.rdns);
+    if (!existingProvider) {
+      acc.push(provider);
+    }
+    return acc;
+  }, [] as WalletProvider[]);
+
   return {
-    providers: allProviders,
+    providers: deduplicatedProviders,
     mounted,
   };
 }

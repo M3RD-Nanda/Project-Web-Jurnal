@@ -3,6 +3,7 @@
 import React from "react";
 import dynamic from "next/dynamic";
 import { usePageTracking } from "@/hooks/usePageTracking";
+import { WalletGlobalProvider } from "@/contexts/WalletGlobalContext";
 
 // Lazy load heavy components to reduce main thread work
 const Web3Provider = dynamic(
@@ -55,15 +56,12 @@ function ConditionalWeb3Provider({ children }: { children: React.ReactNode }) {
     setIsWalletPage(needsFullWeb3);
   }, []);
 
-  // Always provide Web3Provider to prevent hook errors, but with different configurations
-  if (!isMounted) {
-    // During SSR/initial mount, provide minimal providers
-    return <>{children}</>;
-  }
-
+  // Always provide Web3Provider to prevent hook errors, even during initial mount
   return (
     <Web3Provider>
-      <SolanaProvider>{children}</SolanaProvider>
+      <SolanaProvider>
+        <WalletGlobalProvider>{children}</WalletGlobalProvider>
+      </SolanaProvider>
     </Web3Provider>
   );
 }

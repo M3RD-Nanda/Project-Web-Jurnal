@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -10,28 +11,28 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Wallet, Copy, ExternalLink, ChevronDown } from "lucide-react";
-import { useWallet } from "@solana/wallet-adapter-react";
 import {
-  useAccountSafe,
-  useChainIdSafe,
-  useDisconnectSafe,
-  useConnectSafe,
-} from "@/hooks/useWagmiSafe";
-import { WalletButton } from "./WalletButton";
-import { SolanaWalletButton } from "./SolanaWalletButton";
-import { formatAddress, getChainConfig } from "@/lib/web3-config";
-import {
-  getSolanaNetworkConfig,
-  formatSolanaAddress,
-} from "@/lib/solana-config";
+  Wallet,
+  Copy,
+  ExternalLink,
+  ChevronDown,
+  CheckCircle,
+  AlertCircle,
+} from "lucide-react";
 import { toast } from "sonner";
-import { useWalletSafe } from "@/hooks/useSolanaSafe";
-import {
-  WalletErrorBoundary,
-  useWalletErrorHandler,
-} from "./WalletErrorBoundary";
+import { usePhantomWallet } from "@/hooks/usePhantomWallet";
 import { useEvmWallets } from "@/hooks/useEvmWallets";
+import { useAccountSafe, useConnectSafe } from "@/hooks/useWagmiSafe";
+import {
+  formatSolanaAddress,
+  formatEthereumAddress,
+  redirectToPhantomDownload,
+} from "@/lib/phantom-provider";
+import {
+  dispatchWalletEvent,
+  createWalletEventDetail,
+  type WalletConnectedEvent,
+} from "@/types/wallet-events";
 
 interface UnifiedWalletButtonProps {
   variant?:
@@ -50,6 +51,7 @@ export function UnifiedWalletButton({
   size = "sm",
   className = "",
 }: UnifiedWalletButtonProps) {
+  const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [isWalletTypeModalOpen, setIsWalletTypeModalOpen] = useState(false);
   const [isWalletInfoModalOpen, setIsWalletInfoModalOpen] = useState(false);
@@ -59,37 +61,188 @@ export function UnifiedWalletButton({
     "evm" | "solana" | null
   >(null);
 
-  // Use wallet error handler
-  const { handleWalletError } = useWalletErrorHandler();
+  // Phantom wallet hooks - Direct integration based on official docs
+  const { solana, ethereum, isAnyConnected, isAnyConnecting, isInstalled } =
+    usePhantomWallet();
 
-  // Get EVM wallets with dynamic detection
+  // EVM wallets hooks
   const evmWallets = useEvmWallets();
-
-  // Check EVM wallet connection
-  const { isConnected: isEvmConnected, address: evmAddress } = useAccountSafe();
-  const chainId = useChainIdSafe();
-  const { disconnect: disconnectEvm } = useDisconnectSafe();
+  const { address: wagmiEvmAddress, isConnected: isWagmiEvmConnected } =
+    useAccountSafe();
   const { connect: connectEvm } = useConnectSafe();
-  const chain = getChainConfig(chainId);
 
-  // Check Solana wallet connection
-  const {
-    connected: isSolanaConnected,
-    publicKey: solanaPublicKey,
-    disconnect: disconnectSolana,
-    wallet: solanaWallet,
-    wallets: solanaWallets,
-    select: selectSolanaWallet,
-    connect: connectSolanaWallet,
-  } = useWalletSafe();
+  // Legacy compatibility for existing code
+  const isPhantomEvmConnected = ethereum.isConnected;
+  const phantomEvmAddress = ethereum.address;
+  const isSolanaConnected = solana.isConnected;
+  const solanaPublicKey = solana.publicKey;
 
-  // Check if any wallet is connected
-  const isAnyWalletConnected =
-    (isEvmConnected && evmAddress) || (isSolanaConnected && solanaPublicKey);
+  // Combined EVM connection status
+  const isEvmConnected = isPhantomEvmConnected || isWagmiEvmConnected;
+  const evmAddress = phantomEvmAddress || wagmiEvmAddress;
+
+  // Check if Phantom is installed (only log once with throttling)
+  useEffect(() => {
+    if (!isInstalled) {
+      // Only log once every 30 seconds to prevent spam
+      const now = Date.now();
+      const lastWarning = (window as any).__phantomDetectionWarningTime || 0;
+      if (now - lastWarning > 30000) {
+        console.warn("⚠️ Phantom wallet not detected");
+        (window as any).__phantomDetectionWarningTime = now;
+      }
+    }
+  }, []); // Remove isInstalled dependency to prevent repeated warnings
+
+  // Debug logging for Phantom wallet state changes
+  useEffect(() => {
+    console.log("🔍 Phantom Wallet State:", {
+      solana: {
+        connected: solana.isConnected,
+        publicKey: solana.publicKey
+          ? formatSolanaAddress(solana.publicKey)
+          : null,
+      },
+      ethereum: {
+        connected: ethereum.isConnected,
+        address: ethereum.address
+          ? formatEthereumAddress(ethereum.address)
+          : null,
+        chainId: ethereum.chainId,
+      },
+      isAnyConnected,
+    });
+  }, [
+    solana.isConnected,
+    solana.publicKey,
+    ethereum.isConnected,
+    ethereum.address,
+    ethereum.chainId,
+    isAnyConnected,
+  ]);
+
+  // Check if any wallet is connected (using Phantom state + EVM state)
+  const isAnyWalletConnected = isAnyConnected || isEvmConnected;
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  // Auto-navigate to wallet dashboard when wallet connects in header
+  useEffect(() => {
+    if (
+      mounted &&
+      isAnyWalletConnected &&
+      className?.includes("header-wallet")
+    ) {
+      // Longer delay to ensure connection is fully established and state is synced
+      const timer = setTimeout(() => {
+        console.log("Auto-navigating to wallet dashboard from header");
+        router.push("/wallet");
+
+        // Dispatch event to ensure wallet page is updated
+        window.dispatchEvent(
+          new CustomEvent("walletConnected", {
+            detail: {
+              evmConnected: isEvmConnected,
+              solanaConnected: isSolanaConnected,
+              evmAddress,
+              solanaPublicKey: solanaPublicKey?.toString(),
+              timestamp: Date.now(),
+              walletType:
+                isEvmConnected && isSolanaConnected
+                  ? "both"
+                  : isEvmConnected
+                  ? "evm"
+                  : isSolanaConnected
+                  ? "solana"
+                  : "none",
+              connected: true,
+            },
+          })
+        );
+      }, 1000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [
+    mounted,
+    isAnyWalletConnected,
+    className,
+    router,
+    isEvmConnected,
+    isSolanaConnected,
+    evmAddress,
+    solanaPublicKey,
+  ]);
+
+  // Force refresh wallet dashboard when wallet connects with debouncing
+  useEffect(() => {
+    if (className?.includes("header-wallet")) {
+      console.log("🔄 Wallet state changed in header:", {
+        isAnyWalletConnected,
+        isEvmConnected,
+        isSolanaConnected,
+        evmAddress: evmAddress
+          ? `${evmAddress.slice(0, 6)}...${evmAddress.slice(-4)}`
+          : null,
+        solanaPublicKey: solanaPublicKey
+          ? `${solanaPublicKey.toString().slice(0, 6)}...${solanaPublicKey
+              .toString()
+              .slice(-4)}`
+          : null,
+      });
+
+      // Debounce the event to prevent rapid firing
+      const debounceTimer = setTimeout(() => {
+        // Trigger a custom event to notify dashboard to refresh using helper function
+        const eventDetail = createWalletEventDetail(
+          isEvmConnected,
+          isSolanaConnected,
+          evmAddress,
+          solanaPublicKey?.toString()
+        );
+
+        dispatchWalletEvent(eventDetail);
+      }, 200); // 200ms debounce
+
+      return () => clearTimeout(debounceTimer);
+    }
+  }, [
+    isAnyWalletConnected,
+    isEvmConnected,
+    isSolanaConnected,
+    evmAddress,
+    solanaPublicKey,
+    className,
+  ]);
+
+  // Listen for wallet events from dashboard to sync header state
+  useEffect(() => {
+    if (className?.includes("header-wallet")) {
+      const handleWalletEvent = (event: CustomEvent) => {
+        const { detail } = event;
+        console.log("🔄 Header received wallet event from dashboard:", detail);
+
+        // Force re-render by triggering a small state update
+        // This ensures the header button reflects the latest wallet state
+        setIsWalletTypeModalOpen(false);
+        setIsWalletInfoModalOpen(false);
+      };
+
+      window.addEventListener(
+        "walletConnected",
+        handleWalletEvent as EventListener
+      );
+
+      return () => {
+        window.removeEventListener(
+          "walletConnected",
+          handleWalletEvent as EventListener
+        );
+      };
+    }
+  }, [className]);
 
   // Close connection modal when wallet connects
   useEffect(() => {
@@ -106,22 +259,28 @@ export function UnifiedWalletButton({
   }, [isEvmConnected, isSolanaConnected]);
 
   // Reset selected wallet type after a delay to allow user to interact with wallet modal
-  // Only reset if no modal is open
+  // Only reset if no modal is open and no wallet is being connected
   useEffect(() => {
     if (
       selectedWalletType &&
       !isWalletConnectionModalOpen &&
-      !isWalletTypeModalOpen
+      !isWalletTypeModalOpen &&
+      !isWalletInfoModalOpen
     ) {
-      // Set a timeout to reset the selected wallet type after 10 seconds
+      // Set a timeout to reset the selected wallet type after 15 seconds
       // This gives user time to interact with wallet modal, but resets if they close it
       const timeout = setTimeout(() => {
         setSelectedWalletType(null);
-      }, 10000);
+      }, 15000);
 
       return () => clearTimeout(timeout);
     }
-  }, [selectedWalletType, isWalletConnectionModalOpen, isWalletTypeModalOpen]);
+  }, [
+    selectedWalletType,
+    isWalletConnectionModalOpen,
+    isWalletTypeModalOpen,
+    isWalletInfoModalOpen,
+  ]);
 
   // Handle wallet info modal close
   const handleWalletInfoModalClose = (open: boolean) => {
@@ -131,29 +290,179 @@ export function UnifiedWalletButton({
   // Handle button click
   const handleButtonClick = () => {
     if (isAnyWalletConnected) {
-      setIsWalletInfoModalOpen(true);
-    } else if (selectedWalletType) {
-      // If a wallet type is already selected, open the connection modal
+      // Always show wallet status modal when connected
       setIsWalletConnectionModalOpen(true);
     } else {
+      // Always reset and show wallet type selection modal for new connections
+      setSelectedWalletType(null);
       setIsWalletTypeModalOpen(true);
+    }
+  };
+
+  // Handle Phantom wallet connections
+  const handleConnectSolana = async () => {
+    if (!isInstalled) {
+      redirectToPhantomDownload();
+      return;
+    }
+
+    try {
+      await solana.connect();
+      toast.success("Phantom Solana wallet connected!");
+      setIsWalletConnectionModalOpen(false);
+      setIsWalletTypeModalOpen(false);
+
+      // Dispatch wallet connection event
+      const eventDetail = createWalletEventDetail(
+        ethereum.isConnected,
+        true,
+        ethereum.address,
+        solana.publicKey
+      );
+      dispatchWalletEvent(eventDetail);
+    } catch (error: any) {
+      console.error("Failed to connect Phantom Solana:", error);
+      if (error.code === 4001) {
+        toast.error("Connection rejected by user");
+      } else {
+        toast.error("Failed to connect to Phantom Solana wallet");
+      }
+    }
+  };
+
+  const handleConnectEthereum = async () => {
+    // Double-check installation status
+    if (!isInstalled || !ethereum.isInstalled) {
+      console.warn("⚠️ Phantom wallet not installed or not detected");
+      toast.error(
+        "Phantom wallet not detected. Please install Phantom wallet extension."
+      );
+      redirectToPhantomDownload();
+      return;
+    }
+
+    try {
+      await ethereum.connect();
+      toast.success("Phantom Ethereum wallet connected!");
+      setIsWalletConnectionModalOpen(false);
+      setIsWalletTypeModalOpen(false);
+
+      // Dispatch wallet connection event
+      const eventDetail = createWalletEventDetail(
+        true,
+        solana.isConnected,
+        ethereum.address,
+        solana.publicKey
+      );
+      dispatchWalletEvent(eventDetail);
+    } catch (error: any) {
+      console.error("Failed to connect Phantom Ethereum:", error);
+      if (error.code === 4001) {
+        toast.error("Connection rejected by user");
+      } else if (
+        error.message?.includes("not detected") ||
+        error.message?.includes("not installed")
+      ) {
+        toast.error(
+          "Phantom wallet not detected. Please install Phantom wallet extension."
+        );
+        redirectToPhantomDownload();
+      } else {
+        toast.error("Failed to connect to Phantom Ethereum wallet");
+      }
+    }
+  };
+
+  // Handle EVM wallet connections (Brave, MetaMask, etc.)
+  const handleConnectEvmWallet = async (walletId: string) => {
+    try {
+      const wallet = evmWallets.find((w) => w.id === walletId);
+      if (!wallet) {
+        toast.error("Wallet not found");
+        return;
+      }
+
+      if (!wallet.isInstalled) {
+        toast.error(
+          `${wallet.name} is not installed. Please install the extension first.`
+        );
+        return;
+      }
+
+      await connectEvm({ connector: wallet.connector });
+      toast.success(`${wallet.name} connected successfully!`);
+      setIsWalletConnectionModalOpen(false);
+      setIsWalletTypeModalOpen(false);
+
+      // Dispatch wallet connection event with updated status
+      const eventDetail = createWalletEventDetail(
+        true, // EVM connected
+        solana.isConnected,
+        wagmiEvmAddress || phantomEvmAddress,
+        solana.publicKey
+      );
+      dispatchWalletEvent(eventDetail);
+    } catch (error: any) {
+      console.error("Failed to connect EVM wallet:", error);
+      if (error.code === 4001) {
+        toast.error("Connection rejected by user");
+      } else {
+        toast.error("Failed to connect wallet");
+      }
     }
   };
 
   // Handle disconnect
   const handleDisconnect = async () => {
     try {
-      if (isEvmConnected) {
-        await disconnectEvm();
-      }
+      let solanaDisconnected = false;
+      let hasErrors = false;
+
+      // Disconnect Solana (Phantom supports programmatic disconnect)
       if (isSolanaConnected) {
-        await disconnectSolana();
+        try {
+          console.log("Attempting to disconnect Phantom Solana wallet...");
+          await solana.disconnect();
+          solanaDisconnected = true;
+          console.log("Phantom Solana wallet disconnected successfully");
+        } catch (solanaError) {
+          console.error("Phantom Solana disconnect failed:", solanaError);
+          hasErrors = true;
+        }
       }
-      setIsWalletInfoModalOpen(false);
-      toast.success("Wallet disconnected");
+
+      // Note: Phantom Ethereum doesn't support programmatic disconnect
+      if (isEvmConnected) {
+        console.log(
+          "Note: Phantom Ethereum requires manual disconnect through wallet UI"
+        );
+        toast.info(
+          "Please disconnect Ethereum wallet manually through Phantom"
+        );
+      }
+
+      // Close all modals
+      setIsWalletConnectionModalOpen(false);
+      setIsWalletTypeModalOpen(false);
+
+      // Show appropriate success/error message
+      if (solanaDisconnected) {
+        toast.success("Phantom Solana wallet disconnected successfully");
+      } else if (hasErrors) {
+        toast.error("Failed to disconnect Phantom Solana wallet");
+      }
+
+      // Dispatch wallet disconnection event
+      const eventDetail = createWalletEventDetail(
+        ethereum.isConnected, // EVM might still be connected
+        false, // Solana disconnected
+        ethereum.address,
+        null
+      );
+      dispatchWalletEvent(eventDetail);
     } catch (error) {
-      console.error("Error disconnecting wallet:", error);
-      toast.error("Failed to disconnect wallet");
+      console.error("Unexpected error during disconnect:", error);
+      toast.error("Unexpected error occurred while disconnecting");
     }
   };
 
@@ -161,16 +470,15 @@ export function UnifiedWalletButton({
   const handleConnectionModalClose = useCallback((open: boolean) => {
     setIsWalletConnectionModalOpen(open);
     if (!open) {
-      // Small delay to prevent double popup issue
-      setTimeout(() => {
-        setSelectedWalletType(null);
-      }, 100);
+      // Reset wallet type immediately when modal closes
+      setSelectedWalletType(null);
     }
   }, []);
 
   const handleTypeModalClose = useCallback((open: boolean) => {
     setIsWalletTypeModalOpen(open);
     if (!open) {
+      // Reset wallet type immediately when modal closes
       setSelectedWalletType(null);
     }
   }, []);
@@ -269,133 +577,6 @@ export function UnifiedWalletButton({
         </DialogContent>
       </Dialog>
 
-      {/* Wallet Info Modal */}
-      <Dialog
-        open={isWalletInfoModalOpen}
-        onOpenChange={handleWalletInfoModalClose}
-      >
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>Connected Wallet</DialogTitle>
-            <DialogDescription>
-              View your connected wallet information and manage your connection.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
-            {/* EVM Wallet Info */}
-            {isEvmConnected && evmAddress && chain && (
-              <div className="space-y-3">
-                <div className="flex items-center gap-3 p-3 border rounded-lg">
-                  {chain.icon && (
-                    <div
-                      style={{
-                        background: chain.color,
-                        width: 24,
-                        height: 24,
-                        borderRadius: 999,
-                        overflow: "hidden",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        fontSize: "12px",
-                      }}
-                    >
-                      <span>{chain.icon}</span>
-                    </div>
-                  )}
-                  <div className="flex-1">
-                    <div className="font-medium">EVM Wallet</div>
-                    <div className="text-sm text-muted-foreground">
-                      {chain.name} • {formatAddress(evmAddress)}
-                    </div>
-                  </div>
-                </div>
-                <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleCopyAddress}
-                    className="flex-1"
-                  >
-                    <Copy className="h-4 w-4 mr-2" />
-                    Copy Address
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      const explorerUrl = chain.blockExplorer;
-                      if (explorerUrl) {
-                        window.open(
-                          `${explorerUrl}/address/${evmAddress}`,
-                          "_blank"
-                        );
-                      }
-                    }}
-                    className="flex-1"
-                  >
-                    <ExternalLink className="h-4 w-4 mr-2" />
-                    Explorer
-                  </Button>
-                </div>
-              </div>
-            )}
-
-            {/* Solana Wallet Info */}
-            {isSolanaConnected && solanaPublicKey && (
-              <div className="space-y-3">
-                <div className="flex items-center gap-3 p-3 border rounded-lg">
-                  <div className="text-2xl">◎</div>
-                  <div className="flex-1">
-                    <div className="font-medium">Solana Wallet</div>
-                    <div className="text-sm text-muted-foreground">
-                      {solanaWallet?.adapter?.name} •{" "}
-                      {formatSolanaAddress(solanaPublicKey.toString())}
-                    </div>
-                  </div>
-                </div>
-                <div className="flex gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleCopyAddress}
-                    className="flex-1"
-                  >
-                    <Copy className="h-4 w-4 mr-2" />
-                    Copy Address
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      const networkConfig = getSolanaNetworkConfig("mainnet");
-                      window.open(
-                        `${
-                          networkConfig.blockExplorer
-                        }/address/${solanaPublicKey.toString()}`,
-                        "_blank"
-                      );
-                    }}
-                    className="flex-1"
-                  >
-                    <ExternalLink className="h-4 w-4 mr-2" />
-                    Explorer
-                  </Button>
-                </div>
-              </div>
-            )}
-
-            <Button
-              variant="destructive"
-              onClick={handleDisconnect}
-              className="w-full"
-            >
-              Disconnect Wallet
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
-
       {/* Wallet Connection Modal */}
       <Dialog
         open={isWalletConnectionModalOpen}
@@ -404,204 +585,198 @@ export function UnifiedWalletButton({
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>
-              Connect {selectedWalletType === "evm" ? "EVM" : "Solana"} Wallet
+              {isAnyWalletConnected
+                ? "Wallet Status"
+                : `Connect ${
+                    selectedWalletType === "evm" ? "EVM" : "Solana"
+                  } Wallet`}
             </DialogTitle>
             <DialogDescription>
-              Choose your preferred wallet to connect.
+              {isAnyWalletConnected
+                ? "View your connected wallets and manage connections."
+                : "Choose your preferred wallet to connect."}
             </DialogDescription>
           </DialogHeader>
-          <WalletErrorBoundary>
-            <div className="space-y-4">
-              {selectedWalletType === "evm" ? (
-                <div className="grid gap-3">
-                  {evmWallets.map((wallet) => (
-                    <Button
-                      key={wallet.id}
-                      variant="outline"
-                      className="justify-start gap-3 h-12"
-                      onClick={async () => {
-                        if (!wallet.connector) {
-                          // If no connector available, show message to install wallet
-                          toast.error(
-                            `${wallet.name} is not available. Please install it first.`
-                          );
-                          return;
-                        }
-
-                        try {
-                          // Close our modal first to prevent overlap
+          <div className="space-y-4">
+            {/* Show connected wallet status */}
+            {isAnyWalletConnected && (
+              <div className="space-y-3">
+                {isEvmConnected && evmAddress && (
+                  <div className="p-3 border rounded-lg bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-800">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="font-medium text-green-800 dark:text-green-200">
+                          EVM Wallet Connected
+                        </p>
+                        <p className="text-sm text-green-600 dark:text-green-300">
+                          {formatEthereumAddress(evmAddress)}
+                        </p>
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
                           setIsWalletConnectionModalOpen(false);
-
-                          // Use connector directly without RainbowKit modal
-                          await connectEvm({ connector: wallet.connector });
-                        } catch (error: any) {
-                          // Silently handle WalletConnect connection reset errors
-                          if (
-                            error.message?.includes("Connection request reset")
-                          ) {
-                            setIsWalletConnectionModalOpen(false);
-                            // Don't show toast for connection reset errors
-                            return;
-                          }
-
-                          const errorInfo = handleWalletError(
-                            error,
-                            wallet.name
-                          );
-
-                          // Handle error based on type
-                          switch (errorInfo.type) {
-                            case "connection_reset":
-                            case "walletconnect_error":
-                              // Don't reopen modal for WalletConnect errors, let user manually retry
-                              setIsWalletConnectionModalOpen(false);
-                              // Don't show toast for these errors
-                              break;
-                            case "user_rejected":
-                              // User cancelled - don't show error, just close modal
-                              setIsWalletConnectionModalOpen(false);
-                              break;
-                            case "not_installed":
-                              // Wallet not installed - show error and keep modal open
-                              toast.error(errorInfo.message);
-                              setIsWalletConnectionModalOpen(true);
-                              break;
-                            default:
-                              // Unknown error - show error and allow retry
-                              toast.error(errorInfo.message);
-                              setIsWalletConnectionModalOpen(
-                                errorInfo.shouldRetry
-                              );
-                              break;
-                          }
-                        }
-                      }}
-                    >
-                      <img
-                        src={wallet.icon}
-                        alt={wallet.name}
-                        className="w-6 h-6"
-                        onError={(e) => {
-                          // Fallback to a default icon if the image fails to load
-                          const target = e.target as HTMLImageElement;
-                          target.src =
-                            "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMzIiIGZpbGw9Im5vbmUiIHZpZXdCb3g9IjAgMCAzMiAzMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTYgMzJjOC44MzcgMCAxNi03LjE2MyAxNi0xNlMyNC44MzcgMCAxNiAwIDAgNy4xNjMgMCAxNnM3LjE2MyAxNiAxNiAxNloiIGZpbGw9IiM2MzY2RjEiLz48cGF0aCBkPSJNMTYgMjRjNC40MTggMCA4LTMuNTgyIDgtOHMtMy41ODItOC04LTgtOCAzLjU4Mi04IDggMy41ODIgOCA4IDhaIiBmaWxsPSIjZmZmIi8+PC9zdmc+";
+                          router.push("/wallet");
                         }}
-                      />
-                      <span className="font-medium">{wallet.name}</span>
-                      {wallet.isInstalled && (
-                        <span className="ml-auto text-xs text-green-600">
-                          Installed
-                        </span>
-                      )}
-                    </Button>
-                  ))}
-                  {evmWallets.length === 0 && (
-                    <div className="text-center py-8 text-muted-foreground">
-                      <Wallet className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                      <p className="text-sm">No EVM wallets detected.</p>
-                      <p className="text-xs mt-1">
-                        Please install a wallet like MetaMask or Coinbase
-                        Wallet.
-                      </p>
+                      >
+                        Dashboard
+                      </Button>
                     </div>
-                  )}
-                </div>
-              ) : (
-                <div className="grid gap-3">
-                  {solanaWallets.map((wallet) => (
-                    <Button
-                      key={wallet.adapter.name}
-                      variant="outline"
-                      className="justify-start gap-3 h-12"
-                      onClick={async () => {
-                        try {
-                          // Ensure we have the select function available
-                          if (!selectSolanaWallet) {
-                            console.error(
-                              "Wallet select function not available"
-                            );
-                            return;
-                          }
+                  </div>
+                )}
 
-                          // First select the wallet
-                          selectSolanaWallet(wallet.adapter.name);
-
-                          // Wait a brief moment for wallet selection to complete
-                          await new Promise((resolve) =>
-                            setTimeout(resolve, 150)
-                          );
-
-                          // Ensure we have the connect function available
-                          if (!connectSolanaWallet) {
-                            console.error(
-                              "Wallet connect function not available"
-                            );
-                            return;
-                          }
-
-                          // Then connect to the selected wallet
-                          await connectSolanaWallet();
+                {isSolanaConnected && solanaPublicKey && (
+                  <div className="p-3 border rounded-lg bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-800">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="font-medium text-green-800 dark:text-green-200">
+                          Solana Wallet Connected
+                        </p>
+                        <p className="text-sm text-green-600 dark:text-green-300">
+                          {formatSolanaAddress(solanaPublicKey)}
+                        </p>
+                      </div>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
                           setIsWalletConnectionModalOpen(false);
-                        } catch (error: any) {
-                          console.error("Wallet connection error:", error);
+                          router.push("/wallet");
+                        }}
+                      >
+                        Dashboard
+                      </Button>
+                    </div>
+                  </div>
+                )}
 
-                          // Handle different types of wallet errors
-                          if (error.name === "WalletConnectionError") {
-                            // User rejected the connection - this is normal behavior
-                            // Don't close modal, let user try again or choose different wallet
-                          } else if (error.name === "WalletNotReadyError") {
-                            // Wallet not installed - redirect to install page
-                            // Modal will stay open for user to see other options
-                          } else if (error.name === "WalletNotSelectedError") {
-                            // Wallet not properly selected - retry with longer delay
-                            try {
-                              // Try selecting again with a longer delay
-                              selectSolanaWallet(wallet.adapter.name);
-                              await new Promise((resolve) =>
-                                setTimeout(resolve, 500)
-                              );
-                              await connectSolanaWallet();
-                              setIsWalletConnectionModalOpen(false);
-                            } catch (retryError: any) {
-                              console.error("Retry failed:", retryError);
-                              // If retry fails, keep modal open for user to try manually
-                            }
-                          } else {
-                            // Other errors - log for debugging
-                            console.error("Failed to connect wallet:", error);
-                          }
-                        }
-                      }}
-                    >
-                      {wallet.adapter.icon && (
+                <div className="pt-2 border-t">
+                  <p className="text-sm text-muted-foreground mb-3">
+                    Connect additional wallets:
+                  </p>
+                </div>
+              </div>
+            )}
+
+            {selectedWalletType === "evm" ? (
+              <div className="space-y-4">
+                <p className="text-sm text-muted-foreground text-center">
+                  Choose your preferred EVM wallet
+                </p>
+
+                {/* Show available EVM wallets */}
+                <div className="space-y-3">
+                  {evmWallets.length > 0 ? (
+                    evmWallets.map((wallet) => (
+                      <Button
+                        key={wallet.id}
+                        onClick={() => handleConnectEvmWallet(wallet.id)}
+                        className="w-full justify-start gap-3 h-12"
+                        variant="outline"
+                        disabled={!wallet.isInstalled}
+                      >
                         <img
-                          src={wallet.adapter.icon}
-                          alt={wallet.adapter.name}
+                          src={wallet.icon}
+                          alt={wallet.name}
                           className="w-6 h-6"
+                          onError={(e) => {
+                            // Fallback to emoji if image fails to load
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = "none";
+                            target.nextElementSibling!.textContent = "🔗";
+                          }}
                         />
-                      )}
-                      <span className="font-medium">{wallet.adapter.name}</span>
-                      {wallet.readyState === "Installed" && (
-                        <span className="ml-auto text-xs text-green-600">
-                          Installed
-                        </span>
-                      )}
-                    </Button>
-                  ))}
-                  {solanaWallets.length === 0 && (
-                    <div className="text-center py-8 text-muted-foreground">
-                      <Wallet className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                      <p className="text-sm">No Solana wallets detected.</p>
-                      <p className="text-xs mt-1">
-                        Please install a Solana wallet like Phantom or Solflare.
+                        <span className="hidden">🔗</span>
+                        <div className="flex-1 text-left">
+                          <div className="font-medium">{wallet.name}</div>
+                          {wallet.isInstalled && (
+                            <div className="text-xs text-green-600">
+                              Installed
+                            </div>
+                          )}
+                          {!wallet.isInstalled && (
+                            <div className="text-xs text-muted-foreground">
+                              Not installed
+                            </div>
+                          )}
+                        </div>
+                      </Button>
+                    ))
+                  ) : (
+                    <div className="text-center py-4">
+                      <p className="text-sm text-muted-foreground">
+                        No EVM wallets detected. Please install a wallet
+                        extension.
                       </p>
                     </div>
                   )}
                 </div>
-              )}
-            </div>
-          </WalletErrorBoundary>
+
+                {/* Phantom Ethereum option */}
+                <div className="border-t pt-4">
+                  <p className="text-sm text-muted-foreground text-center mb-3">
+                    Or connect to Phantom Ethereum wallet
+                  </p>
+                  {!isInstalled ? (
+                    <Button
+                      onClick={redirectToPhantomDownload}
+                      className="w-full"
+                      size="lg"
+                      variant="outline"
+                    >
+                      <ExternalLink className="w-4 h-4 mr-2" />
+                      Install Phantom Wallet
+                    </Button>
+                  ) : (
+                    <Button
+                      onClick={handleConnectEthereum}
+                      className="w-full"
+                      size="lg"
+                      disabled={ethereum.isConnecting}
+                    >
+                      <Wallet className="w-4 h-4 mr-2" />
+                      {ethereum.isConnecting
+                        ? "Connecting..."
+                        : "Connect Phantom Ethereum"}
+                    </Button>
+                  )}
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <p className="text-sm text-muted-foreground text-center">
+                  Connect to Phantom Solana wallet
+                </p>
+                {!isInstalled ? (
+                  <Button
+                    onClick={redirectToPhantomDownload}
+                    className="w-full"
+                    size="lg"
+                    variant="outline"
+                  >
+                    <ExternalLink className="w-4 h-4 mr-2" />
+                    Install Phantom Wallet
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={handleConnectSolana}
+                    className="w-full"
+                    size="lg"
+                    disabled={solana.isConnecting}
+                  >
+                    <Wallet className="w-4 h-4 mr-2" />
+                    {solana.isConnecting
+                      ? "Connecting..."
+                      : "Connect Phantom Solana"}
+                  </Button>
+                )}
+                <div className="text-xs text-muted-foreground text-center">
+                  Official Phantom wallet integration for Solana
+                </div>
+              </div>
+            )}
+          </div>
         </DialogContent>
       </Dialog>
 
@@ -617,7 +792,7 @@ export function UnifiedWalletButton({
         } ${className || ""}`}
       >
         <Wallet className="h-4 w-4" />
-        {isAnyWalletConnected ? "Check Wallet" : "Connect Wallet"}
+        Connect Wallet
       </Button>
     </>
   );

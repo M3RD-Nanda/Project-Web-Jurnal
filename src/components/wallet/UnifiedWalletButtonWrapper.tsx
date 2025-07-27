@@ -55,13 +55,16 @@ export function UnifiedWalletButtonWrapper({
         size={size}
         className={`gap-2 font-semibold text-[10px] lg:text-xs transition-colors px-1.5 lg:px-2 h-8 border bg-transparent opacity-50 ${
           className?.includes("header-wallet")
-            ? "text-primary-foreground border-primary-foreground/20"
-            : "text-muted-foreground border-border bg-background"
+            ? "text-primary-foreground border-primary-foreground/20 hover:bg-primary-foreground/10 shadow-sm"
+            : "text-muted-foreground border-border bg-background hover:bg-muted"
         } ${className || ""}`}
         disabled
       >
-        <Wallet className="h-4 w-4" />
-        Connect Wallet
+        <div className="relative">
+          <Wallet className="h-4 w-4" />
+          <div className="absolute -top-1 -right-1 w-2 h-2 bg-muted-foreground rounded-full animate-pulse"></div>
+        </div>
+        <span>Connect Wallet</span>
       </Button>
     );
   }
@@ -74,13 +77,16 @@ export function UnifiedWalletButtonWrapper({
         size={size}
         className={`gap-2 font-semibold text-[10px] lg:text-xs transition-colors px-1.5 lg:px-2 h-8 border bg-transparent ${
           className?.includes("header-wallet")
-            ? "text-primary-foreground border-primary-foreground/20"
-            : "text-muted-foreground border-border bg-background"
+            ? "text-primary-foreground border-primary-foreground/20 hover:bg-primary-foreground/10 shadow-sm"
+            : "text-muted-foreground border-border bg-background hover:bg-muted"
         } ${className || ""}`}
         disabled
       >
-        <Wallet className="h-4 w-4" />
-        Wallet Unavailable
+        <div className="relative">
+          <Wallet className="h-4 w-4" />
+          <div className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"></div>
+        </div>
+        <span>Wallet Unavailable</span>
       </Button>
     );
   }

@@ -32,6 +32,20 @@ export function suppressDevWarnings() {
     "eval @",
     "reactive-element.js",
     "issueWarning @",
+    // Wallet-related warnings
+    "Phantom was registered as a Standard Wallet",
+    "The Wallet Adapter for Phantom can be removed from your app",
+    "⚠️ Phantom wallet not detected",
+    "❌ Phantom Ethereum provider not found",
+    "Phantom Ethereum provider not found",
+    "getPhantomEthereumProvider",
+    // Preload warnings
+    "The resource",
+    "was preloaded using link preload but not used within a few seconds",
+    "preload but not used within a few seconds",
+    "_next/static/media/",
+    ".woff2 was preloaded using link preload",
+    "gyByhwUxId8gMEwcGFWNOITd-s.p.da1ebef7.woff2",
     "The label's for attribute doesn't match any element id",
     "Incorrect use of <label for=FORM_ELEMENT>",
     "label elements",
@@ -137,6 +151,31 @@ export function suppressDevWarnings() {
     // Check for localhost URLs with preload warnings
     const localhostPattern = /http:\/\/localhost:\d+\/_next\/static\/css\//;
     if (localhostPattern.test(message) && message.includes("preload")) {
+      return true;
+    }
+
+    // General preload warning pattern
+    const generalPreloadPattern =
+      /The resource .* was preloaded using link preload but not used within a few seconds/;
+    if (generalPreloadPattern.test(message)) {
+      return true;
+    }
+
+    // Any message containing "preload but not used"
+    if (message.includes("preload but not used within a few seconds")) {
+      return true;
+    }
+
+    // Font file preload warnings
+    const fontPattern =
+      /\.(woff2?|ttf|otf|eot).*was preloaded using link preload/;
+    if (fontPattern.test(message)) {
+      return true;
+    }
+
+    // Network IP address preload warnings
+    const networkPattern = /http:\/\/192\.168\.\d+\.\d+:\d+\/_next\/static/;
+    if (networkPattern.test(message) && message.includes("preload")) {
       return true;
     }
 

@@ -10,6 +10,7 @@ import React, {
 import {
   ConnectionProvider,
   WalletProvider,
+  useWallet,
 } from "@solana/wallet-adapter-react";
 import { WalletAdapterNetwork } from "@solana/wallet-adapter-base";
 import {
@@ -49,10 +50,42 @@ const SolanaContext = createContext<SolanaContextType>({
   },
 });
 
-export function SolanaProvider({ children }: SolanaProviderProps) {
+// Inner component that has access to wallet context
+function SolanaContextProvider({ children }: { children: React.ReactNode }) {
   const [network, setNetwork] = useState<SolanaNetwork>(defaultSolanaNetwork);
   const [isSolanaAvailable, setIsSolanaAvailable] = useState(false);
   const [mounted, setMounted] = useState(false);
+
+  // Get actual wallet status from wallet adapter
+  const { connected, publicKey } = useWallet();
+
+  useEffect(() => {
+    setMounted(true);
+    // Check if Solana is available
+    if (typeof window !== "undefined") {
+      setIsSolanaAvailable(true);
+    }
+  }, []);
+
+  const contextValue: SolanaContextType = {
+    network,
+    setNetwork,
+    isSolanaAvailable: mounted && isSolanaAvailable,
+    wallet: {
+      connected,
+      publicKey,
+    },
+  };
+
+  return (
+    <SolanaContext.Provider value={contextValue}>
+      {children}
+    </SolanaContext.Provider>
+  );
+}
+
+export function SolanaProvider({ children }: SolanaProviderProps) {
+  const [network, setNetwork] = useState<SolanaNetwork>(defaultSolanaNetwork);
 
   // The network can be set to 'devnet', 'testnet', or 'mainnet-beta'
   const walletNetwork = WalletAdapterNetwork.Mainnet;
@@ -66,20 +99,13 @@ export function SolanaProvider({ children }: SolanaProviderProps) {
 
   const wallets = useMemo(
     () => [
-      new PhantomWalletAdapter(),
+      // Note: Phantom is handled by custom integration to avoid conflicts
+      // new PhantomWalletAdapter(), // Commented out to prevent Standard Wallet conflicts
       new SolflareWalletAdapter(),
       new TorusWalletAdapter(),
     ],
     []
   );
-
-  useEffect(() => {
-    setMounted(true);
-    // Check if Solana is available
-    if (typeof window !== "undefined") {
-      setIsSolanaAvailable(true);
-    }
-  }, []);
 
   // Handle wallet errors gracefully
   const onError = (error: any) => {
@@ -92,24 +118,12 @@ export function SolanaProvider({ children }: SolanaProviderProps) {
     }
   };
 
-  const contextValue: SolanaContextType = {
-    network,
-    setNetwork,
-    isSolanaAvailable: mounted && isSolanaAvailable,
-    wallet: {
-      connected: false,
-      publicKey: null,
-    },
-  };
-
   return (
-    <SolanaContext.Provider value={contextValue}>
-      <ConnectionProvider endpoint={endpoint}>
-        <WalletProvider wallets={wallets} autoConnect onError={onError}>
-          {children}
-        </WalletProvider>
-      </ConnectionProvider>
-    </SolanaContext.Provider>
+    <ConnectionProvider endpoint={endpoint}>
+      <WalletProvider wallets={wallets} autoConnect={false} onError={onError}>
+        <SolanaContextProvider>{children}</SolanaContextProvider>
+      </WalletProvider>
+    </ConnectionProvider>
   );
 }
 

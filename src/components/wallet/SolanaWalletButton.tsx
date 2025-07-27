@@ -203,53 +203,85 @@ export function SolanaWalletButton({
               className="justify-start gap-3 h-12"
               onClick={async () => {
                 try {
-                  // Ensure we have the select function available
-                  if (!select) {
-                    console.error("Wallet select function not available");
+                  // Ensure we have the required functions available
+                  if (!select || !connect) {
+                    console.error("Wallet functions not available");
                     return;
                   }
 
-                  // First select the wallet
-                  select(wallet.adapter.name);
+                  console.log(
+                    `Attempting to connect to ${wallet.adapter.name}...`
+                  );
 
-                  // Wait a brief moment for wallet selection to complete
-                  await new Promise((resolve) => setTimeout(resolve, 150));
+                  // Enhanced connection process with retry mechanism
+                  const connectWithRetry = async (retryCount = 0) => {
+                    const maxRetries = 3;
 
-                  // Ensure we have the connect function available
-                  if (!connect) {
-                    console.error("Wallet connect function not available");
-                    return;
-                  }
+                    try {
+                      // Step 1: Select the wallet
+                      console.log(
+                        `Selecting wallet: ${wallet.adapter.name} (attempt ${
+                          retryCount + 1
+                        })`
+                      );
+                      select(wallet.adapter.name);
 
-                  // Then connect to the selected wallet
-                  await connect();
-                  setIsWalletModalOpen(false);
+                      // Step 2: Wait for selection to complete (longer delay for first attempt)
+                      const delay =
+                        retryCount === 0 ? 500 : 300 + retryCount * 200;
+                      await new Promise((resolve) =>
+                        setTimeout(resolve, delay)
+                      );
+
+                      // Step 3: Verify selection was successful
+                      console.log("Verifying wallet selection...");
+
+                      // Step 4: Attempt connection
+                      console.log("Connecting to selected wallet...");
+                      await connect();
+
+                      console.log("Solana wallet connected successfully");
+                      setIsWalletModalOpen(false);
+                      return true;
+                    } catch (error: any) {
+                      console.error(
+                        `Connection attempt ${retryCount + 1} failed:`,
+                        error
+                      );
+
+                      if (
+                        error.name === "WalletNotSelectedError" &&
+                        retryCount < maxRetries
+                      ) {
+                        console.log(
+                          `Retrying connection (${
+                            retryCount + 1
+                          }/${maxRetries})...`
+                        );
+                        return await connectWithRetry(retryCount + 1);
+                      }
+
+                      throw error;
+                    }
+                  };
+
+                  // Start the connection process
+                  await connectWithRetry();
                 } catch (error: any) {
                   console.error("Wallet connection error:", error);
 
                   // Handle different types of wallet errors
                   if (error.name === "WalletConnectionError") {
                     // User rejected the connection - this is normal behavior
-                    // Don't close modal, let user try again or choose different wallet
+                    console.log("User rejected the connection");
                   } else if (error.name === "WalletNotReadyError") {
-                    // Wallet not installed - redirect to install page
-                    // Modal will stay open for user to see other options
-                  } else if (error.name === "WalletNotSelectedError") {
-                    // Wallet not properly selected - retry with longer delay
-                    try {
-                      // Try selecting again with a longer delay
-                      select(wallet.adapter.name);
-                      await new Promise((resolve) => setTimeout(resolve, 500));
-                      await connect();
-                      setIsWalletModalOpen(false);
-                    } catch (retryError: any) {
-                      console.error("Retry failed:", retryError);
-                      // If retry fails, keep modal open for user to try manually
-                    }
+                    // Wallet not installed
+                    console.log("Wallet not installed");
                   } else {
                     // Other errors - log for debugging
                     console.error("Failed to connect wallet:", error);
                   }
+                  // Keep modal open for user to try again
                 }
               }}
             >

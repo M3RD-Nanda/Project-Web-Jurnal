@@ -38,8 +38,21 @@ export function useAccountSafe() {
   // Always call hooks unconditionally to follow React rules
   const wagmiData = useAccount();
 
-  // Only return wagmi data if Web3 is available and mounted
-  return mounted && isWeb3Available && !isLoading ? wagmiData : safeData;
+  // Return wagmi data if mounted, regardless of Web3 availability
+  // This allows the hook to work even when Web3Provider is still initializing
+  if (mounted) {
+    // If wagmi data shows connection, return it even if Web3 context is still loading
+    if (wagmiData.isConnected && wagmiData.address) {
+      return wagmiData;
+    }
+    // If Web3 is available and not loading, return wagmi data
+    if (isWeb3Available && !isLoading) {
+      return wagmiData;
+    }
+  }
+
+  // Return safe data only if not mounted or no connection detected
+  return safeData;
 }
 
 export function useBalanceSafe(config?: { address?: `0x${string}` }) {
@@ -60,8 +73,20 @@ export function useBalanceSafe(config?: { address?: `0x${string}` }) {
   // Always call hooks unconditionally to follow React rules
   const wagmiData = useBalance(config);
 
-  // Only return wagmi data if Web3 is available and mounted
-  return mounted && isWeb3Available && !isLoading ? wagmiData : safeData;
+  // Return wagmi data if mounted, similar to useAccountSafe logic
+  if (mounted) {
+    // If Web3 is available and not loading, return wagmi data
+    if (isWeb3Available && !isLoading) {
+      return wagmiData;
+    }
+    // If wagmi data has valid balance data, return it even if Web3 context is still loading
+    if (wagmiData.data !== undefined) {
+      return wagmiData;
+    }
+  }
+
+  // Return safe data only if not mounted or no valid data
+  return safeData;
 }
 
 export function useChainIdSafe() {
@@ -77,8 +102,20 @@ export function useChainIdSafe() {
   // Always call hooks unconditionally to follow React rules
   const wagmiData = useChainId();
 
-  // Only return wagmi data if Web3 is available and mounted
-  return mounted && isWeb3Available && !isLoading ? wagmiData : safeData;
+  // Return wagmi data if mounted, similar to other safe hooks
+  if (mounted) {
+    // If Web3 is available and not loading, return wagmi data
+    if (isWeb3Available && !isLoading) {
+      return wagmiData;
+    }
+    // If wagmi data has valid chain data, return it even if Web3 context is still loading
+    if (wagmiData !== undefined) {
+      return wagmiData;
+    }
+  }
+
+  // Return safe data only if not mounted or no valid data
+  return safeData;
 }
 
 export function useConnectSafe() {
@@ -112,8 +149,64 @@ export function useDisconnectSafe() {
   const [mounted, setMounted] = useState(false);
   const { isWeb3Available, isLoading } = useWeb3Context();
 
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Always call hooks unconditionally to follow React rules
+  const wagmiData = useDisconnect();
+
+  // Create a more robust fallback disconnect function
+  const fallbackDisconnect = async () => {
+    console.log("Using fallback disconnect method...");
+    try {
+      // Try multiple disconnect methods
+      if (typeof window !== "undefined" && window.ethereum) {
+        // Method 1: Request permissions reset
+        try {
+          await window.ethereum.request({
+            method: "wallet_requestPermissions",
+            params: [{ eth_accounts: {} }],
+          });
+          console.log("Disconnected via wallet_requestPermissions");
+          return;
+        } catch (permError) {
+          console.log(
+            "wallet_requestPermissions failed, trying other methods..."
+          );
+        }
+
+        // Method 2: Direct disconnect if available
+        if (
+          window.ethereum.disconnect &&
+          typeof window.ethereum.disconnect === "function"
+        ) {
+          await window.ethereum.disconnect();
+          console.log("Disconnected via direct disconnect");
+          return;
+        }
+
+        // Method 3: Clear accounts (for some wallets)
+        try {
+          await window.ethereum.request({
+            method: "eth_requestAccounts",
+            params: [],
+          });
+          console.log("Attempted account clearing");
+        } catch (accountError) {
+          console.log("Account clearing failed, but continuing...");
+        }
+      }
+
+      console.log("Fallback disconnect completed");
+    } catch (error) {
+      console.error("All fallback disconnect methods failed:", error);
+      throw error;
+    }
+  };
+
   const [safeData] = useState({
-    disconnect: () => {},
+    disconnect: fallbackDisconnect,
     error: null,
     isError: false,
     isPending: false,
@@ -122,13 +215,6 @@ export function useDisconnectSafe() {
     status: "idle" as const,
     variables: undefined,
   } as any);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  // Always call hooks unconditionally to follow React rules
-  const wagmiData = useDisconnect();
 
   // Only return wagmi data if Web3 is available and mounted
   return mounted && isWeb3Available && !isLoading ? wagmiData : safeData;

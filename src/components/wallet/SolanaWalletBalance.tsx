@@ -4,15 +4,22 @@ import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useWallet, useConnection } from "@/components/SolanaProvider";
+import { usePhantomWallet } from "@/hooks/usePhantomWallet";
 import { useSolanaBalance } from "@/hooks/useSolanaSafe";
 import {
   getSolanaNetworkConfig,
   formatSolBalance,
   lamportsToSol,
 } from "@/lib/solana-config";
-import { Wallet, RefreshCw, ExternalLink } from "lucide-react";
+import {
+  formatSOLWithIDR,
+  lamportsToIDR,
+  formatIDRCompact,
+} from "@/lib/currency-conversion";
+import { Wallet, RefreshCw, ExternalLink, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { PublicKey } from "@solana/web3.js";
+import { toast } from "sonner";
 
 interface SolanaWalletBalanceProps {
   className?: string;
@@ -23,15 +30,59 @@ export function SolanaWalletBalance({
 }: SolanaWalletBalanceProps) {
   const [isClient, setIsClient] = useState(false);
 
-  const { publicKey, connected } = useWallet();
+  // Use Phantom wallet hook for consistent detection
+  const { solana } = usePhantomWallet();
+  const connected = solana.isConnected;
+  const publicKeyString = solana.publicKey;
+
+  // Convert string to PublicKey object for the hook
+  const publicKey = publicKeyString ? new PublicKey(publicKeyString) : null;
   const network = "mainnet"; // Use mainnet for real balance
 
   // Use the custom hook for balance fetching
   const { balance, isLoading, error, refetch } = useSolanaBalance(publicKey);
 
+  // Handle wallet disconnect
+  const handleDisconnect = async () => {
+    try {
+      await solana.disconnect();
+      toast.success("Solana wallet disconnected successfully");
+    } catch (error) {
+      console.error("Error disconnecting Solana wallet:", error);
+      toast.error("Failed to disconnect Solana wallet");
+    }
+  };
+
   useEffect(() => {
     setIsClient(true);
   }, []);
+
+  // Debug logging
+  useEffect(() => {
+    console.log("SolanaWalletBalance Debug:", {
+      connected,
+      publicKeyString,
+      publicKey: publicKey?.toString(),
+      balance,
+      isLoading,
+      error,
+      network,
+      phantomSolana: {
+        isConnected: solana.isConnected,
+        isInstalled: solana.isInstalled,
+        publicKey: solana.publicKey,
+      },
+    });
+  }, [
+    connected,
+    publicKeyString,
+    publicKey,
+    balance,
+    isLoading,
+    error,
+    network,
+    solana,
+  ]);
 
   // Auto-refresh balance every 30 seconds
   useEffect(() => {
@@ -98,10 +149,20 @@ export function SolanaWalletBalance({
               onClick={refetch}
               disabled={isLoading}
               className="h-6 w-6 p-0"
+              title="Refresh balance"
             >
               <RefreshCw
                 className={`h-3 w-3 ${isLoading ? "animate-spin" : ""}`}
               />
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleDisconnect}
+              className="h-6 w-6 p-0 text-destructive hover:text-destructive"
+              title="Disconnect Solana wallet"
+            >
+              <LogOut className="h-3 w-3" />
             </Button>
           </div>
         </CardTitle>
@@ -113,9 +174,15 @@ export function SolanaWalletBalance({
           <Skeleton className="h-8 w-32" />
         ) : balance !== null ? (
           <div className="space-y-2">
-            <div className="text-2xl font-bold">
+            {/* Primary display: IDR value */}
+            <div className="text-2xl font-bold text-green-600">
+              {formatIDRCompact(lamportsToIDR(balance))}
+            </div>
+            {/* Secondary display: SOL amount */}
+            <div className="text-sm text-muted-foreground">
               {formatSolBalance(balance)} SOL
             </div>
+            {/* Tertiary display: Lamports for technical reference */}
             <div className="text-xs text-muted-foreground">
               {balance.toLocaleString()} lamports
             </div>
@@ -150,7 +217,13 @@ export function SolanaWalletBalance({
 export function SolanaWalletBalanceCompact() {
   const [isClient, setIsClient] = useState(false);
 
-  const { publicKey, connected } = useWallet();
+  // Use Phantom wallet hook for consistent detection
+  const { solana } = usePhantomWallet();
+  const connected = solana.isConnected;
+  const publicKeyString = solana.publicKey;
+
+  // Convert string to PublicKey object for the hook
+  const publicKey = publicKeyString ? new PublicKey(publicKeyString) : null;
 
   // Use the custom hook for balance fetching
   const { balance, isLoading } = useSolanaBalance(publicKey);
@@ -169,9 +242,16 @@ export function SolanaWalletBalanceCompact() {
       {isLoading ? (
         <Skeleton className="h-4 w-16" />
       ) : (
-        <span>
-          {balance !== null ? formatSolBalance(balance, 4) : "0.0000"} SOL
-        </span>
+        <div className="flex flex-col">
+          <span className="font-medium text-green-600">
+            {balance !== null
+              ? formatIDRCompact(lamportsToIDR(balance))
+              : "Rp 0"}
+          </span>
+          <span className="text-xs text-muted-foreground">
+            {balance !== null ? formatSolBalance(balance, 4) : "0.0000"} SOL
+          </span>
+        </div>
       )}
     </div>
   );
