@@ -15,11 +15,18 @@ export async function GET(_request: NextRequest) {
       "template-jurnal-jebaka.docx"
     );
 
-    // Read the file
+    // Read the file as Node Buffer (Uint8Array)
     const fileBuffer = await readFile(filePath);
 
-    // Create response with proper headers
-    const response = new NextResponse(fileBuffer, {
+    // Wrap buffer into a ReadableStream for Web Response compatibility
+    const stream = new ReadableStream({
+      start(controller) {
+        controller.enqueue(new Uint8Array(fileBuffer)); // enqueue as Uint8Array
+        controller.close();
+      },
+    });
+
+    return new NextResponse(stream, {
       status: 200,
       headers: {
         "Content-Type":
@@ -29,8 +36,6 @@ export async function GET(_request: NextRequest) {
         "Cache-Control": "public, max-age=31536000, immutable",
       },
     });
-
-    return response;
   } catch (error) {
     console.error("Template file error:", error);
     // Return 404 if file not found
